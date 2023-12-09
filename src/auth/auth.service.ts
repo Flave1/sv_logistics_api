@@ -8,6 +8,11 @@ import {
   import { JwtService } from '@nestjs/jwt';
   import { ConfigService } from '@nestjs/config';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { Restaurant } from 'src/restaurant/enums/restaurant.enum';
+import { UserType } from 'src/user/enums/userType.enum';
+import { CourierType } from 'src/courier/enums/courierType.enum';
+import { CreateCustomerDto } from 'src/auth/dto/create.customer.dto';
+import { CreateUserDto } from './dto/create.user.dto';
   
   @Injectable()
   export class AuthService {
@@ -17,16 +22,22 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
       private config: ConfigService,
     ) {}
   
-    async signup(dto: AuthDto) {
+    async CreateCustomer(dto: CreateCustomerDto) {
       // generate the password hash
       const hash = await argon.hash(dto.password);
       // save the new user in the db
       try {
         const user = await this.prisma.user.create({
           data: {
-            email: dto.email,
-            restaurantId: dto.restaurantId,
-            hash,
+              email: dto.email,
+              firstName: dto.firstName,
+              lastName: dto.lastName,
+              hash,
+              phoneNumber: dto.PhoneNumber,
+              address: dto.Address,
+              restaurantId: Restaurant.Default,
+              userTypeId: UserType.Customer,
+              courierTypeId: CourierType.Default
           },
         });
   
@@ -45,8 +56,44 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
         throw error;
       }
     }
+
+    //** Method to profile Staff and Drivers */
+    async CreateUser(dto: CreateUserDto) {
+      // generate the password hash
+      const hash = await argon.hash(dto.password);
+      // save the new user in the db
+      try {
+        const user = await this.prisma.user.create({
+          data: {
+              email: dto.email,
+              firstName: dto.firstName,
+              lastName: dto.lastName,
+              hash,
+              phoneNumber: dto.phoneNumber,
+              address: dto.address,
+              restaurantId: dto.restaurantId,
+              userTypeId: dto.userType,
+              courierTypeId: dto.courierType
+          },
+        });
   
-    async signin(dto: AuthDto) {
+        return this.signToken(user.id, user.email);
+      } catch (error) {
+        if (
+          error instanceof
+          PrismaClientKnownRequestError
+        ) {
+          if (error.code === 'P2002') {
+            throw new ForbiddenException(
+              'Email already exist',
+            );
+          }
+        }
+        throw error;
+      }
+    }
+  
+    async login(dto: AuthDto) {
       // find the user by email
       const user =
         await this.prisma.user.findUnique({
@@ -57,7 +104,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
       // if user does not exist throw exception
       if (!user)
         throw new ForbiddenException(
-          'Credentials incorrect',
+          'Invalid Credentials',
         );
   
       // compare password
@@ -68,7 +115,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
       // if password incorrect throw exception
       if (!pwMatches)
         throw new ForbiddenException(
-          'Credentials incorrect',
+          'Invalid Credentials',
         );
       return this.signToken(user.id, user.email);
     }

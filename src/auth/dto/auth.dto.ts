@@ -13,8 +13,4 @@ import {
     @IsString()
     @IsNotEmpty()
     password: string;
-
-    @IsNumber()
-    @IsNotEmpty()
-    restaurantId: number;
   }

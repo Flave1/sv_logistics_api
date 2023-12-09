@@ -2,7 +2,9 @@ import {
     Body,
     Controller,
     Get,
+    Param,
     Patch,
+    Post,
     UseGuards,
   } from '@nestjs/common';
   import { User } from '@prisma/client';
@@ -11,22 +13,30 @@ import {
   import { EditUserDto } from './dto';
   import { UserService } from './user.service';
   
-  @UseGuards(JwtGuard)
   @Controller('users')
   export class UserController {
     constructor(
        private userService: UserService
         ) {}
-    @Get('me')
+
+    @Get()
     getMe(@GetUser() user: User) {
       return user;
     }
-  
-    @Patch()
-    editUser(
-      @GetUser('id') userId: number,
-      @Body() dto: EditUserDto,
-    ) {
-      return this.userService.editUser(userId, dto);
+
+    @Patch("update/:id")
+    editUser(@Param('id') userId: string, @Body() dto: EditUserDto) {
+      return this.userService.updateUser(userId, dto);
     }
+
+    @Get(':id')
+    getUserById(@Param('id') userId: string) {
+        return this.userService.getUserById(userId);
+    }
+
+    @Get('restaurant/:restaurantId')
+    getUserByRestaurantId(@Param('restaurantId') restaurantId: string) {
+        return this.userService.getUserByRestaurantId(restaurantId);
+    }
+
   }
