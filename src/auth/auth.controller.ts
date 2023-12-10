@@ -10,19 +10,21 @@ import {
   import { AuthDto } from './dto';
 import { CreateCustomerDto } from './dto/create.customer.dto';
 import { CreateUserDto } from './dto/create.user.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
   
-@ApiTags('Authencticaion')
-  @Controller('auth')
+@ApiTags('Authentication')
+  @Controller('Authentication')
   export class AuthController {
     constructor(private authService: AuthService) {}
   
+    @ApiCreatedResponse({description: "Customer successfully created"})
     @Post('create-customer')
     createCustomer(@Body() dto: CreateCustomerDto) {
       return this.authService.CreateCustomer(dto);
     }
     
     //** Method to profile Staff and Drivers */
+    @ApiCreatedResponse({description: "User successfully created"})
     @Post('create-user')
     creatUser(@Body() dto: CreateUserDto) {
       return this.authService.CreateUser(dto);

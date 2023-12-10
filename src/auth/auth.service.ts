@@ -33,15 +33,15 @@ import { CreateUserDto } from './dto/create.user.dto';
               firstName: dto.firstName,
               lastName: dto.lastName,
               hash,
-              phoneNumber: dto.PhoneNumber,
-              address: dto.Address,
+              phoneNumber: dto.phoneNumber,
+              address: dto.address,
               restaurantId: Restaurant.Default,
               userTypeId: UserType.Customer,
               courierTypeId: CourierType.Default
           },
         });
   
-        return this.signToken(user.id, user.email);
+        return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
       } catch (error) {
         if (
           error instanceof
@@ -75,7 +75,7 @@ import { CreateUserDto } from './dto/create.user.dto';
           },
         });
   
-        return this.signToken(user.id, user.email);
+        return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
       } catch (error) {
         if ( error instanceof PrismaClientKnownRequestError ) {
           if (error.code === 'P2002') {
@@ -96,22 +96,29 @@ import { CreateUserDto } from './dto/create.user.dto';
         });
       // if user does not exist throw exception
       if (!user)
-        throw new ForbiddenException('Credentials incorrect');
+        throw new ForbiddenException('Invalid Credentials');
   
       // compare password
       const pwMatches = await argon.verify(user.hash, dto.password);
       // if password incorrect throw exception
       if (!pwMatches)
-        throw new ForbiddenException('Credentials incorrect');
-      return this.signToken(user.id, user.email);
+        throw new ForbiddenException(
+          'Invalid Credentials',
+        );
+      return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
     }
   
-    async signToken(userId: number,email: string): Promise<{ access_token: string }> {
+    async signToken(
+      userId: number,
+      email: string,
+      userType: number,
+      restaurantId: number
+    ): Promise<{ access_token: string }> {
       const payload = {
         sub: userId,
         email,
-        displayName: '',
-        expireDate: new Date()
+        userType,
+        restaurantId
       };
       const secret = this.config.get('JWT_SECRET');
   
