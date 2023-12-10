@@ -10,7 +10,7 @@ import {
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { Restaurant } from 'src/restaurant/enums/restaurant.enum';
 import { UserType } from 'src/user/enums/userType.enum';
-import { CourierType } from 'src/courier/enums/courierType.enum';
+import { CourierType } from 'src/user/enums/courierType.enum';
 import { CreateCustomerDto } from 'src/auth/dto/create.customer.dto';
 import { CreateUserDto } from './dto/create.user.dto';
   
@@ -79,10 +79,7 @@ import { CreateUserDto } from './dto/create.user.dto';
   
         return this.signToken(user.id, user.email);
       } catch (error) {
-        if (
-          error instanceof
-          PrismaClientKnownRequestError
-        ) {
+        if ( error instanceof PrismaClientKnownRequestError ) {
           if (error.code === 'P2002') {
             throw new ForbiddenException(
               'Email already exist',

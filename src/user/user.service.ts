@@ -4,13 +4,16 @@ import { EditUserDto } from './dto';
 import * as argon from 'argon2';
 import { Restaurant } from 'src/restaurant/enums/restaurant.enum';
 import { UserType } from './enums/userType.enum';
-import { CourierType } from 'src/courier/enums/courierType.enum';
+import { CourierType } from 'src/user/enums/courierType.enum';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
-  async editUser(userId: number, dto: EditUserDto) {
+  async updateUser(
+    userId: string,
+    dto: EditUserDto,
+  ) {
     const user = await this.prisma.user.update({
       where: {
         id: parseInt(userId),
@@ -49,13 +52,12 @@ async getUserByRestaurantId(
   return user.map(({ hash, ...newUsers }) => newUsers); //Todo: change mapping to transformer
 }
 
-  async getSuperUser() {
-    const user = {
-      admin: 'admin'
-    }
-
-
-    return user;
+async getSuperUser() {
+  const user = {
+    admin: 'admin'
   }
-}
 
+
+  return user;
+}
+}
