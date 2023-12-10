@@ -6,27 +6,27 @@ import {
   } from 'class-validator';
   
   export class CreateCustomerDto {
-    @ApiProperty()
+    @ApiProperty({ })
     @IsEmail()
     email?: string;
-  
-    @ApiProperty()
+
+    @ApiProperty({ })
     @IsString()
     firstName?: string;
-  
-    @ApiProperty()
+
+    @ApiProperty({ })
     @IsString()
     lastName?: string;
 
-    @ApiProperty()
+    @ApiProperty({ })
     @IsString()
     password?: string;
 
-    @ApiProperty()
+    @ApiProperty({ })
     @IsString()
-    phoneNumber?: string;
-
-    @ApiProperty()
+    PhoneNumber?: string;
+    
+    @ApiProperty({ })
     @IsString()
     address?: string;
 

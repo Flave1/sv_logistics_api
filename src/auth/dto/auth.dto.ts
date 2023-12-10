@@ -7,12 +7,12 @@ import {
   } from 'class-validator';
   
   export class AuthDto {
-    @ApiProperty()
+    @ApiProperty({})
     @IsEmail()
     @IsNotEmpty()
     email: string;
   
-    @ApiProperty()
+    @ApiProperty({})
     @IsString()
     @IsNotEmpty()
     password: string;

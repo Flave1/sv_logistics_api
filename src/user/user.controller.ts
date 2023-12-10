@@ -36,19 +36,19 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
       return this.userService.getAllUsers();
     }
 
-    @Patch("update/:id")
-    editUser(@Param('id') userId: string, @Body() dto: EditUserDto) {
-      return this.userService.updateUser(userId, dto);
-    }
-
-    @Get(':id')
-    getUserById(@Param('id') userId: string) {
-        return this.userService.getUserById(userId);
-    }
-
-    @Get('restaurant/:restaurantId')
-    getUserByRestaurantId(@Param('restaurantId') restaurantId: string) {
-        return this.userService.getUserByRestaurantId(restaurantId);
-    }
-
+  @Patch("update/:id")
+  editUser(@Param('id') userId: string, @Body() dto: EditUserDto) {
+    return this.userService.updateUser(userId, dto);
   }
+
+  @Get(':id')
+  getUserById(@Param('id') userId: string) {
+    return this.userService.getUserById(userId);
+  }
+
+  @Get('restaurant/:restaurantId')
+  getUserByRestaurantId(@Param('restaurantId') restaurantId: string) {
+    return this.userService.getUserByRestaurantId(restaurantId);
+  }
+
+}

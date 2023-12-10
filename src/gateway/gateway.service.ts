@@ -35,7 +35,6 @@ export class GatewayService implements OnModuleInit, OnGatewayDisconnect, OnGate
   }
 
   handleDisconnect(client: Socket) {
-    // console.log(client.id + ' Disconnected');
     const connectedClients = this.server.sockets;
     this.server.emit(CommonEvents.get_connected_clients, {
       msg: 'Connected customers',
@@ -45,8 +44,6 @@ export class GatewayService implements OnModuleInit, OnGatewayDisconnect, OnGate
 
   handleConnection(client: Socket, ...args: any[]) {
      this.connectedClients = this.server.sockets;
-    // console.log(connectedClients.sockets.size, ' number of clients Connected');
-
     this.server.emit(CommonEvents.get_connected_clients, {
       msg: 'Connected customers',
       content: `${this.connectedClients.sockets.size} number of clients Connected`,
@@ -64,11 +61,9 @@ export class GatewayService implements OnModuleInit, OnGatewayDisconnect, OnGate
   }
   @SubscribeMessage(CommonEvents.join_room)
   async JoinRoom(@ValidateGatewayUser() token: string, @MessageBody() body: any) {
-    
     const roomName = JSON.parse(body).roomName;
     await this.connectedClients.socketsJoin(roomName)
     const personsInRoom = this.connectedClients.adapter.rooms?.get(roomName)?.size;
     this.connectedClients.to(roomName).emit(CommonEvents.join_room, {message: `A new user has joined ${roomName} total ${personsInRoom}`});
-    
   }
 }
