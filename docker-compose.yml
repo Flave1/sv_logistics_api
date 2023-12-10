@@ -20,5 +20,13 @@ services:
       POSTGRES_DB: nest
     networks:
       - freecodecamp
+  redis:
+    image: 'redislabs/rejson:2.0.0'
+    ports:
+      - '6379:6379'
+    volumes:
+      - 'redisdata:/data'
+volumes:
+  redisdata:
 networks:
   freecodecamp:

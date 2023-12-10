@@ -8,12 +8,9 @@ import { CourierType } from 'src/courier/enums/courierType.enum';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
-  async updateUser(
-    userId: string,
-    dto: EditUserDto,
-  ) {
+  async editUser(userId: number, dto: EditUserDto) {
     const user = await this.prisma.user.update({
       where: {
         id: parseInt(userId),
@@ -68,4 +65,13 @@ async getAllUsers(
   return users.map(({ hash, ...newUsers }) => newUsers); //Todo: change mapping to transformer
 }
 
+  async getSuperUser() {
+    const user = {
+      admin: 'admin'
+    }
+
+
+    return user;
+  }
 }
+

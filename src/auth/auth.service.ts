@@ -103,15 +103,10 @@ import { CreateUserDto } from './dto/create.user.dto';
         });
       // if user does not exist throw exception
       if (!user)
-        throw new ForbiddenException(
-          'Invalid Credentials',
-        );
+        throw new ForbiddenException('Credentials incorrect');
   
       // compare password
-      const pwMatches = await argon.verify(
-        user.hash,
-        dto.password,
-      );
+      const pwMatches = await argon.verify(user.hash, dto.password);
       // if password incorrect throw exception
       if (!pwMatches)
         throw new ForbiddenException(
@@ -137,7 +132,7 @@ import { CreateUserDto } from './dto/create.user.dto';
       const token = await this.jwt.signAsync(
         payload,
         {
-          expiresIn: '15m',
+          expiresIn: '60m',
           secret: secret,
         },
       );

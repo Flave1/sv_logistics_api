@@ -10,6 +10,7 @@ import {
     Patch,
     Post,
     UseGuards,
+    UseInterceptors,
 } from '@nestjs/common';
 
 import { JwtGuard } from '../auth/guard';
@@ -19,6 +20,7 @@ import {
     EditRestaurantDto,
 } from './dto';
 import { ApiTags } from '@nestjs/swagger';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 
 @UseGuards(JwtGuard)
 @ApiTags('Restaurant')
@@ -28,7 +30,13 @@ export class RestaurantController {
         private restaurantService: RestaurantService,
     ) { }
 
-   
+    @Get()
+    // @UseInterceptors(CacheInterceptor) 
+    // @CacheTTL(1000)
+    getRestaurant() {
+        return this.restaurantService.getRestaurants();
+    }
+
     @Get(':id')
     getRestaurantById(@Param('id', ParseIntPipe) restaurantId: number) {
         return this.restaurantService.getRestaurantById(restaurantId);
