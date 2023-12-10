@@ -33,15 +33,15 @@ import { CreateUserDto } from './dto/create.user.dto';
               firstName: dto.firstName,
               lastName: dto.lastName,
               hash,
-              phoneNumber: dto.PhoneNumber,
-              address: dto.Address,
+              phoneNumber: dto.phoneNumber,
+              address: dto.address,
               restaurantId: Restaurant.Default,
               userTypeId: UserType.Customer,
               courierTypeId: CourierType.Default
           },
         });
   
-        return this.signToken(user.id, user.email);
+        return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
       } catch (error) {
         if (
           error instanceof
@@ -77,7 +77,7 @@ import { CreateUserDto } from './dto/create.user.dto';
           },
         });
   
-        return this.signToken(user.id, user.email);
+        return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
       } catch (error) {
         if (
           error instanceof
@@ -117,16 +117,20 @@ import { CreateUserDto } from './dto/create.user.dto';
         throw new ForbiddenException(
           'Invalid Credentials',
         );
-      return this.signToken(user.id, user.email);
+      return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
     }
   
     async signToken(
       userId: number,
       email: string,
+      userType: number,
+      restaurantId: number
     ): Promise<{ access_token: string }> {
       const payload = {
         sub: userId,
         email,
+        userType,
+        restaurantId
       };
       const secret = this.config.get('JWT_SECRET');
   

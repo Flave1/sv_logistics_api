@@ -18,8 +18,10 @@ import {
     CreateBookmarkDto,
     EditBookmarkDto,
   } from './dto';
+import { ApiTags } from '@nestjs/swagger';
   
   // @UseGuards(JwtGuard)
+  @ApiTags('Bookmarks')
   @Controller('bookmarks')
   export class BookmarkController {
     constructor(

@@ -18,8 +18,10 @@ import {
     CreateRestaurantDto,
     EditRestaurantDto,
 } from './dto';
+import { ApiTags } from '@nestjs/swagger';
 
-// @UseGuards(JwtGuard)
+@UseGuards(JwtGuard)
+@ApiTags('Restaurant')
 @Controller('restaurant')
 export class RestaurantController {
     constructor(

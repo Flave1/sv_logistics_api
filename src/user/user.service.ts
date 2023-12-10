@@ -48,8 +48,24 @@ async getUserByRestaurantId(
       where: {
           restaurantId: parseInt(restaurantId)
       },
+      orderBy: [
+        {
+          createdAt: 'desc',
+        }
+      ]
   });
   return user.map(({ hash, ...newUsers }) => newUsers); //Todo: change mapping to transformer
+}
+
+async getAllUsers(
+) {
+  const users = (await this.prisma.user.findMany({
+    orderBy: [
+      {
+        createdAt: 'desc',
+      }
+    ]}));
+  return users.map(({ hash, ...newUsers }) => newUsers); //Todo: change mapping to transformer
 }
 
 }
