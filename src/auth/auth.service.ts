@@ -81,9 +81,7 @@ import { CreateUserDto } from './dto/create.user.dto';
       } catch (error) {
         if ( error instanceof PrismaClientKnownRequestError ) {
           if (error.code === 'P2002') {
-            throw new ForbiddenException(
-              'Email already exist',
-            );
+            throw new ForbiddenException('Email already exist');
           }
         }
         throw error;
