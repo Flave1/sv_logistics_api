@@ -7,15 +7,18 @@ import {
     CreateRestaurantDto,
     EditRestaurantDto,
 } from './dto';
+import { RedisRepository } from 'src/redis/redis.repository';
+import { RedisDto1, RedisDto2 } from 'src/redis/dto';
+import { Restaurant } from '@prisma/client';
 
+export const cached_restaurants = 'cached_restaurants';
 @Injectable()
 export class RestaurantService {
-    constructor(private prisma: PrismaService) { }
+    constructor(private prisma: PrismaService,
+        private redis: RedisRepository
+    ) { }
 
-
-    getRestaurantById(
-        restaurantId: number,
-    ) {
+    getRestaurantById(restaurantId: number) {
         return this.prisma.restaurant.findFirst({
             where: {
                 id: restaurantId
@@ -23,21 +26,32 @@ export class RestaurantService {
         });
     }
 
-    async createRestaurant(
-        dto: CreateRestaurantDto,
-    ) {
+    async getRestaurants() {
+        const cachedData = await this.redis.getAll<Restaurant[]>(cached_restaurants);
+        if (cachedData){
+            console.log('gotten from cache');
+            return cachedData;
+        }
+
+        const restaurants = await this.prisma.restaurant.findMany();
+        await this.redis.store<Restaurant[]>({ key: cached_restaurants, data: restaurants });
+        console.log('gotten from db');
+        return restaurants;
+    }
+
+    async createRestaurant(dto: CreateRestaurantDto) {
         const restaurant =
             await this.prisma.restaurant.create({
                 data: {
                     name: dto.name
                 },
             });
-
+        await this.redis.updateList(cached_restaurants, restaurant);
         return restaurant;
     }
 
 
-    
+
 
     async editRestaurantById(
         restaurantId: number,

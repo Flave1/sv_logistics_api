@@ -25,7 +25,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
         const user = await this.prisma.user.create({
           data: {
             email: dto.email,
-            restaurantId: dto.restaurantId,
+             restaurantId: 0,
             hash,
           },
         });
@@ -56,26 +56,17 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
         });
       // if user does not exist throw exception
       if (!user)
-        throw new ForbiddenException(
-          'Credentials incorrect',
-        );
+        throw new ForbiddenException('Credentials incorrect');
   
       // compare password
-      const pwMatches = await argon.verify(
-        user.hash,
-        dto.password,
-      );
+      const pwMatches = await argon.verify(user.hash, dto.password);
       // if password incorrect throw exception
       if (!pwMatches)
-        throw new ForbiddenException(
-          'Credentials incorrect',
-        );
+        throw new ForbiddenException('Credentials incorrect');
       return this.signToken(user.id, user.email);
     }
   
-    async signToken(
-      userId: number,
-      email: string,
+    async signToken(userId: number,email: string,
     ): Promise<{ access_token: string }> {
       const payload = {
         sub: userId,
@@ -86,7 +77,7 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
       const token = await this.jwt.signAsync(
         payload,
         {
-          expiresIn: '15m',
+          expiresIn: '60m',
           secret: secret,
         },
       );

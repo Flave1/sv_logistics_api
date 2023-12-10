@@ -10,6 +10,7 @@ import {
     Patch,
     Post,
     UseGuards,
+    UseInterceptors,
 } from '@nestjs/common';
 
 import { JwtGuard } from '../auth/guard';
@@ -18,6 +19,7 @@ import {
     CreateRestaurantDto,
     EditRestaurantDto,
 } from './dto';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 
 // @UseGuards(JwtGuard)
 @Controller('restaurant')
@@ -26,7 +28,13 @@ export class RestaurantController {
         private restaurantService: RestaurantService,
     ) { }
 
-   
+    @Get()
+    // @UseInterceptors(CacheInterceptor) 
+    // @CacheTTL(1000)
+    getRestaurant() {
+        return this.restaurantService.getRestaurants();
+    }
+
     @Get(':id')
     getRestaurantById(@Param('id', ParseIntPipe) restaurantId: number) {
         return this.restaurantService.getRestaurantById(restaurantId);
