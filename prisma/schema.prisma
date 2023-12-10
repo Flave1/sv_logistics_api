@@ -14,7 +14,7 @@ model Restaurant {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  name String?
+  name      String?
 
   users User[]
 
@@ -32,8 +32,20 @@ model User {
   firstName String?
   lastName  String?
 
-  bookmarks Bookmark[]
+  phoneNumber          String?
+  otherPhoneNumber     String?
+  address              String?
+  nextOfKinName        String?
+  nextOfKinPhoneNumber String?
+  nextOfKinAddress     String?
 
+  userTypeId Int
+  UserType   UserType @relation(fields: [userTypeId], references: [id])
+
+  courierTypeId Int
+  courierType   CourierType @relation(fields: [courierTypeId], references: [id])
+
+  bookmarks Bookmark[]
 
   restaurantId Int
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
@@ -54,4 +66,26 @@ model Bookmark {
   user   User @relation(fields: [userId], references: [id])
 
   @@map("bookmarks")
+}
+
+model UserType {
+  id        Int      @id @default(autoincrement())
+  Name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users User[]
+
+  @@map("userType")
+}
+
+model CourierType {
+  id        Int      @id @default(autoincrement())
+  Name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users User[]
+
+  @@map("courierType")
 }

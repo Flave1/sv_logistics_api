@@ -19,7 +19,7 @@ import {
     EditBookmarkDto,
   } from './dto';
   
-  @UseGuards(JwtGuard)
+  // @UseGuards(JwtGuard)
   @Controller('bookmarks')
   export class BookmarkController {
     constructor(

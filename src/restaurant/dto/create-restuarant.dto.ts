@@ -6,6 +6,5 @@ import {
   
   export class CreateRestaurantDto {
     @IsString()
-    @IsOptional()
-    name?: string;
+    name: string;
   }

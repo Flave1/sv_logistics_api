@@ -13,5 +13,4 @@ import {
     @IsString()
     @IsNotEmpty()
     password: string;
-
   }
