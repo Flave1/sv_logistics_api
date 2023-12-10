@@ -48,9 +48,7 @@ import { CreateUserDto } from './dto/create.user.dto';
           PrismaClientKnownRequestError
         ) {
           if (error.code === 'P2002') {
-            throw new ForbiddenException(
-              'Credentials taken',
-            );
+            throw new ForbiddenException('Credentials taken');
           }
         }
         throw error;
@@ -108,19 +106,20 @@ import { CreateUserDto } from './dto/create.user.dto';
       return this.signToken(user.id, user.email);
     }
   
-    async signToken(userId: number,email: string,
-    ): Promise<{ access_token: string }> {
+    async signToken(userId: number,email: string): Promise<{ access_token: string }> {
       const payload = {
         sub: userId,
         email,
+        displayName: '',
+        expireDate: new Date()
       };
       const secret = this.config.get('JWT_SECRET');
   
-      const token = await this.jwt.signAsync(
-        payload,
+      const token = await this.jwt.signAsync(payload,
         {
           expiresIn: '60m',
           secret: secret,
+          jwtid: ''
         },
       );
   

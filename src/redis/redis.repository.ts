@@ -17,7 +17,7 @@ export class RedisRepository {
     @Inject(IORedisKey) private readonly redisClient: Redis,
     @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) {
-    this.ttl = configService.get('data_DURATION');
+    this.ttl = configService.get('POLL_DURATION');
   }
 
   async store<T>({ data, key }: any): Promise<T> {
