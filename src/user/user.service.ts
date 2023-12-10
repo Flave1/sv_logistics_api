@@ -10,7 +10,7 @@ import { CourierType } from 'src/courier/enums/courierType.enum';
 export class UserService {
   constructor(private prisma: PrismaService) { }
 
-  async editUser(userId: number, dto: EditUserDto) {
+  async updateUser(userId: string, dto: EditUserDto) {
     const user = await this.prisma.user.update({
       where: {
         id: parseInt(userId),
