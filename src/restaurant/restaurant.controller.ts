@@ -20,7 +20,9 @@ import {
     EditRestaurantDto,
 } from './dto';
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Restaurant')
 // @UseGuards(JwtGuard)
 @Controller('restaurant')
 export class RestaurantController {
