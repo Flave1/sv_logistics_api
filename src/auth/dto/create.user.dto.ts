@@ -9,39 +9,40 @@ import {
   } from 'class-validator';
   
   export class CreateUserDto {
-    @ApiProperty()
+    @ApiProperty({})
     @IsEmail()
     email?: string;
   
-    @ApiProperty()
+    @ApiProperty({})
     @IsString()
     firstName?: string;
   
-    @ApiProperty()
+    @ApiProperty({})
     @IsString()
     lastName?: string;
 
-    @ApiProperty()
+    @ApiProperty({})
     @IsString()
     password?: string;
 
-    @ApiProperty()
+    @ApiProperty({})
     @IsString()
     phoneNumber?: string;
 
-    @ApiProperty()
+    @ApiProperty({})
     @IsString()
     address?: string;
 
-    @ApiProperty()
+    @ApiProperty({})
     @IsNumber()
     restaurantId: number;
 
-    @ApiProperty()
+    @ApiProperty({})
     @IsNumber()
+    @ApiProperty({example: 1})
     userType: number;
 
-    @ApiProperty()
+    @ApiProperty({example: 1})
     @IsNumber()
     courierType: number;
 
