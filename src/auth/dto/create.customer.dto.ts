@@ -24,7 +24,7 @@ import {
 
     @ApiProperty({ })
     @IsString()
-    PhoneNumber?: string;
+    phoneNumber?: string;
     
     @ApiProperty({ })
     @IsString()

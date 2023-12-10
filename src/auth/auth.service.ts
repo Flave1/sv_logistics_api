@@ -49,7 +49,7 @@ import { CreateUserDto } from './dto/create.user.dto';
         ) {
           if (error.code === 'P2002') {
             throw new ForbiddenException(
-              'Credentials taken',
+              'Email already exist',
             );
           }
         }
@@ -100,7 +100,7 @@ import { CreateUserDto } from './dto/create.user.dto';
         });
       // if user does not exist throw exception
       if (!user)
-        throw new ForbiddenException('Credentials incorrect');
+        throw new ForbiddenException('Invalid Credentials');
   
       // compare password
       const pwMatches = await argon.verify(user.hash, dto.password);

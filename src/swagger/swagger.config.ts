@@ -3,10 +3,10 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
 export function swaggerConfig(app: INestApplication): void{
     const config = new DocumentBuilder()
-    .setTitle('Foodie API')
-    .setDescription('API for meal ordering system')
+    .setTitle('FOODIE CAFE API')
+    .setDescription('API Documentation for foodie endpoints')
     .setVersion('1.0')
-    .addTag('Auth')
+    .addTag('Authentication')
     .addTag('Users')
     .addTag('Restaurant')
     .addTag('Bookmarks')

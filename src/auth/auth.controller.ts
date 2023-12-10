@@ -10,11 +10,10 @@ import {
   import { AuthDto } from './dto';
 import { CreateCustomerDto } from './dto/create.customer.dto';
 import { CreateUserDto } from './dto/create.user.dto';
-import { ApiTags } from '@nestjs/swagger';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
   
-@ApiTags('Authencticaion')
-  @Controller('auth')
+@ApiTags('Authentication')
+  @Controller('Authentication')
   export class AuthController {
     constructor(private authService: AuthService) {}
   
