@@ -1,31 +1,40 @@
 import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Patch,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
-import { User } from '@prisma/client';
-import { GetUser } from '../auth/decorator';
-import { JwtGuard } from '../auth/guard';
-import { EditUserDto } from './dto';
-import { UserService } from './user.service';
-import { ApiTags } from '@nestjs/swagger';
+    Body,
+    Controller,
+    Get,
+    Param,
+    Patch,
+    Post,
+    Req,
+    UseGuards,
+  } from '@nestjs/common';
+  import { User } from '@prisma/client';
+  import { GetUser } from '../auth/decorator';
+  import { JwtGuard } from '../auth/guard';
+  import { AuthGuard } from '@nestjs/passport';
+  import { Request } from 'express';
+  import { EditUserDto } from './dto';
+  import { UserService } from './user.service';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+  
+  @UseGuards(JwtGuard)
+  @ApiBearerAuth()
+  @ApiTags('Users')
+  @Controller('users')
+  export class UserController {
+    constructor(
+       private userService: UserService
+        ) {}
 
+    @Get('me')
+    getMe(@Req() req: Request) {
+      return req.user;
+    }
 
-@ApiTags('User')
-@Controller('users')
-export class UserController {
-  constructor(
-    private userService: UserService
-  ) { }
-
-  @Get()
-  getMe(@GetUser() user: User) {
-    return user;
-  }
+    @Get('all')
+    getAll() {
+      return this.userService.getAllUsers();
+    }
 
   @Patch("update/:id")
   editUser(@Param('id') userId: string, @Body() dto: EditUserDto) {

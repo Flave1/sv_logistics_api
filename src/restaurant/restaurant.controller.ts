@@ -22,8 +22,8 @@ import {
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import { ApiTags } from '@nestjs/swagger';
 
+@UseGuards(JwtGuard)
 @ApiTags('Restaurant')
-// @UseGuards(JwtGuard)
 @Controller('restaurant')
 export class RestaurantController {
     constructor(
