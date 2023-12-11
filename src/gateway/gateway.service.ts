@@ -1,4 +1,4 @@
-import { Logger, OnModuleInit, UseGuards } from '@nestjs/common';
+import { Logger, OnModuleInit } from '@nestjs/common';
 import {
   MessageBody,
   OnGatewayConnection,
@@ -9,15 +9,13 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { Socket, Namespace } from 'socket.io';
-import { CommonEvents, JoinRoom, SocketResponse } from './dto';
-import { GetUser, ValidateGatewayUser } from 'src/auth/decorator';
-import { User } from '@prisma/client';
-import { JwtGuard } from 'src/auth/guard';
- 
+import { CommonEvents, SocketResponse } from './dto';
+import { ValidateGatewayUser } from 'src/auth/decorator';
+
 
 @WebSocketGateway({
   cors: {
-    origin: [`${process.env['BASE_URL']}${process.env['PORT']}`],
+    origin: [`${process.env['BASE_URL']}${process.env['CLIENT_PORT']}`],
   },
   // namespace:'foodiegateway'
 })
@@ -43,7 +41,7 @@ export class GatewayService implements OnModuleInit, OnGatewayDisconnect, OnGate
   }
 
   handleConnection(client: Socket, ...args: any[]) {
-     this.connectedClients = this.server.sockets;
+    this.connectedClients = this.server.sockets;
     this.server.emit(CommonEvents.get_connected_clients, {
       msg: 'Connected customers',
       content: `${this.connectedClients.sockets.size} number of clients Connected`,
@@ -64,6 +62,11 @@ export class GatewayService implements OnModuleInit, OnGatewayDisconnect, OnGate
     const roomName = JSON.parse(body).roomName;
     await this.connectedClients.socketsJoin(roomName)
     const personsInRoom = this.connectedClients.adapter.rooms?.get(roomName)?.size;
-    this.connectedClients.to(roomName).emit(CommonEvents.join_room, {message: `A new user has joined ${roomName} total ${personsInRoom}`});
+    this.connectedClients.to(roomName).emit(CommonEvents.join_room, { message: `A new user has joined ${roomName} total ${personsInRoom}` });
+  }
+
+  async emitToClient(event: CommonEvents, message: string = "emetted to client app") {
+    const resp: SocketResponse = { message }    
+    this.server.emit(event, resp)
   }
 }

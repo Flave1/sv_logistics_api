@@ -87,8 +87,7 @@ export interface JoinRoom {
     roomName: string;
 }
 
-export class SocketResponse {
-    refresh: boolean = false;
+export interface SocketResponse {
     message?: string;
 }
 

@@ -9,10 +9,12 @@ import {
   import { ConfigService } from '@nestjs/config';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { Restaurant } from 'src/restaurant/enums/restaurant.enum';
-import { UserType } from 'src/user/enums/userType.enum';
-import { CourierType } from 'src/user/enums/courierType.enum';
+import { UserType } from 'src/restaurant/user/enums/userType.enum';
+import { CourierType } from 'src/restaurant/user/enums/courierType.enum';
 import { CreateCustomerDto } from 'src/auth/dto/create.customer.dto';
 import { CreateUserDto } from './dto/create.user.dto';
+import { GatewayService } from 'src/gateway/gateway.service';
+import { CommonEvents } from 'src/gateway/dto';
   
   @Injectable()
   export class AuthService {
@@ -20,6 +22,7 @@ import { CreateUserDto } from './dto/create.user.dto';
       private prisma: PrismaService,
       private jwt: JwtService,
       private config: ConfigService,
+      private socket: GatewayService
     ) {}
   
     async CreateCustomer(dto: CreateCustomerDto) {
@@ -75,6 +78,7 @@ import { CreateUserDto } from './dto/create.user.dto';
           },
         });
   
+        this.socket.emitToClient(CommonEvents.get_all_staff_event)
         return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
       } catch (error) {
         if ( error instanceof PrismaClientKnownRequestError ) {

@@ -11,7 +11,7 @@ import {
   EditBookmarkDto,
 } from '../src/bookmark/dto';
 import { PrismaService } from '../src/prisma/prisma.service';
-import { EditUserDto } from '../src/user/dto';
+import { EditUserDto } from '../src/restaurant/user/dto';
 
 describe('App e2e', () => {
   let app: INestApplication;

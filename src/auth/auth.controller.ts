@@ -13,7 +13,7 @@ import { CreateUserDto } from './dto/create.user.dto';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
   
 @ApiTags('Authentication')
-  @Controller('Authentication')
+  @Controller('authentication')
   export class AuthController {
     constructor(private authService: AuthService) {}
   

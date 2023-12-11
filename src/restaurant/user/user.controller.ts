@@ -9,13 +9,14 @@ import {
     UseGuards,
   } from '@nestjs/common';
   import { User } from '@prisma/client';
-  import { GetUser } from '../auth/decorator';
-  import { JwtGuard } from '../auth/guard';
+  import { GetUser } from '../../auth/decorator';
+  import { JwtGuard } from '../../auth/guard';
   import { AuthGuard } from '@nestjs/passport';
-  import { Request } from 'express';
   import { EditUserDto } from './dto';
   import { UserService } from './user.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+
+import { NextFunction, Request, Response } from 'express'
   
   @UseGuards(JwtGuard)
   @ApiBearerAuth()
@@ -27,8 +28,8 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
         ) {}
 
     @Get('me')
-    getMe(@Req() req: Request) {
-      return req.user;
+    getMe(@GetUser() user: User, req: Request) {
+      return user;
     }
 
     @Get('all')
@@ -41,14 +42,24 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
     return this.userService.updateUser(userId, dto);
   }
 
-  @Get(':id')
-  getUserById(@Param('id') userId: string) {
-    return this.userService.getUserById(userId);
-  }
+  // @Get(':id')
+  // getUserById(@Param('id') userId: string) {
+  //   return this.userService.getUserById(userId);
+  // }
 
   @Get('restaurant/:restaurantId')
   getUserByRestaurantId(@Param('restaurantId') restaurantId: string) {
     return this.userService.getUserByRestaurantId(restaurantId);
+  }
+
+  @Get('staff')
+  async getStaff(@GetUser('restaurantId') restaurantId: string, res: Response) {
+  try {
+    return await this.userService.getRestaurantStaff(restaurantId)
+    // res.status(200).json(response)
+  } catch (error) {
+    console.log('error', error);
+  }
   }
 
 }

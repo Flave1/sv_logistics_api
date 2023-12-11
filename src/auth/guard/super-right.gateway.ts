@@ -7,7 +7,7 @@ import {
   } from '@nestjs/common';
   import { JwtService } from '@nestjs/jwt';
 import { AuthPayload, SocketWithAuth } from 'src/gateway/dto';
-import { UserService } from 'src/user/user.service';
+import { UserService } from 'src/restaurant/user/user.service';
   
   @Injectable()
   export class GatewayAdminGuard implements CanActivate {
