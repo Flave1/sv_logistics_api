@@ -65,7 +65,7 @@ export class GatewayService implements OnModuleInit, OnGatewayDisconnect, OnGate
     this.connectedClients.to(roomName).emit(CommonEvents.join_room, { message: `A new user has joined ${roomName} total ${personsInRoom}` });
   }
 
-  async emitToClient(event: string, message: string = "emetted to client app") {
+  async emitToClient(event: string, message: string = "emitted to client app") {
     const resp: SocketResponse = { message }    
     this.server.emit(event, resp)
   }
