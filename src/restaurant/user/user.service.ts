@@ -56,6 +56,16 @@ export class UserService {
     return user.map(({ hash, ...newUsers }) => newUsers); //Todo: change mapping to transformer
   }
 
+  async getUserByStaffId(staffId: string) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id: parseInt(staffId)
+      }
+    });
+    delete user.hash
+    return user
+  }
+
 
   async getRestaurantStaff(restaurantId: string) {
     const user = await this.prisma.user.findMany({

@@ -47,6 +47,11 @@ import { NextFunction, Request, Response } from 'express'
   //   return this.userService.getUserById(userId);
   // }
 
+  @Get('get-staff/:id')
+  getStaffUser(@Param('id') id: string) {
+    return this.userService.getUserByStaffId(id);
+  }
+
   @Get('restaurant/:restaurantId')
   getUserByRestaurantId(@Param('restaurantId') restaurantId: string) {
     return this.userService.getUserByRestaurantId(restaurantId);
