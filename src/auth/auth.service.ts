@@ -14,7 +14,11 @@ import { CourierType } from 'src/restaurant/user/enums/courierType.enum';
 import { CreateCustomerDto } from 'src/auth/dto/create.customer.dto';
 import { CreateUserDto } from './dto/create.user.dto';
 import { GatewayService } from 'src/gateway/gateway.service';
-import { CommonEvents } from 'src/gateway/dto';
+import { CommonEvents, UserManagementEvents } from 'src/gateway/dto';
+import { ForgotPasswordDto } from './dto/forgot.password.dto';
+import * as crypto from 'crypto';
+import { CreateDriverDto } from './dto/create.driver.dto';
+import { CreateStaffDto } from './dto/create.staff.dto';
   
   @Injectable()
   export class AuthService {
@@ -43,7 +47,8 @@ import { CommonEvents } from 'src/gateway/dto';
               courierTypeId: CourierType.Default
           },
         });
-  
+        
+        this.socket.emitToClient(UserManagementEvents.get_all_customers_event)
         return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
       } catch (error) {
         if (
@@ -78,7 +83,79 @@ import { CommonEvents } from 'src/gateway/dto';
           },
         });
   
-        this.socket.emitToClient(CommonEvents.get_all_staff_event)
+        if(dto.userType == UserType.Staff)
+        {
+          this.socket.emitToClient(UserManagementEvents.get_all_staff_event)
+        }
+        else{
+          this.socket.emitToClient(UserManagementEvents.get_all_drivers_event)
+        }
+        return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
+      } catch (error) {
+        if ( error instanceof PrismaClientKnownRequestError ) {
+          if (error.code === 'P2002') {
+            throw new ForbiddenException('Email already exist');
+          }
+        }
+        throw error;
+      }
+    }
+
+    //** Method to profile Staff and Drivers */
+    async CreateStaff(restaurantId: string, dto: CreateStaffDto) {
+      // generate the password hash
+      const defaultPassword = "Password123"
+      const hash = await argon.hash(defaultPassword);
+      // save the new user in the db
+      try {
+        const user = await this.prisma.user.create({
+          data: {
+              email: dto.email,
+              firstName: dto.firstName,
+              lastName: dto.lastName,
+              hash,
+              phoneNumber: dto.phoneNumber,
+              address: dto.address,
+              restaurantId: parseInt(restaurantId),
+              userTypeId: UserType.Staff,
+              courierTypeId: CourierType.Default
+          },
+        });
+        
+        this.socket.emitToClient(UserManagementEvents.get_all_staff_event)
+        return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
+      } catch (error) {
+        if ( error instanceof PrismaClientKnownRequestError ) {
+          if (error.code === 'P2002') {
+            throw new ForbiddenException('Email already exist');
+          }
+        }
+        throw error;
+      }
+    }
+
+    //** Method to profile Drivers */
+    async CreateDriver(restaurantId: string, dto: CreateDriverDto) {
+      // generate the password hash
+      const defaultPassword = "Password123"
+      const hash = await argon.hash(defaultPassword);
+      // save the new user in the db
+      try {
+        const user = await this.prisma.user.create({
+          data: {
+              email: dto.email,
+              firstName: dto.firstName,
+              lastName: dto.lastName,
+              hash,
+              phoneNumber: dto.phoneNumber,
+              address: dto.address,
+              restaurantId: parseInt(restaurantId),
+              userTypeId: UserType.Driver,
+              courierTypeId: dto.courierType
+          },
+        });
+        
+        this.socket.emitToClient(UserManagementEvents.get_all_drivers_event)
         return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
       } catch (error) {
         if ( error instanceof PrismaClientKnownRequestError ) {
@@ -138,4 +215,49 @@ import { CommonEvents } from 'src/gateway/dto';
         access_token: token,
       };
     }
+
+    async forgotPassword(dto: ForgotPasswordDto) {
+      // find the user by email
+      const user =
+        await this.prisma.user.findUnique({
+          where: {
+            email: dto.email,
+          },
+        });
+      // if user does not exist throw exception
+      if (!user)
+        throw new ForbiddenException('Invalid Email');
+  
+      //Generate random token
+
+      const tokenResult = await this.GenerateToken();
+      
+      //Save hashedToken
+      await this.prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          passwordResetToken: tokenResult.hashedToken,
+        },
+      });
+
+      //Implement Logic to send mail
+
+
+      
+
+
+      return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
+    }
+
+
+    async GenerateToken(): Promise<{token: string, hashedToken: string}> {
+      
+      const token = crypto.randomBytes(32).toString('hex');
+      const hashedToken = await argon.hash(token);
+
+      return {token, hashedToken}
+    }
+
   }

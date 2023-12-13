@@ -50,6 +50,8 @@ model User {
   restaurantId Int
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
 
+  passwordResetToken  String?
+
   @@map("users")
 }
 
