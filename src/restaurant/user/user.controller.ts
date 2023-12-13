@@ -14,9 +14,10 @@ import {
   import { AuthGuard } from '@nestjs/passport';
   import { EditUserDto } from './dto';
   import { UserService } from './user.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { NextFunction, Request, Response } from 'express'
+import { DeleteUserDto } from './dto/delete.user.dto';
   
   @UseGuards(JwtGuard)
   @ApiBearerAuth()
@@ -65,6 +66,32 @@ import { NextFunction, Request, Response } from 'express'
   } catch (error) {
     console.log('error', error);
   }
+  }
+
+  @Get('drivers')
+  async getDrivers(@GetUser('restaurantId') restaurantId: string, res: Response) {
+  try {
+    return await this.userService.getRestaurantDrivers(restaurantId)
+    // res.status(200).json(response)
+  } catch (error) {
+    console.log('error', error);
+  }
+  }
+
+  @Get('customers')
+  async getCustomers(@GetUser('restaurantId') restaurantId: string, res: Response) {
+  try {
+    return await this.userService.getRestaurantCustomers(restaurantId)
+    // res.status(200).json(response)
+  } catch (error) {
+    console.log('error', error);
+  }
+  }
+
+  @ApiOkResponse({description: "User deleted successfully"})
+  @Post('delete/:id')
+  async deleteById(@Body() dto: DeleteUserDto, res: Response) {
+    const response = await this.userService.deleteById(dto);
   }
 
 }
