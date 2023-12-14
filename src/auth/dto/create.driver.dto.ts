@@ -30,7 +30,7 @@ import {
     address?: string;
 
     @ApiProperty({example: 1})
-    @IsNumber()
-    courierType: number;
+    @IsString()
+    courierType: string;
 
   }

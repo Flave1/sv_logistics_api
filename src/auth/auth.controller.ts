@@ -11,7 +11,7 @@ import { AuthService } from './auth.service';
 import { AuthDto } from './dto';
 import { CreateCustomerDto } from './dto/create.customer.dto';
 import { CreateUserDto } from './dto/create.user.dto';
-import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { GetUser } from './decorator/get-user.decorator';
 import { CreateStaffDto } from './dto/create.staff.dto';
 import { CreateDriverDto } from './dto/create.driver.dto';
@@ -30,17 +30,19 @@ export class AuthController {
 
 
   //** Method to profile Staff*/
+  @ApiBearerAuth()
   @ApiCreatedResponse({ description: "Staff successfully created" })
-  @Post('create-staff')
   @UseGuards(JwtGuard)
+  @Post('create-staff')
   createStaff(@GetUser('restaurantId') restaurantId: string, @Body() dto: CreateStaffDto) {
     return this.authService.CreateStaff(restaurantId, dto);
   }
 
   //** Method to profile Driver*/
+  @ApiBearerAuth()
   @ApiCreatedResponse({ description: "Driver successfully created" })
-  @Post('create-driver')
   @UseGuards(JwtGuard)
+  @Post('create-driver')
   createDriver(@GetUser('restaurantId') restaurantId: string, @Body() dto: CreateDriverDto) {
     return this.authService.CreateDriver(restaurantId, dto);
   }
