@@ -8,6 +8,10 @@ import {
   
   export class EditUserDto {
     @ApiProperty()
+    @IsNumber()
+    id: number;
+
+    @ApiProperty()
     @IsString()
     @IsOptional()
     firstName?: string;

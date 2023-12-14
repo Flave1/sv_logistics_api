@@ -63,43 +63,6 @@ import { CreateStaffDto } from './dto/create.staff.dto';
       }
     }
 
-    //** Method to profile Staff and Drivers */
-    async CreateUser(dto: CreateUserDto) {
-      // generate the password hash
-      const hash = await argon.hash(dto.password);
-      // save the new user in the db
-      try {
-        const user = await this.prisma.user.create({
-          data: {
-              email: dto.email,
-              firstName: dto.firstName,
-              lastName: dto.lastName,
-              hash,
-              phoneNumber: dto.phoneNumber,
-              address: dto.address,
-              restaurantId: dto.restaurantId,
-              userTypeId: dto.userType,
-              courierTypeId: dto.courierType
-          },
-        });
-  
-        if(dto.userType == UserType.Staff)
-        {
-          this.socket.emitToClient(UserManagementEvents.get_all_staff_event)
-        }
-        else{
-          this.socket.emitToClient(UserManagementEvents.get_all_drivers_event)
-        }
-        return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
-      } catch (error) {
-        if ( error instanceof PrismaClientKnownRequestError ) {
-          if (error.code === 'P2002') {
-            throw new ForbiddenException('Email already exist');
-          }
-        }
-        throw error;
-      }
-    }
 
     //** Method to profile Staff and Drivers */
     async CreateStaff(restaurantId: string, dto: CreateStaffDto) {

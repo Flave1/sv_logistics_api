@@ -7,18 +7,16 @@ import { UserType } from './enums/userType.enum';
 import { CourierType } from 'src/restaurant/user/enums/courierType.enum';
 import { GatewayService } from 'src/gateway/gateway.service';
 import { DeleteUserDto } from './dto/delete.user.dto';
+import { DeleteDto } from 'src/dto/delete.dto';
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService, private socket: GatewayService) { }
 
-  async updateUser(
-    userId: string,
-    dto: EditUserDto,
-  ) {
+  async updateUser(userId: number, dto: EditUserDto) {
     const user = await this.prisma.user.update({
       where: {
-        id: parseInt(userId),
+        id: userId,
       },
       data: {
         ...dto,
@@ -131,19 +129,26 @@ export class UserService {
     return user;
   }
 
-  async deleteById(dto: DeleteUserDto) {
+  async deleteById(dto: DeleteDto) {
     try {
-      const result = await this.prisma.user.delete({
-        where: {
-          id: parseInt(dto.userId),
-        },
-      });
-      
-      if (!result) {
-        throw new NotFoundException(`Record with ID ${dto.userId} not found`);
+      console.log('dto', dto);
+
+      if (dto.id.length > 0) {
+        for (var i = 0; i < dto.id.length; i++) {
+          const result = await this.prisma.user.delete({
+            where: {
+              id: parseInt(dto.id[i]),
+            },
+          });
+
+          if (!result) {
+            throw new NotFoundException(`Record with ID ${dto.id[i]} not found`);
+          }
+        }
       }
 
-      return {status: "Successful", message: "User successfully deleted"} ///ToDo: Create implement generic API Response
+
+      return { status: "Successful", message: "User successfully deleted" }
     } catch (error) {
       throw error;
     }

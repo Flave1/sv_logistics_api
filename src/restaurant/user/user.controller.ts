@@ -18,6 +18,7 @@ import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nest
 
 import { NextFunction, Request, Response } from 'express'
 import { DeleteUserDto } from './dto/delete.user.dto';
+import { DeleteDto } from 'src/dto/delete.dto';
   
   @UseGuards(JwtGuard)
   @ApiBearerAuth()
@@ -38,9 +39,9 @@ import { DeleteUserDto } from './dto/delete.user.dto';
       return this.userService.getAllUsers();
     }
 
-  @Patch("update/:id")
-  editUser(@Param('id') userId: string, @Body() dto: EditUserDto) {
-    return this.userService.updateUser(userId, dto);
+  @Patch("update-user")
+  editUser(@Body() dto: EditUserDto) {
+    return this.userService.updateUser(dto.id, dto);
   }
 
   // @Get(':id')
@@ -61,8 +62,9 @@ import { DeleteUserDto } from './dto/delete.user.dto';
   @Get('staff')
   async getStaff(@GetUser('restaurantId') restaurantId: string, res: Response) {
   try {
+    console.log('restaurantId', restaurantId);
+    
     return await this.userService.getRestaurantStaff(restaurantId)
-    // res.status(200).json(response)
   } catch (error) {
     console.log('error', error);
   }
@@ -89,9 +91,9 @@ import { DeleteUserDto } from './dto/delete.user.dto';
   }
 
   @ApiOkResponse({description: "User deleted successfully"})
-  @Post('delete/:id')
-  async deleteById(@Body() dto: DeleteUserDto, res: Response) {
-    const response = await this.userService.deleteById(dto);
+  @Post('delete')
+  async deleteById(@Body() dto: DeleteDto) {
+    return await this.userService.deleteById(dto);
   }
 
 }
