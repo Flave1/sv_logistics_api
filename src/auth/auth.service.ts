@@ -114,7 +114,7 @@ import { CreateStaffDto } from './dto/create.staff.dto';
               address: dto.address,
               restaurantId: parseInt(restaurantId),
               userTypeId: UserType.Driver,
-              courierTypeId: dto.courierType
+              courierTypeId: parseInt(dto.courierType)
           },
         });
         

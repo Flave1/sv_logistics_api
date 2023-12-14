@@ -17,7 +17,6 @@ import {
 import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { NextFunction, Request, Response } from 'express'
-import { DeleteUserDto } from './dto/delete.user.dto';
 import { DeleteDto } from 'src/dto/delete.dto';
   
   @UseGuards(JwtGuard)
@@ -39,9 +38,14 @@ import { DeleteDto } from 'src/dto/delete.dto';
       return this.userService.getAllUsers();
     }
 
-  @Patch("update-user")
-  editUser(@Body() dto: EditUserDto) {
-    return this.userService.updateUser(dto.id, dto);
+  @Post("update-staff")
+  editStaff(@Body() dto: EditUserDto) {
+    return this.userService.updateStaffUser(dto.id, dto);
+  }
+
+  @Post("update-driver")
+  editDriver(@Body() dto: EditUserDto) {
+    return this.userService.updateDriverUser(dto.id, dto);
   }
 
   // @Get(':id')
@@ -54,6 +58,11 @@ import { DeleteDto } from 'src/dto/delete.dto';
     return this.userService.getUserByStaffId(id);
   }
 
+  @Get('get-driver/:id')
+  getDriverUser(@Param('id') id: string) {
+    return this.userService.getUserByDriverId(id);
+  }
+
   @Get('restaurant/:restaurantId')
   getUserByRestaurantId(@Param('restaurantId') restaurantId: string) {
     return this.userService.getUserByRestaurantId(restaurantId);
@@ -62,8 +71,6 @@ import { DeleteDto } from 'src/dto/delete.dto';
   @Get('staff')
   async getStaff(@GetUser('restaurantId') restaurantId: string, res: Response) {
   try {
-    console.log('restaurantId', restaurantId);
-    
     return await this.userService.getRestaurantStaff(restaurantId)
   } catch (error) {
     console.log('error', error);
