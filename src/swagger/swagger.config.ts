@@ -10,8 +10,13 @@ export function swaggerConfig(app: INestApplication): void{
     .addTag('Users')
     .addTag('Restaurant')
     .addTag('Bookmarks')
+    .addTag('Menu')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document); 
+  SwaggerModule.setup('api', app, document, {
+    swaggerOptions: {
+      consumes: ['multipart/form-data']
+    },
+  });
 }

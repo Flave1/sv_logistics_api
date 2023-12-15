@@ -43,6 +43,8 @@ export class BookmarkService {
                     title: dto.title,
                     description: dto.description,
                     link: dto.link,
+                    status: true,
+                    deleted: false
                 },
             });
 

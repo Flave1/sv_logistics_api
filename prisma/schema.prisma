@@ -15,8 +15,18 @@ model Restaurant {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name      String?
+  status        Boolean?
+  deleted       Boolean?
 
   users User[]
+
+  menuCategory MenuCategory[]
+
+  menuSubCategory MenuSubCategory[]
+
+  menu Menu[]
+
+  availabilitySchedule AvailabilitySchedule[]
 
   @@map("restaurant")
 }
@@ -38,6 +48,8 @@ model User {
   nextOfKinName        String?
   nextOfKinPhoneNumber String?
   nextOfKinAddress     String?
+  status        Boolean?
+  deleted       Boolean?
 
   userTypeId Int
   UserType   UserType @relation(fields: [userTypeId], references: [id])
@@ -63,6 +75,8 @@ model Bookmark {
   title       String
   description String?
   link        String
+  status        Boolean
+  deleted       Boolean
 
   userId Int
   user   User @relation(fields: [userId], references: [id])
@@ -73,6 +87,8 @@ model Bookmark {
 model UserType {
   id        Int      @id @default(autoincrement())
   Name      String
+  status        Boolean?
+  deleted       Boolean?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -84,10 +100,92 @@ model UserType {
 model CourierType {
   id        Int      @id @default(autoincrement())
   Name      String
+  status        Boolean?
+  deleted       Boolean?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   users User[]
 
   @@map("courierType")
+}
+
+model MenuCategory {
+  id      Int    @id @default(autoincrement())
+  name    String
+  description   String
+  image         String
+  status        Boolean
+  deleted       Boolean
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  restaurantId Int
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+
+  menuSubCategory MenuSubCategory[]
+  @@map("menuCategory")
+}
+
+model MenuSubCategory {
+  id      Int    @id @default(autoincrement())
+  name    String
+  description   String
+  image         String
+  createdAt     DateTime @default(now())
+  status        Boolean
+  deleted       Boolean
+  updatedAt     DateTime @updatedAt
+
+  menuCategoryId Int
+  menuCategory   MenuCategory @relation(fields: [menuCategoryId], references: [id])
+
+  restaurantId Int
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+
+  menu Menu[]
+
+  @@map("menuSubCategory")
+}
+
+model Menu {
+  id      Int    @id @default(autoincrement())
+  name    String
+  description   String
+  image         String
+  price         Decimal
+  availability  Boolean
+  discount      String?
+  dietaryInformation  String?
+  status        Boolean
+  deleted       Boolean
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  menuSubCategoryId Int
+  menuSubCategory   MenuSubCategory @relation(fields: [menuSubCategoryId], references: [id])
+
+  restaurantId Int
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+
+  availabilitySchedule AvailabilitySchedule[]
+  @@map("menu")
+}
+
+model AvailabilitySchedule {
+  id         Int    @id @default(autoincrement())
+  dayOfWeek  Int
+  startTime  String
+  endTime    String
+  status        Boolean
+  deleted       Boolean
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  menuId     Int
+  menu   Menu @relation(fields: [menuId], references: [id])
+
+  restaurantId Int
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  @@map("availabilitySchedule")
 }
