@@ -22,6 +22,6 @@ import {
     @IsString()
     status: boolean;
 
-    @ApiProperty({ type: 'string', format: 'binary' }) // Specify that the field is of type 'file'
+    @ApiProperty({ type: 'string', format: 'binary' })
     file: any;
   }

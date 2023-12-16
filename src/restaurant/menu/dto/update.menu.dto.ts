@@ -1,11 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
     IsBoolean,
+    IsNumber,
     IsOptional,
-    IsString
+    IsString,
+    isBoolean,
+    isString
   } from 'class-validator';
   
-  export class CreateMenuDto {
+  export class UpdateMenuDto {
+    @ApiProperty()
+    @IsString()
+    id: string;
+    
     @ApiProperty({})
     @IsString()
     name: string;

@@ -1,9 +1,9 @@
 export enum StatusMessage {
-    Created = "created successfully",
+    Created = "Created successfully",
     Added = "Added successfully",
     GetSuccess = "Record successfully fetched",
     Deleted = "Deleted successfully",
     Updated = "Updated successfully",
-    NoRecord = "Updated successfully",
+    NoRecord = "No record found",
     Exist = "Record already exist"
   }

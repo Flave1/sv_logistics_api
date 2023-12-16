@@ -1,18 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
     IsBoolean,
+    IsNumber,
     IsOptional,
-    IsString
+    IsString,
+    isBoolean,
+    isString
   } from 'class-validator';
   
-  export class CreateMenuDto {
+  export class UpdateMenuSubCategoryDto {
+    @ApiProperty()
+    @IsString()
+    id: string;
+    
     @ApiProperty({})
     @IsString()
     name: string;
-  
-    @ApiProperty({})
-    @IsString()
-    menuSubCategoryId: string;
   
     @ApiProperty({})
     @IsString()
@@ -20,27 +24,12 @@ import {
 
     @ApiProperty({})
     @IsString()
-    price: string;
-
-    @ApiProperty({})
-    @IsOptional()
-    @IsString()
-    availability: boolean;
+    menuCategory: string;
 
     @ApiProperty({})
     @IsOptional()
     @IsString()
     status: boolean;
-
-    @ApiProperty({})
-    @IsString()
-    @IsOptional()
-    discount?: string;
-
-    @ApiProperty({})
-    @IsString()
-    @IsOptional()
-    dietaryInformation?: string;
 
     @ApiProperty({ type: 'string', format: 'binary' })
     file: any;
