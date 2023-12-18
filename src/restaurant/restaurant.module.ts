@@ -6,6 +6,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { MenuModule } from './menu/menu.module';
 import { RedisRepository } from 'src/redis/redis.repository';
 import { GatewayService } from 'src/gateway/gateway.service';
+import { GatewayModule } from 'src/gateway/gateway.module';
 @Module({
   providers: [
     RestaurantService, 
@@ -17,7 +18,7 @@ import { GatewayService } from 'src/gateway/gateway.service';
     MulterModule.register({ dest: '../uploads/menu-category' }),
     MulterModule.register({ dest: '../uploads/menu-subcategory' }),
     MulterModule.register({ dest: '../uploads/menu' }),
-    MenuModule,
+    MenuModule
   ],
   controllers: [RestaurantController],
 })
