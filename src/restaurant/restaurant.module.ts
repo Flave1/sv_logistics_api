@@ -7,9 +7,9 @@ import { redisModule } from 'src/redis/modules.config';
 @Module({
   providers: [
     RestaurantService, 
-    RedisRepository
+    // RedisRepository
   ],
-  imports:[redisModule],
+  // imports:[redisModule],
   controllers: [RestaurantController],
 })
 export class RestaurantModule {}

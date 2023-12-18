@@ -5,6 +5,9 @@ import { PrismaClient } from '@prisma/client';
 @Injectable()
 export class PrismaService extends PrismaClient {
   constructor(config: ConfigService) {
+
+    const databaseUrl = config.get('DATABASE_URL');
+    console.log('Database URL:', databaseUrl);
     super({
       datasources: {
         db: {

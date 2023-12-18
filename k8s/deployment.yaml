@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: foodieapi-k8s
+spec:
+  selector:
+    matchLabels:
+      app: foodieapi-k8s
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: foodieapi-k8s
+    spec:
+      containers:
+        - name: foodieapi
+          image: flave1/foodieapi
+          ports:
+            - containerPort: 3200

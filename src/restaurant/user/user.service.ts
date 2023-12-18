@@ -1,12 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { EditUserDto } from './dto';
-import * as argon from 'argon2';
-import { Restaurant } from 'src/restaurant/enums/restaurant.enum';
 import { UserType } from './enums/userType.enum';
-import { CourierType } from 'src/restaurant/user/enums/courierType.enum';
 import { GatewayService } from 'src/gateway/gateway.service';
-import { DeleteUserDto } from './dto/delete.user.dto';
 import { DeleteDto } from 'src/dto/delete.dto';
 import { UserManagementEvents } from 'src/gateway/dto/gateway.constants';
 
