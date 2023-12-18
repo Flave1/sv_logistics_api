@@ -18,7 +18,6 @@ import { GatewayService } from 'src/gateway/gateway.service';
     MulterModule.register({ dest: '../uploads/menu-subcategory' }),
     MulterModule.register({ dest: '../uploads/menu' }),
     MenuModule,
-    redisModule
   ],
   controllers: [RestaurantController],
 })
