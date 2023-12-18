@@ -4,7 +4,6 @@ import { CacheModule } from '@nestjs/cache-manager';
 
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './restaurant/user/user.module';
-import { BookmarkModule } from './bookmark/bookmark.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { RestaurantModule } from './restaurant/restaurant.module';
 import { GatewayModule } from './gateway/gateway.module';
@@ -19,7 +18,6 @@ import { GatewayModule } from './gateway/gateway.module';
     }),
     AuthModule,
     UserModule,
-    BookmarkModule,
     PrismaModule,
     RestaurantModule,
     GatewayModule
