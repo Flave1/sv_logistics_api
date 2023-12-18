@@ -8,15 +8,9 @@ import { MenuModule } from './menu/menu.module';
 @Module({
   providers: [
     RestaurantService, 
-    RedisRepository
+    // RedisRepository
   ],
-  imports:[
-    redisModule,
-    MulterModule.register({ dest: '../../uploads/menu-category' }),
-    MulterModule.register({ dest: '../../uploads/menu-subcategory' }),
-    MulterModule.register({ dest: '../../uploads/menu' }),
-    MenuModule
-  ],
+  // imports:[redisModule],
   controllers: [RestaurantController],
 })
 export class RestaurantModule {}
