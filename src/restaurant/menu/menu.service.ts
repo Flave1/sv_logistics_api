@@ -3,7 +3,7 @@ import { GatewayService } from "src/gateway/gateway.service";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateMenuCategoryDto } from "./dto/create.menu-category.dto";
 import { stringify } from "querystring";
-import { APIResponse } from "../constant/api-response";
+import { APIResponse } from "../../dto/api-response";
 import { Status } from "../enums/status-code.enum";
 import { DeleteDto } from "src/dto/delete.dto";
 import { StatusMessage } from "../enums/status-message.enum";
