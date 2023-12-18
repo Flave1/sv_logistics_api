@@ -1,4 +1,8 @@
 # compiled output
+/uploads/menu
+/uploads/category
+/uploads/menu-subcategory
+
 /dist
 /node_modules
 .env
