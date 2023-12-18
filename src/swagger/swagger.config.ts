@@ -9,7 +9,6 @@ export function swaggerConfig(app: INestApplication): void{
     .addTag('Authentication')
     .addTag('Users')
     .addTag('Restaurant')
-    .addTag('Bookmarks')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);

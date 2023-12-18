@@ -12,6 +12,14 @@ services:
     networks:
       - cafayteria
 
+  foodie-api:
+    image: flave1/foodieapi
+    container_name: foodie-api-container
+    ports:
+      - 3200:3200
+    networks:
+      - cafayteria
+
   redis:
     image: 'redislabs/rejson:2.0.0'
     ports:
@@ -23,6 +31,7 @@ services:
 
 volumes:
   redisdata:
+
 
 networks:
   cafayteria:
