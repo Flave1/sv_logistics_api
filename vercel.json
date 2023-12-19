@@ -1,7 +1,17 @@
 {
     "version": 2,
     "env": {
-        "MONGO_URI": "@shop_api_mongo_uri"
+        "DATABASE_URL": "sqlserver://SQL8006.site4now.net:1433;database=db_a86846_foodie;user=db_a86846_foodie_admin;password=85236580@Fo;encrypt=true",
+        "BASE_URL": "@foodie_api_base_url",
+        "PORT": "@foodie_api_port",
+        "REDIS_HOST": "@foodie_api_redis_host",
+        "REDIS_PORT": "@foodie_api_redis_port",
+        "POLL_DURATION": "@foodie_api_poll_duration",
+        "JWT_SECRET": "@foodie_api_jwt_secret",
+        "CLIENT_PORT": "@foodie_api_client_port",
+        "POSTGRES_USER": "@foodie_api_postgres_user",
+        "POSTGRES_PASSWORD": "@foodie_api_postgres_password",
+        "POSTGRES_DB": "@foodie_api_postgres_db"
     },
     "builds": [
         {
