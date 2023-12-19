@@ -37,5 +37,4 @@ COPY . .
 
 COPY --from=development /usr/src/app/dist ./dist
 
-
-CMD ["sh", "-c", "sleep 10 && npm run:dev"]
+CMD ["node", "dist/src/main"]
