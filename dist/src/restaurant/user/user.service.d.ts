@@ -24,6 +24,8 @@ export declare class UserService {
         courierTypeId: number;
         restaurantId: number;
         passwordResetToken: string;
+        deleted: boolean;
+        status: boolean;
     }>;
     updateDriverUser(userId: number, dto: EditUserDto): Promise<{
         id: number;
@@ -43,6 +45,8 @@ export declare class UserService {
         courierTypeId: number;
         restaurantId: number;
         passwordResetToken: string;
+        deleted: boolean;
+        status: boolean;
     }>;
     updateStaffUser(userId: number, dto: EditUserDto): Promise<{
         id: number;
@@ -62,6 +66,8 @@ export declare class UserService {
         courierTypeId: number;
         restaurantId: number;
         passwordResetToken: string;
+        deleted: boolean;
+        status: boolean;
     }>;
     getUserById(userId: string): Promise<{
         id: number;
@@ -81,6 +87,8 @@ export declare class UserService {
         courierTypeId: number;
         restaurantId: number;
         passwordResetToken: string;
+        deleted: boolean;
+        status: boolean;
     }>;
     getUserByRestaurantId(restaurantId: string): Promise<{
         id: number;
@@ -99,6 +107,8 @@ export declare class UserService {
         courierTypeId: number;
         restaurantId: number;
         passwordResetToken: string;
+        deleted: boolean;
+        status: boolean;
     }[]>;
     getUserByStaffId(staffId: string): Promise<{
         id: number;
@@ -118,6 +128,8 @@ export declare class UserService {
         courierTypeId: number;
         restaurantId: number;
         passwordResetToken: string;
+        deleted: boolean;
+        status: boolean;
     }>;
     getUserByDriverId(driverId: string): Promise<{
         id: number;
@@ -137,6 +149,8 @@ export declare class UserService {
         courierTypeId: number;
         restaurantId: number;
         passwordResetToken: string;
+        deleted: boolean;
+        status: boolean;
     }>;
     getRestaurantStaff(restaurantId: string): Promise<{
         id: number;
@@ -155,6 +169,8 @@ export declare class UserService {
         courierTypeId: number;
         restaurantId: number;
         passwordResetToken: string;
+        deleted: boolean;
+        status: boolean;
     }[]>;
     getRestaurantDrivers(restaurantId: string): Promise<{
         id: number;
@@ -173,6 +189,8 @@ export declare class UserService {
         courierTypeId: number;
         restaurantId: number;
         passwordResetToken: string;
+        deleted: boolean;
+        status: boolean;
     }[]>;
     getRestaurantCustomers(restaurantId: string): Promise<{
         id: number;
@@ -191,6 +209,8 @@ export declare class UserService {
         courierTypeId: number;
         restaurantId: number;
         passwordResetToken: string;
+        deleted: boolean;
+        status: boolean;
     }[]>;
     getAllUsers(): Promise<{
         id: number;
@@ -209,6 +229,8 @@ export declare class UserService {
         courierTypeId: number;
         restaurantId: number;
         passwordResetToken: string;
+        deleted: boolean;
+        status: boolean;
     }[]>;
     getSuperUser(): Promise<{
         admin: string;

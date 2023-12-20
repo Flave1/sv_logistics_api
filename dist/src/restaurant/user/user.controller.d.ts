@@ -24,6 +24,8 @@ export declare class UserController {
         courierTypeId: number;
         restaurantId: number;
         passwordResetToken: string;
+        deleted: boolean;
+        status: boolean;
     };
     getAll(): Promise<{
         id: number;
@@ -42,6 +44,8 @@ export declare class UserController {
         courierTypeId: number;
         restaurantId: number;
         passwordResetToken: string;
+        deleted: boolean;
+        status: boolean;
     }[]>;
     editStaff(dto: EditUserDto): Promise<{
         id: number;
@@ -61,6 +65,8 @@ export declare class UserController {
         courierTypeId: number;
         restaurantId: number;
         passwordResetToken: string;
+        deleted: boolean;
+        status: boolean;
     }>;
     editDriver(dto: EditUserDto): Promise<{
         id: number;
@@ -80,6 +86,8 @@ export declare class UserController {
         courierTypeId: number;
         restaurantId: number;
         passwordResetToken: string;
+        deleted: boolean;
+        status: boolean;
     }>;
     getStaffUser(id: string): Promise<{
         id: number;
@@ -99,6 +107,8 @@ export declare class UserController {
         courierTypeId: number;
         restaurantId: number;
         passwordResetToken: string;
+        deleted: boolean;
+        status: boolean;
     }>;
     getDriverUser(id: string): Promise<{
         id: number;
@@ -118,6 +128,8 @@ export declare class UserController {
         courierTypeId: number;
         restaurantId: number;
         passwordResetToken: string;
+        deleted: boolean;
+        status: boolean;
     }>;
     getUserByRestaurantId(restaurantId: string): Promise<{
         id: number;
@@ -136,6 +148,8 @@ export declare class UserController {
         courierTypeId: number;
         restaurantId: number;
         passwordResetToken: string;
+        deleted: boolean;
+        status: boolean;
     }[]>;
     getStaff(restaurantId: string, res: Response): Promise<{
         id: number;
@@ -154,6 +168,8 @@ export declare class UserController {
         courierTypeId: number;
         restaurantId: number;
         passwordResetToken: string;
+        deleted: boolean;
+        status: boolean;
     }[]>;
     getDrivers(restaurantId: string, res: Response): Promise<{
         id: number;
@@ -172,6 +188,8 @@ export declare class UserController {
         courierTypeId: number;
         restaurantId: number;
         passwordResetToken: string;
+        deleted: boolean;
+        status: boolean;
     }[]>;
     getCustomers(restaurantId: string, res: Response): Promise<{
         id: number;
@@ -190,6 +208,8 @@ export declare class UserController {
         courierTypeId: number;
         restaurantId: number;
         passwordResetToken: string;
+        deleted: boolean;
+        status: boolean;
     }[]>;
     deleteById(dto: DeleteDto): Promise<{
         status: string;
