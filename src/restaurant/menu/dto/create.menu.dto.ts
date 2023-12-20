@@ -12,7 +12,7 @@ import {
   
     @ApiProperty({})
     @IsString()
-    menuSubCategoryId: string;
+    menuCategoryId: string;
   
     @ApiProperty({})
     @IsString()

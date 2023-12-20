@@ -154,145 +154,6 @@ async deleteRestaurantMenuCategoryById(restaurantId: string, dto: DeleteDto) {
     return user;
   }
 
-  async CreateRestaurantSubMenuCategory(restaurantId: string, file: Express.Multer.File, dto: CreateMenuSubCategoryDto) {
-    try {
-
-        //Check for existing subcategories
-        const name = dto.name.toLowerCase().replace(/\s/g, '')
-        const subCategories = await this.prisma.menuSubCategory.findMany({
-            where: {
-                restaurantId: parseInt(restaurantId),
-                deleted: false
-            },
-          });
-
-          for(let  i = 0; i < subCategories.length; i++ )
-          {
-                if(subCategories[i].name.toLowerCase().replace(/\s/g, '') === name)
-                { 
-                    return new APIResponse(Status.Success, StatusMessage.Exist, null);
-                }
-          }
-
-        //Add new subcategory
-        const status = dto.status.toString().toLowerCase() == 'true' ? true : false;
-        const menuSubCategory = await this.prisma.menuSubCategory.create({
-            data: {
-                name: dto.name,
-                description: dto.description,
-                image: file.path,
-                restaurantId: parseInt(restaurantId),
-                menuCategoryId: parseInt(dto.menuCategory),
-                deleted: false,
-                status
-            },
-        });
-      
-        return new APIResponse(Status.Success, StatusMessage.Created, null);
-      
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async getRestaurantSubMenuCategories(restaurantId: string) {
-    const subCategories = (await this.prisma.menuSubCategory.findMany({
-      where: {
-          restaurantId: parseInt(restaurantId),
-          deleted: false
-      },
-      include: {
-        menuCategory: true,
-      },
-      orderBy: [
-        {
-          createdAt: 'desc',
-        }
-      ]
-    }));
-    return new APIResponse(Status.Success, StatusMessage.GetSuccess, subCategories);
-  }
-
-  async getRestaurantSubMenuCategoryById(restaurantId: string, subCategoryId: string) {
-    try {
-        const subCategory = await this.prisma.menuSubCategory.findFirst({
-            where: {
-            id: parseInt(subCategoryId),
-            restaurantId: parseInt(restaurantId),
-            deleted: false
-            },
-            include: {
-              menuCategory: true,
-            }
-        });
-        if(!subCategory)
-        {
-            return new APIResponse(Status.OtherErrors, StatusMessage.NoRecord, null);
-        }
-        const base64Image = await this.ConvertToBase64String(subCategory.image)
-        subCategory.image = base64Image
-        return new APIResponse(Status.Success, StatusMessage.GetSuccess, subCategory);
-    } catch (error) {
-        throw error
-    }
-}
-
-async deleteRestaurantSubMenuCategoryById(restaurantId: string, dto: DeleteDto) {
-    try {
-        const subCategories = await this.prisma.menuSubCategory.updateMany({
-            where: {
-              id: {
-                in: dto.id.map(id => parseInt(id)),
-              },
-              restaurantId: parseInt(restaurantId)
-            },
-            data: {
-                deleted: true
-              },
-          });
-        return new APIResponse(Status.Success, StatusMessage.Deleted, null);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async updateRestaurantSubMenuCategory(restaurantId: string, file: Express.Multer.File, dto: UpdateMenuSubCategoryDto) {
-    const subCategory = await this.prisma.menuSubCategory.findFirst({
-        where: {
-        id: parseInt(dto.id),
-        restaurantId: parseInt(restaurantId),
-        deleted: false
-        }
-    });
-    if(!subCategory)
-    {
-        return new APIResponse(Status.OtherErrors, StatusMessage.NoRecord, null);
-    }
-
-    if(subCategory.name.toLowerCase().replace(/\s/g, '') == dto.name.toLowerCase().replace(/\s/g, ''))
-    {
-        return new APIResponse(Status.OtherErrors, StatusMessage.Exist, null);
-    }
-
-    const status = dto.status.toString().toLowerCase() == 'true' ? true : false;
-    await this.prisma.menuSubCategory.update({
-      where: {
-        restaurantId: parseInt(restaurantId),
-        id: parseInt(dto.id),
-      },
-      data: {
-        name: dto.name,
-        description: dto.description,
-        image: file.path,
-        restaurantId: parseInt(restaurantId),
-        menuCategoryId: parseInt(dto.menuCategory),
-        deleted: false,
-        status
-      },
-    });
-    return new APIResponse(Status.Success, StatusMessage.Updated, null);
-  }
-
   async CreateRestaurantMenu(restaurantId: string, file: Express.Multer.File, dto: CreateMenuDto) {
     try {
 
@@ -322,7 +183,7 @@ async deleteRestaurantSubMenuCategoryById(restaurantId: string, dto: DeleteDto) 
                 description: dto.description,
                 image: file.path,
                 restaurantId: parseInt(restaurantId),
-                menuSubCategoryId: parseInt(dto.menuSubCategoryId),
+                menuCategoryId: parseInt(dto.menuCategoryId),
                 price: dto.price,
                 discount: dto.discount,
                 dietaryInformation: dto.dietaryInformation,
@@ -346,11 +207,7 @@ async deleteRestaurantSubMenuCategoryById(restaurantId: string, dto: DeleteDto) 
           deleted: false
       },
       include: {
-        menuSubCategory: {
-          include: {
-              menuCategory: true
-          }
-        },
+        menuCategory: true,
       },
       orderBy: [
         {
@@ -370,11 +227,7 @@ async deleteRestaurantSubMenuCategoryById(restaurantId: string, dto: DeleteDto) 
             deleted: false
             },
             include: {
-              menuSubCategory: {
-                include: {
-                    menuCategory: true
-                }
-              },
+              menuCategory: true,
             }
         });
         if(!menu)
@@ -421,7 +274,7 @@ async updateRestaurantMenu(restaurantId: string, file: Express.Multer.File, dto:
         description: dto.description,
         image: file.path,
         restaurantId: parseInt(restaurantId),
-        menuSubCategoryId: parseInt(dto.menuSubCategoryId),
+        menuCategoryId: parseInt(dto.menuCategoryId),
         price: dto.price,
         discount: dto.discount,
         dietaryInformation: dto.dietaryInformation,
