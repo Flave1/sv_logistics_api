@@ -1,7 +1,7 @@
 {
     "version": 2,
     "env": {
-        "DATABASE_URL": "sqlserver://SQL8006.site4now.net:1433;database=db_a86846_foodie;user=db_a86846_foodie_admin;password=85236580@Fo;encrypt=true",
+        "DATABASE_URL": "@DATABASE_URL",
         "BASE_URL": "@BASE_URL",
         "PORT": "@PORT",
         "REDIS_HOST": "@REDIS_HOST",
