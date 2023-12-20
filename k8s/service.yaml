@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: foodieapi-k8s
+spec:
+  selector:
+    app: foodieapi-k8s
+  ports:
+    - protocol: TCP
+      port: 3200
+  type: NodePort #LoadBalancer

@@ -9,8 +9,8 @@ COPY ./prisma/schema.prisma ./
 
 RUN npm install
 # RUN npm run spinup:services
-RUN npx prisma migrate dev
-RUN npx prisma db seed
+# RUN npx prisma migrate dev
+# RUN npx prisma db seed
 
 COPY . . 
 
@@ -30,8 +30,8 @@ COPY ./prisma/schema.prisma ./
 
 RUN npm install --only=prod
 # RUN npm run spinup:services
-RUN npx prisma migrate deploy
-RUN npx prisma db seed
+# RUN npx prisma migrate deploy
+# RUN npx prisma db seed
 
 COPY . .
 

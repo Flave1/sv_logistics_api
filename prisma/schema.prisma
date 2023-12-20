@@ -6,9 +6,10 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlserver"
   url      = env("DATABASE_URL")
 }
+
 
 model Restaurant {
   id        Int      @id @default(autoincrement())
@@ -57,7 +58,6 @@ model User {
   courierTypeId Int
   courierType   CourierType @relation(fields: [courierTypeId], references: [id])
 
-  bookmarks Bookmark[]
 
   restaurantId Int
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
@@ -65,23 +65,6 @@ model User {
   passwordResetToken  String?
 
   @@map("users")
-}
-
-model Bookmark {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  title       String
-  description String?
-  link        String
-  status        Boolean
-  deleted       Boolean
-
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
-
-  @@map("bookmarks")
 }
 
 model UserType {
