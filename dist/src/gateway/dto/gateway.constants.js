@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserManagementEvents = exports.CommonEvents = void 0;
+exports.MenuManagementEvents = exports.UserManagementEvents = exports.CommonEvents = void 0;
 var CommonEvents;
 (function (CommonEvents) {
     CommonEvents["connection"] = "connection";
@@ -14,4 +14,10 @@ var UserManagementEvents;
     UserManagementEvents["get_all_drivers_event"] = "get_all_drivers_event";
     UserManagementEvents["get_all_customers_event"] = "get_all_customers_event";
 })(UserManagementEvents || (exports.UserManagementEvents = UserManagementEvents = {}));
+var MenuManagementEvents;
+(function (MenuManagementEvents) {
+    MenuManagementEvents["get_restaurant_menu_categories_event"] = "get_restaurant_menu_categories_event";
+    MenuManagementEvents["get_restaurant_menu_sub_category_event"] = "get_restaurant_menu_categories_event";
+    MenuManagementEvents["get_restaurant_menu_event"] = "get_restaurant_menu_event";
+})(MenuManagementEvents || (exports.MenuManagementEvents = MenuManagementEvents = {}));
 //# sourceMappingURL=gateway.constants.js.map

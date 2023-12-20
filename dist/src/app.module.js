@@ -21,12 +21,8 @@ exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            config_1.ConfigModule.forRoot({
-                isGlobal: true,
-            }),
-            cache_manager_1.CacheModule.register({
-                isGlobal: true
-            }),
+            config_1.ConfigModule.forRoot({ isGlobal: true }),
+            cache_manager_1.CacheModule.register({ isGlobal: true }),
             auth_module_1.AuthModule,
             user_module_1.UserModule,
             prisma_module_1.PrismaModule,

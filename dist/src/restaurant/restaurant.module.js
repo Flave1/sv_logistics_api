@@ -10,6 +10,12 @@ exports.RestaurantModule = void 0;
 const common_1 = require("@nestjs/common");
 const restaurant_service_1 = require("./restaurant.service");
 const restaurant_controller_1 = require("./restaurant.controller");
+const modules_config_1 = require("../redis/modules.config");
+const platform_express_1 = require("@nestjs/platform-express");
+const menu_module_1 = require("./menu/menu.module");
+const redis_repository_1 = require("../redis/redis.repository");
+const gateway_service_1 = require("../gateway/gateway.service");
+const menu_service_1 = require("./menu/menu.service");
 let RestaurantModule = class RestaurantModule {
 };
 exports.RestaurantModule = RestaurantModule;
@@ -17,6 +23,16 @@ exports.RestaurantModule = RestaurantModule = __decorate([
     (0, common_1.Module)({
         providers: [
             restaurant_service_1.RestaurantService,
+            redis_repository_1.RedisRepository,
+            gateway_service_1.GatewayService,
+            menu_service_1.MenuService
+        ],
+        imports: [
+            modules_config_1.redisModule,
+            platform_express_1.MulterModule.register({ dest: '../uploads/menu-category' }),
+            platform_express_1.MulterModule.register({ dest: '../uploads/menu-subcategory' }),
+            platform_express_1.MulterModule.register({ dest: '../uploads/menu' }),
+            menu_module_1.MenuModule
         ],
         controllers: [restaurant_controller_1.RestaurantController],
     })

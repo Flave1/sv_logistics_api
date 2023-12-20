@@ -26,6 +26,8 @@ export declare class JwtStrategy extends JwtStrategy_base {
         courierTypeId: number;
         restaurantId: number;
         passwordResetToken: string;
+        deleted: boolean;
+        status: boolean;
     }>;
 }
 export {};

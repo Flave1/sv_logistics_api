@@ -9,24 +9,32 @@ export declare class RestaurantService {
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        deleted: boolean;
+        status: boolean;
     }, null, import("@prisma/client/runtime/library").DefaultArgs>;
     getRestaurants(): Promise<{
         id: number;
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        deleted: boolean;
+        status: boolean;
     }[]>;
     createRestaurant(dto: CreateRestaurantDto): Promise<{
         id: number;
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        deleted: boolean;
+        status: boolean;
     }>;
     editRestaurantById(restaurantId: number, dto: EditRestaurantDto): Promise<{
         id: number;
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        deleted: boolean;
+        status: boolean;
     }>;
     deleteRestaurantById(restaurantId: number): Promise<void>;
 }
