@@ -23,8 +23,6 @@ model Restaurant {
 
   menuCategory MenuCategory[]
 
-  menuSubCategory MenuSubCategory[]
-
   menu Menu[]
 
   availabilitySchedule AvailabilitySchedule[]
@@ -106,30 +104,11 @@ model MenuCategory {
   restaurantId Int
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
 
-  menuSubCategory MenuSubCategory[]
+  menu Menu[]
+
   @@map("menuCategory")
 }
 
-model MenuSubCategory {
-  id      Int    @id @default(autoincrement())
-  name    String
-  description   String
-  image         String
-  createdAt     DateTime @default(now())
-  status        Boolean
-  deleted       Boolean
-  updatedAt     DateTime @updatedAt
-
-  menuCategoryId Int
-  menuCategory   MenuCategory @relation(fields: [menuCategoryId], references: [id])
-
-  restaurantId Int
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
-
-  menu Menu[]
-
-  @@map("menuSubCategory")
-}
 
 model Menu {
   id      Int    @id @default(autoincrement())
@@ -145,11 +124,11 @@ model Menu {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  menuSubCategoryId Int
-  menuSubCategory   MenuSubCategory @relation(fields: [menuSubCategoryId], references: [id])
+  menuCategoryId Int
+  menuCategory   MenuCategory @relation(fields: [menuCategoryId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   restaurantId Int
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onUpdate: NoAction)
 
   availabilitySchedule AvailabilitySchedule[]
   @@map("menu")
@@ -166,9 +145,9 @@ model AvailabilitySchedule {
   updatedAt     DateTime @updatedAt
 
   menuId     Int
-  menu   Menu @relation(fields: [menuId], references: [id])
+  menu   Menu @relation(fields: [menuId], references: [id],  onUpdate: NoAction)
 
   restaurantId Int
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   @@map("availabilitySchedule")
 }
