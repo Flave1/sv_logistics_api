@@ -10,12 +10,8 @@ import { GatewayModule } from './gateway/gateway.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
-    CacheModule.register({
-      isGlobal: true
-    }),
+    ConfigModule.forRoot({ isGlobal: true }),
+    CacheModule.register({ isGlobal: true }),
     AuthModule,
     UserModule,
     PrismaModule,
@@ -23,4 +19,4 @@ import { GatewayModule } from './gateway/gateway.module';
     GatewayModule
   ],
 })
-export class AppModule {}
+export class AppModule { }

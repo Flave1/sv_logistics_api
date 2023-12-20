@@ -1,5 +1,9 @@
 # compiled output
-#/dist
+/src/uploads/menu
+/src/uploads/menu-category
+/src/uploads/menu-subcategory
+
+/dist
 /node_modules
 .env
 # Logs
