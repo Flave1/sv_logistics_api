@@ -7,11 +7,13 @@ import { MenuModule } from './menu/menu.module';
 import { RedisRepository } from 'src/redis/redis.repository';
 import { GatewayService } from 'src/gateway/gateway.service';
 import { GatewayModule } from 'src/gateway/gateway.module';
+import { MenuService } from './menu/menu.service';
 @Module({
   providers: [
     RestaurantService, 
     RedisRepository,
-    GatewayService
+    GatewayService,
+    MenuService
   ],
   imports:[
     redisModule,
