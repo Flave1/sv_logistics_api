@@ -18,7 +18,7 @@ import { UpdateMenuDto } from "./dto/update.menu.dto";
 @ApiTags('Menu')
 @ApiBearerAuth()
 @UseGuards(JwtGuard)
-@Controller()
+@Controller('menu')
 export class MenuController {
     constructor(
        private menuService: MenuService
@@ -28,7 +28,7 @@ export class MenuController {
     @ApiOperation({ summary: 'Create category with an image, name and description' })
     @UseInterceptors(FileInterceptor('file',{
         storage: diskStorage({
-            destination: './uploads/menu-category',
+            destination: './src/uploads/menu-category',
             filename: (req, file, cb) => {
                 const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
                 const extension: string = path.parse(file.originalname).ext;
@@ -40,27 +40,27 @@ export class MenuController {
     @ApiConsumes('multipart/form-data')
     @Post('create-category')
     createCategory(@GetUser('restaurantId') restaurantId: string, @UploadedFile() file, @Body() dto: CreateMenuCategoryDto) {
-        return this.menuService.CreateCategory(restaurantId, file, dto);
+        return this.menuService.CreateRestaurantMenuCategory(restaurantId, file, dto);
     }
 
-    @Get('categories')
-    getAllCategories(@GetUser('restaurantId') restaurantId: string) {
-        return this.menuService.getAllCategories(restaurantId);
+    @Get('restaurant-categories')
+    getRestaurantCategories(@GetUser('restaurantId') restaurantId: string) {
+        return this.menuService.getRestaurantMenuCategories(restaurantId);
     }
 
-    @Get('category/:id')
+    @Get('restaurant-category/:id')
     getCategoryById(@GetUser('restaurantId') restaurantId: string, @Param('id') id: string) {
-        return this.menuService.getCategoryById(restaurantId, id);
+        return this.menuService.getRestaurantMenuCategoryById(restaurantId, id);
     }
 
     @Post('delete-category')
     deleteCategory(@GetUser('restaurantId') restaurantId: string, @Body() dto: DeleteDto) {
-        return this.menuService.deleteCategoryById(restaurantId, dto);
+        return this.menuService.deleteRestaurantMenuCategoryById(restaurantId, dto);
     }
 
     @UseInterceptors(FileInterceptor('file',{
         storage: diskStorage({
-            destination: './uploads/menu-category',
+            destination: './src/uploads/menu-category',
             filename: (req, file, cb) => {
                 const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
                 const extension: string = path.parse(file.originalname).ext;
@@ -72,7 +72,7 @@ export class MenuController {
     @ApiConsumes('multipart/form-data')
     @Post('update-category')
     updateCategory(@GetUser('restaurantId') restaurantId: string, @UploadedFile() file, @Body() dto: UpdateMenuCategoryDto) {
-        return this.menuService.updateCategory(restaurantId, file, dto);
+        return this.menuService.updateRestaurantMenuCategory(restaurantId, file, dto);
     }
 
 
@@ -80,7 +80,7 @@ export class MenuController {
     @ApiOperation({ summary: 'Create sub category with an image, name and description' })
     @UseInterceptors(FileInterceptor('file',{
         storage: diskStorage({
-            destination: './uploads/menu-subcategory',
+            destination: './src/uploads/menu-subcategory',
             filename: (req, file, cb) => {
                 const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
                 const extension: string = path.parse(file.originalname).ext;
@@ -92,27 +92,27 @@ export class MenuController {
     @ApiConsumes('multipart/form-data')
     @Post('create-subcategory')
     createSubCategory(@GetUser('restaurantId') restaurantId: string, @UploadedFile() file, @Body() dto: CreateMenuSubCategoryDto) {
-        return this.menuService.CreateSubCategory(restaurantId, file, dto);
+        return this.menuService.CreateRestaurantSubMenuCategory(restaurantId, file, dto);
     }
 
-    @Get('subcategories')
+    @Get('restaurant-subcategories')
     getAllSubCategories(@GetUser('restaurantId') restaurantId: string) {
-        return this.menuService.getAllSubCategories(restaurantId);
+        return this.menuService.getRestaurantSubMenuCategories(restaurantId);
     }
 
-    @Get('subcategory/:id')
+    @Get('restaurant-subcategory/:id')
     getSubCategoryById(@GetUser('restaurantId') restaurantId: string, @Param('id') id: string) {
-        return this.menuService.getSubCategoryById(restaurantId, id);
+        return this.menuService.getRestaurantSubMenuCategoryById(restaurantId, id);
     }
 
     @Post('delete-subcategory')
     deleteSubCategory(@GetUser('restaurantId') restaurantId: string, @Body() dto: DeleteDto) {
-        return this.menuService.deleteSubCategoryById(restaurantId, dto);
+        return this.menuService.deleteRestaurantSubMenuCategoryById(restaurantId, dto);
     }
 
     @UseInterceptors(FileInterceptor('file',{
         storage: diskStorage({
-            destination: './uploads/menu-subcategory',
+            destination: './src/uploads/menu-subcategory',
             filename: (req, file, cb) => {
                 const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
                 const extension: string = path.parse(file.originalname).ext;
@@ -124,14 +124,14 @@ export class MenuController {
     @ApiConsumes('multipart/form-data')
     @Post('update-subcategory')
     updateSubCategory(@GetUser('restaurantId') restaurantId: string, @UploadedFile() file, @Body() dto: UpdateMenuSubCategoryDto) {
-        return this.menuService.updateSubCategory(restaurantId, file, dto);
+        return this.menuService.updateRestaurantSubMenuCategory(restaurantId, file, dto);
     }
 
     @ApiCreatedResponse({ description: "Menu successfully created" })
     @ApiOperation({ summary: 'Create menu with an image, name and description' })
     @UseInterceptors(FileInterceptor('file',{
         storage: diskStorage({
-            destination: './uploads/menu',
+            destination: './src/uploads/menu',
             filename: (req, file, cb) => {
                 const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
                 const extension: string = path.parse(file.originalname).ext;
@@ -143,27 +143,27 @@ export class MenuController {
     @ApiConsumes('multipart/form-data')
     @Post('create-menu')
     createMenu(@GetUser('restaurantId') restaurantId: string, @UploadedFile() file, @Body() dto: CreateMenuDto) {
-        return this.menuService.CreateMenu(restaurantId, file, dto);
+        return this.menuService.CreateRestaurantMenu(restaurantId, file, dto);
     }
 
-    @Get('all-menu')
+    @Get('restaurant-menu')
     getAllMenu(@GetUser('restaurantId') restaurantId: string) {
-        return this.menuService.getAllMenu(restaurantId);
+        return this.menuService.getRestaurantMenu(restaurantId);
     }
 
-    @Get('menu/:id')
+    @Get('restaurant-menu/:id')
     getMenuById(@GetUser('restaurantId') restaurantId: string, @Param('id') id: string) {
-        return this.menuService.getMenuById(restaurantId, id);
+        return this.menuService.getRestaurantMenuById(restaurantId, id);
     }
 
     @Post('delete-menu')
     deleteMenu(@GetUser('restaurantId') restaurantId: string, @Body() dto: DeleteDto) {
-        return this.menuService.deleteMenuById(restaurantId, dto);
+        return this.menuService.deleteRestaurantMenuById(restaurantId, dto);
     }
 
     @UseInterceptors(FileInterceptor('file',{
         storage: diskStorage({
-            destination: './uploads/menu',
+            destination: './src/uploads/menu',
             filename: (req, file, cb) => {
                 const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
                 const extension: string = path.parse(file.originalname).ext;
@@ -175,6 +175,6 @@ export class MenuController {
     @ApiConsumes('multipart/form-data')
     @Post('update-menu')
     updateMenu(@GetUser('restaurantId') restaurantId: string, @UploadedFile() file, @Body() dto: UpdateMenuDto) {
-        return this.menuService.updateMenu(restaurantId, file, dto);
+        return this.menuService.updateRestaurantMenu(restaurantId, file, dto);
     }
 }

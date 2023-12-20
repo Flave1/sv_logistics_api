@@ -14,15 +14,15 @@ import { UpdateMenuDto } from "./dto/update.menu.dto";
 import * as fs from 'fs';
 
 import * as base64js from 'base64-js';
+import { MenuManagementEvents } from "src/gateway/dto";
 
 
 @Injectable()
 export class MenuService {
   constructor(private prisma: PrismaService, private socket: GatewayService) { }
 
-  async CreateCategory(restaurantId: string, file: Express.Multer.File, dto: CreateMenuCategoryDto) {
+  async CreateRestaurantMenuCategory(restaurantId: string, file: Express.Multer.File, dto: CreateMenuCategoryDto) {
     try {
-
         //Check for existing categories
         const name = dto.name.toLowerCase().replace(/\s/g, '')
         const categories = await this.prisma.menuCategory.findMany({
@@ -52,7 +52,7 @@ export class MenuService {
                 status
             },
         });
-      
+        this.socket.emitToClient(MenuManagementEvents.get_restaurant_menu_categories_event)
         return new APIResponse(Status.Success, StatusMessage.Created, null);
       
     } catch (error) {
@@ -60,7 +60,7 @@ export class MenuService {
     }
   }
 
-  async getAllCategories(restaurantId: string) {
+  async getRestaurantMenuCategories(restaurantId: string) {
       const categories = (await this.prisma.menuCategory.findMany({
         where: {
             restaurantId: parseInt(restaurantId),
@@ -72,10 +72,15 @@ export class MenuService {
           }
         ]
       }));
+      for(let i = 0; i<categories.length ; i++)
+      {
+        const base64Image = await this.ConvertToBase64String(categories[i].image)
+        categories[i].image = base64Image
+      }
       return new APIResponse(Status.Success, StatusMessage.GetSuccess, categories);
     }
 
-async getCategoryById(restaurantId: string, categoryId: string) {
+async getRestaurantMenuCategoryById(restaurantId: string, categoryId: string) {
     try {
         const category = await this.prisma.menuCategory.findFirst({
             where: {
@@ -88,15 +93,13 @@ async getCategoryById(restaurantId: string, categoryId: string) {
         {
             return new APIResponse(Status.OtherErrors, StatusMessage.NoRecord, null);
         }
-        const base64Image = await this.ConvertToBase64String(category.image)
-        category.image = base64Image
         return new APIResponse(Status.Success, StatusMessage.GetSuccess, category);
     } catch (error) {
         throw error
     }
 }
 
-async deleteCategoryById(restaurantId: string, dto: DeleteDto) {
+async deleteRestaurantMenuCategoryById(restaurantId: string, dto: DeleteDto) {
     try {
         const categories = await this.prisma.menuCategory.updateMany({
             where: {
@@ -115,7 +118,7 @@ async deleteCategoryById(restaurantId: string, dto: DeleteDto) {
     }
   }
 
-  async updateCategory(restaurantId: string, file: Express.Multer.File, dto: UpdateMenuCategoryDto) {
+  async updateRestaurantMenuCategory(restaurantId: string, file: Express.Multer.File, dto: UpdateMenuCategoryDto) {
     const category = await this.prisma.menuCategory.findFirst({
         where: {
         id: parseInt(dto.id),
@@ -128,7 +131,7 @@ async deleteCategoryById(restaurantId: string, dto: DeleteDto) {
         return new APIResponse(Status.OtherErrors, StatusMessage.NoRecord, null);
     }
 
-    if(category.name.toLowerCase().replace(/\s/g, '') == dto.name.toLowerCase().replace(/\s/g, ''))
+    if(category.name.toLowerCase().replace(/\s/g, '') == dto.name.toLowerCase().replace(/\s/g, '') && category.id != parseInt(dto.id))
     {
         return new APIResponse(Status.OtherErrors, StatusMessage.Exist, null);
     }
@@ -151,7 +154,7 @@ async deleteCategoryById(restaurantId: string, dto: DeleteDto) {
     return user;
   }
 
-  async CreateSubCategory(restaurantId: string, file: Express.Multer.File, dto: CreateMenuSubCategoryDto) {
+  async CreateRestaurantSubMenuCategory(restaurantId: string, file: Express.Multer.File, dto: CreateMenuSubCategoryDto) {
     try {
 
         //Check for existing subcategories
@@ -192,7 +195,7 @@ async deleteCategoryById(restaurantId: string, dto: DeleteDto) {
     }
   }
 
-  async getAllSubCategories(restaurantId: string) {
+  async getRestaurantSubMenuCategories(restaurantId: string) {
     const subCategories = (await this.prisma.menuSubCategory.findMany({
       where: {
           restaurantId: parseInt(restaurantId),
@@ -210,7 +213,7 @@ async deleteCategoryById(restaurantId: string, dto: DeleteDto) {
     return new APIResponse(Status.Success, StatusMessage.GetSuccess, subCategories);
   }
 
-  async getSubCategoryById(restaurantId: string, subCategoryId: string) {
+  async getRestaurantSubMenuCategoryById(restaurantId: string, subCategoryId: string) {
     try {
         const subCategory = await this.prisma.menuSubCategory.findFirst({
             where: {
@@ -234,7 +237,7 @@ async deleteCategoryById(restaurantId: string, dto: DeleteDto) {
     }
 }
 
-async deleteSubCategoryById(restaurantId: string, dto: DeleteDto) {
+async deleteRestaurantSubMenuCategoryById(restaurantId: string, dto: DeleteDto) {
     try {
         const subCategories = await this.prisma.menuSubCategory.updateMany({
             where: {
@@ -253,7 +256,7 @@ async deleteSubCategoryById(restaurantId: string, dto: DeleteDto) {
     }
   }
 
-  async updateSubCategory(restaurantId: string, file: Express.Multer.File, dto: UpdateMenuSubCategoryDto) {
+  async updateRestaurantSubMenuCategory(restaurantId: string, file: Express.Multer.File, dto: UpdateMenuSubCategoryDto) {
     const subCategory = await this.prisma.menuSubCategory.findFirst({
         where: {
         id: parseInt(dto.id),
@@ -290,7 +293,7 @@ async deleteSubCategoryById(restaurantId: string, dto: DeleteDto) {
     return new APIResponse(Status.Success, StatusMessage.Updated, null);
   }
 
-  async CreateMenu(restaurantId: string, file: Express.Multer.File, dto: CreateMenuDto) {
+  async CreateRestaurantMenu(restaurantId: string, file: Express.Multer.File, dto: CreateMenuDto) {
     try {
 
         //Check for existing menu
@@ -336,7 +339,7 @@ async deleteSubCategoryById(restaurantId: string, dto: DeleteDto) {
     }
   }
 
-  async getAllMenu(restaurantId: string) {
+  async getRestaurantMenu(restaurantId: string) {
     const menus = (await this.prisma.menu.findMany({
       where: {
           restaurantId: parseInt(restaurantId),
@@ -358,7 +361,7 @@ async deleteSubCategoryById(restaurantId: string, dto: DeleteDto) {
     return new APIResponse(Status.Success, StatusMessage.GetSuccess, menus);
   }
 
-  async getMenuById(restaurantId: string, subCategoryId: string) {
+  async getRestaurantMenuById(restaurantId: string, subCategoryId: string) {
     try {
         const menu = await this.prisma.menu.findFirst({
             where: {
@@ -388,7 +391,7 @@ async deleteSubCategoryById(restaurantId: string, dto: DeleteDto) {
     }
 }
 
-async updateMenu(restaurantId: string, file: Express.Multer.File, dto: UpdateMenuDto) {
+async updateRestaurantMenu(restaurantId: string, file: Express.Multer.File, dto: UpdateMenuDto) {
     const menu = await this.prisma.menu.findFirst({
         where: {
         id: parseInt(dto.id),
@@ -430,7 +433,7 @@ async updateMenu(restaurantId: string, file: Express.Multer.File, dto: UpdateMen
     return new APIResponse(Status.Success, StatusMessage.Updated, null);
   }
 
-  async deleteMenuById(restaurantId: string, dto: DeleteDto) {
+  async deleteRestaurantMenuById(restaurantId: string, dto: DeleteDto) {
     try {
         const menu = await this.prisma.menu.updateMany({
             where: {

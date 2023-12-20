@@ -6,6 +6,6 @@ import { Module } from "@nestjs/common";
 
 @Module({
     controllers: [MenuController],
-    providers: [MenuService]
+    providers: [MenuService, GatewayService]
   })
   export class MenuModule {}
