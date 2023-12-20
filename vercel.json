@@ -3,7 +3,7 @@
     "env": {
         "DATABASE_URL": "sqlserver://SQL8006.site4now.net:1433;database=db_a86846_foodie;user=db_a86846_foodie_admin;password=85236580@Fo;encrypt=true",
         "BASE_URL": "http://localhost:",
-        "PORT": "@200",
+        "PORT": "3200",
         "REDIS_HOST": "localhost",
         "REDIS_PORT": "6379",
         "JWT_SECRET": "wowthisisabadsecret123",
