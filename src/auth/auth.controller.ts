@@ -4,13 +4,11 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  Req,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto';
 import { CreateCustomerDto } from './dto/create.customer.dto';
-import { CreateUserDto } from './dto/create.user.dto';
 import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { GetUser } from './decorator/get-user.decorator';
 import { CreateStaffDto } from './dto/create.staff.dto';
