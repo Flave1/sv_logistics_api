@@ -10,7 +10,6 @@ async function main() {
     const userTypes = [{ id: 1, name: "Staff" }, { id: 2, name: "Customer" }, { id: 3, name: "Driver" }];
     const defaultPassword = "Password123"
     const hash = await argon.hash(defaultPassword);
-    // create two dummy articles
     const restaurant = await prisma.restaurant.upsert({
         where: { id: 1 },
         update: {},

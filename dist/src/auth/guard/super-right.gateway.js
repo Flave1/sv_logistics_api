@@ -37,7 +37,7 @@ let GatewayAdminGuard = GatewayAdminGuard_1 = class GatewayAdminGuard {
             }
             return true;
         }
-        catch {
+        catch (_a) {
             throw new common_1.ForbiddenException('Admin privileges required');
         }
     }

@@ -11,12 +11,12 @@ import { MenuService } from './menu/menu.service';
 @Module({
   providers: [
     RestaurantService, 
-    RedisRepository,
+    // RedisRepository,
     GatewayService,
     MenuService
   ],
   imports:[
-    redisModule,
+    // redisModule,
     MulterModule.register({ dest: '../uploads/menu-category' }),
     MulterModule.register({ dest: '../uploads/menu-subcategory' }),
     MulterModule.register({ dest: '../uploads/menu' }),

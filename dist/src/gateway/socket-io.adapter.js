@@ -38,7 +38,7 @@ const createTokenMiddleware = (jwtService, logger) => (socket, next) => {
         socket.name = payload.name;
         next();
     }
-    catch {
+    catch (_a) {
         next(new Error('FORBIDDEN'));
     }
 };
