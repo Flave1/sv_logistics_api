@@ -1,0 +1,33 @@
+service: foodieapi
+
+useDotenv: true
+
+plugins:
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  environment:
+    DATABASE_URL: ${env:DATABASE_URL}
+    BASE_URL: ${env:BASE_URL}
+    PORT: ${env:PORT}
+    REDIS_HOST: ${env:REDIS_HOST}
+    REDIS_PORT: ${env:REDIS_PORT}
+    JWT_SECRET: ${env:JWT_SECRET}
+    CLIENT_PORT: ${env:CLIENT_PORT}
+    POSTGRES_USER: ${env:POSTGRES_USER}
+    POSTGRES_PASSWORD: ${env:POSTGRES_PASSWORD}
+    POSTGRES_DB: ${env:POSTGRES_DB}
+    DIGITAL_OCEAN_TOKEN: ${env:DIGITAL_OCEAN_TOKEN}
+
+functions:
+  main:
+    handler: dist/serverless.handler
+    events:
+      - http:
+          method: ANY
+          path: /
+      - http:
+          method: ANY
+          path: '{proxy+}'

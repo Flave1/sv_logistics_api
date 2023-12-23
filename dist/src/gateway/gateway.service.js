@@ -50,9 +50,10 @@ let GatewayService = GatewayService_1 = class GatewayService {
         });
     }
     async JoinRoom(token, body) {
+        var _a, _b;
         const roomName = JSON.parse(body).roomName;
         await this.connectedClients.socketsJoin(roomName);
-        const personsInRoom = this.connectedClients.adapter.rooms?.get(roomName)?.size;
+        const personsInRoom = (_b = (_a = this.connectedClients.adapter.rooms) === null || _a === void 0 ? void 0 : _a.get(roomName)) === null || _b === void 0 ? void 0 : _b.size;
         this.connectedClients.to(roomName).emit(dto_1.CommonEvents.join_room, { message: `A new user has joined ${roomName} total ${personsInRoom}` });
     }
     async emitToClient(event, message = "emitted to client app") {
