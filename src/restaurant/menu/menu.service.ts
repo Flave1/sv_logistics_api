@@ -112,6 +112,8 @@ async deleteRestaurantMenuCategoryById(restaurantId: string, dto: DeleteDto) {
                 deleted: true
               },
           });
+          
+        this.socket.emitToClient(MenuManagementEvents.get_restaurant_menu_categories_event)
         return new APIResponse(Status.Success, StatusMessage.Deleted, null);
     } catch (error) {
       throw error;
@@ -151,7 +153,8 @@ async deleteRestaurantMenuCategoryById(restaurantId: string, dto: DeleteDto) {
         status
       },
     });
-    return user;
+    this.socket.emitToClient(MenuManagementEvents.get_restaurant_menu_categories_event)
+    return new APIResponse(Status.Success, StatusMessage.Updated, null);
   }
 
   async CreateRestaurantMenu(restaurantId: string, file: Express.Multer.File, dto: CreateMenuDto) {
@@ -193,6 +196,8 @@ async deleteRestaurantMenuCategoryById(restaurantId: string, dto: DeleteDto) {
             },
         });
       
+        this.socket.emitToClient(MenuManagementEvents.get_restaurant_menu_event)
+        this.socket.emitToClient(MenuManagementEvents.get_restaurant_menu_by_category_event)
         return new APIResponse(Status.Success, StatusMessage.Created, null);
       
     } catch (error) {
@@ -218,11 +223,11 @@ async deleteRestaurantMenuCategoryById(restaurantId: string, dto: DeleteDto) {
     return new APIResponse(Status.Success, StatusMessage.GetSuccess, menus);
   }
 
-  async getRestaurantMenuById(restaurantId: string, subCategoryId: string) {
+  async getRestaurantMenuById(restaurantId: string, menuId: string) {
     try {
         const menu = await this.prisma.menu.findFirst({
             where: {
-            id: parseInt(subCategoryId),
+            id: parseInt(menuId),
             restaurantId: parseInt(restaurantId),
             deleted: false
             },
@@ -243,6 +248,31 @@ async deleteRestaurantMenuCategoryById(restaurantId: string, dto: DeleteDto) {
         throw error
     }
 }
+
+async getRestaurantMenuByCategoryId(restaurantId: string, categoryId: string) {
+  try {
+      const menuList = await this.prisma.menu.findMany({
+          where: {
+          menuCategoryId: parseInt(categoryId),
+          restaurantId: parseInt(restaurantId),
+          deleted: false
+          },
+          include: {
+            menuCategory: true,
+          }
+      });
+      for(let i = 0; i<menuList.length ; i++)
+      {
+        const base64Image = await this.ConvertToBase64String(menuList[i].image)
+        menuList[i].image = base64Image
+      }
+  
+      return new APIResponse(Status.Success, StatusMessage.GetSuccess, menuList);
+  } catch (error) {
+      throw error
+  }
+}
+
 
 async updateRestaurantMenu(restaurantId: string, file: Express.Multer.File, dto: UpdateMenuDto) {
     const menu = await this.prisma.menu.findFirst({
@@ -283,6 +313,8 @@ async updateRestaurantMenu(restaurantId: string, file: Express.Multer.File, dto:
         status
       },
     });
+
+    this.socket.emitToClient(MenuManagementEvents.get_restaurant_menu_categories_event)
     return new APIResponse(Status.Success, StatusMessage.Updated, null);
   }
 
