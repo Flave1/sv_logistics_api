@@ -15,7 +15,8 @@ import { ValidateGatewayUser } from 'src/auth/decorator';
 
 @WebSocketGateway({
   cors: {
-    origin: [`${process.env['BASE_URL']}${process.env['CLIENT_PORT']}`],
+    // origin: [`${process.env['BASE_URL']}${process.env['CLIENT_PORT']}`],
+    origin : [`http://localhost:3000`]
   },
   // namespace:'foodiegateway'
 })

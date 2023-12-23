@@ -1,7 +1,8 @@
 // prisma/seed.ts
 
 import { PrismaClient } from '@prisma/client';
-import * as argon from 'argon2';
+// import * as argon from 'argon2';
+import * as bcrypt from 'bcrypt';
 
 // initialize Prisma Client
 const prisma = new PrismaClient();
@@ -9,7 +10,8 @@ async function main() {
     const courierTypes = [{ id: 1, name: "Default" }, { id: 2, name: "Car" }, { id: 3, name: "Bycicle" }];
     const userTypes = [{ id: 1, name: "Staff" }, { id: 2, name: "Customer" }, { id: 3, name: "Driver" }];
     const defaultPassword = "Password123"
-    const hash = await argon.hash(defaultPassword);
+    // const hash = await argon.hash(defaultPassword);
+    const hash = await bcrypt.hash(defaultPassword, 10);
     const restaurant = await prisma.restaurant.upsert({
         where: { id: 1 },
         update: {},

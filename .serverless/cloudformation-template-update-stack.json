@@ -162,7 +162,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/foodieapi/prod/1703342249727-2023-12-23T14:37:29.727Z/foodieapi.zip"
+          "S3Key": "serverless/foodieapi/prod/1703366579166-2023-12-23T21:22:59.166Z/foodieapi.zip"
         },
         "Handler": "dist/serverless.handler",
         "Runtime": "nodejs14.x",
@@ -171,7 +171,7 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
-            "DATABASE_URL": "://SQL8006.site4now.net:1433;database=db_a86846_foodie;user=db_a86846_foodie_admin;password=85236580@Fo;encrypt=true",
+            "DATABASE_URL": "sqlserver://SQL8006.site4now.net:1433;database=db_a86846_foodie;user=db_a86846_foodie_admin;password=85236580@Fo;encrypt=true",
             "BASE_URL": "http://localhost:",
             "PORT": "3200",
             "REDIS_HOST": "localhost",
@@ -180,8 +180,7 @@
             "CLIENT_PORT": "3000",
             "POSTGRES_USER": "postgres",
             "POSTGRES_PASSWORD": "85236580@Po",
-            "POSTGRES_DB": "foodieapi",
-            "DIGITAL_OCEAN_TOKEN": "dop_v1_d4d75d0581c14197072594c5e015d016a55b5c1a585bef091d23acbe1e29dbbc"
+            "POSTGRES_DB": "foodieapi"
           }
         },
         "Role": {
@@ -195,14 +194,14 @@
         "MainLogGroup"
       ]
     },
-    "MainLambdaVersionOsCd8QEqdmVPMKHo92gf5qEaJKdYfFzZZf82LyLq4g": {
+    "MainLambdaVersionqkNylg33oLCRt2KaBv7aHK2YMOldA3Kvsg2PPRzUnLc": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "MainLambdaFunction"
         },
-        "CodeSha256": "6gb8muYVPFXbAlNHlgw73JKH0xzwbU4jsUBlkIMZ1u0="
+        "CodeSha256": "eBdxnM20YJWTfDTqBPprqkklNlpiBdluSYIKlDVfnNs="
       }
     },
     "ApiGatewayRestApi": {
@@ -327,7 +326,7 @@
         "MainLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1703342232683": {
+    "ApiGatewayDeployment1703366562720": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -390,7 +389,7 @@
     "MainLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "MainLambdaVersionOsCd8QEqdmVPMKHo92gf5qEaJKdYfFzZZf82LyLq4g"
+        "Ref": "MainLambdaVersionqkNylg33oLCRt2KaBv7aHK2YMOldA3Kvsg2PPRzUnLc"
       },
       "Export": {
         "Name": "sls-foodieapi-prod-MainLambdaFunctionQualifiedArn"

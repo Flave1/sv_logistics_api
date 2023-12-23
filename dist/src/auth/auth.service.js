@@ -35,7 +35,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
-const argon = __importStar(require("argon2"));
+const bcrypt = __importStar(require("bcrypt"));
 const jwt_1 = require("@nestjs/jwt");
 const config_1 = require("@nestjs/config");
 const library_1 = require("@prisma/client/runtime/library");
@@ -45,6 +45,7 @@ const courierType_enum_1 = require("../restaurant/user/enums/courierType.enum");
 const gateway_service_1 = require("../gateway/gateway.service");
 const dto_1 = require("../gateway/dto");
 const crypto = __importStar(require("crypto"));
+const saltRounds = 10;
 let AuthService = class AuthService {
     constructor(prisma, jwt, config, socket) {
         this.prisma = prisma;
@@ -53,7 +54,7 @@ let AuthService = class AuthService {
         this.socket = socket;
     }
     async CreateCustomer(dto) {
-        const hash = await argon.hash(dto.password);
+        const hash = await bcrypt.hash(dto.password, saltRounds);
         try {
             const user = await this.prisma.user.create({
                 data: {
@@ -83,7 +84,7 @@ let AuthService = class AuthService {
     }
     async CreateStaff(restaurantId, dto) {
         const defaultPassword = "Password123";
-        const hash = await argon.hash(defaultPassword);
+        const hash = await bcrypt.hash(defaultPassword, saltRounds);
         try {
             const user = await this.prisma.user.create({
                 data: {
@@ -112,7 +113,7 @@ let AuthService = class AuthService {
     }
     async CreateDriver(restaurantId, dto) {
         const defaultPassword = "Password123";
-        const hash = await argon.hash(defaultPassword);
+        const hash = await bcrypt.hash(defaultPassword, saltRounds);
         try {
             const user = await this.prisma.user.create({
                 data: {
@@ -147,7 +148,7 @@ let AuthService = class AuthService {
         });
         if (!user)
             throw new common_1.ForbiddenException('Invalid Credentials');
-        const pwMatches = await argon.verify(user.hash, dto.password);
+        const pwMatches = await bcrypt.compare(user.hash, dto.password);
         if (!pwMatches)
             throw new common_1.ForbiddenException('Invalid Credentials');
         return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
@@ -159,15 +160,21 @@ let AuthService = class AuthService {
             userType,
             restaurantId
         };
-        const secret = this.config.get('JWT_SECRET');
-        const token = await this.jwt.signAsync(payload, {
-            expiresIn: '60m',
-            secret: secret,
-            jwtid: ''
-        });
-        return {
-            access_token: token,
-        };
+        const secret = 'wowthisisabadsecret123';
+        try {
+            const token = await this.jwt.signAsync(payload, {
+                expiresIn: '60m',
+                secret: secret,
+                jwtid: ''
+            });
+            return {
+                access_token: token,
+            };
+        }
+        catch (error) {
+            console.log('error', error);
+        }
+        return null;
     }
     async forgotPassword(dto) {
         const user = await this.prisma.user.findUnique({
@@ -190,7 +197,7 @@ let AuthService = class AuthService {
     }
     async GenerateToken() {
         const token = crypto.randomBytes(32).toString('hex');
-        const hashedToken = await argon.hash(token);
+        const hashedToken = await bcrypt.hash(token, saltRounds);
         return { token, hashedToken };
     }
 };

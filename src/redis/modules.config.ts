@@ -11,8 +11,8 @@ export const redisModule = RedisModule.registerAsync({
 
     return {
       connectionOptions: {
-        host: configService.get('REDIS_HOST'),
-        port: configService.get('REDIS_PORT'),
+        host: 'localhost',//configService.get('REDIS_HOST'),
+        port: 6379,//configService.get('REDIS_PORT'),
       },
       onClientReady: (client) => {
         logger.log('Redis client ready');
@@ -31,14 +31,3 @@ export const redisModule = RedisModule.registerAsync({
   },
   inject: [ConfigService],
 });
-
-// export const jwtModule = JwtModule.registerAsync({
-//   imports: [ConfigModule],
-//   useFactory: async (configService: ConfigService) => ({
-//     secret: configService.get<string>('JWT_SECRET'),
-//     signOptions: {
-//       expiresIn: parseInt(configService.get<string>('POLL_DURATION')),
-//     },
-//   }),
-//   inject: [ConfigService],
-// });
