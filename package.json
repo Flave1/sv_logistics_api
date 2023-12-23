@@ -2,7 +2,7 @@
   "name": "foodieapi",
   "version": "0.0.1",
   "engines": {
-    "node": "16.x"
+    "node": "21.x"
   },
   "description": "",
   "author": "",
