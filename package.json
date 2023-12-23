@@ -1,6 +1,9 @@
 {
   "name": "foodieapi",
   "version": "0.0.1",
+  "engines": {
+    "node": "16.x"
+  },
   "description": "",
   "author": "",
   "private": true,
@@ -47,6 +50,7 @@
     "@prisma/client": "5.7.1",
     "@types/cache-manager": "^4.0.6",
     "@vendia/serverless-express": "^4.12.6",
+    "argon2": "^0.31.2",
     "aws-lambda": "^1.0.7",
     "bcrypt": "^5.1.1",
     "cache-manager": "^5.3.1",
