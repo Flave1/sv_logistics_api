@@ -4,8 +4,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthDto } from './dto';
-// import * as argon from 'argon2';
-import * as bcrypt from 'bcrypt';
+import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
@@ -20,7 +19,6 @@ import * as crypto from 'crypto';
 import { CreateDriverDto } from './dto/create.driver.dto';
 import { CreateStaffDto } from './dto/create.staff.dto';
 
-const saltRounds = 10;
 @Injectable()
 export class AuthService {
   constructor(
@@ -32,8 +30,7 @@ export class AuthService {
 
   async CreateCustomer(dto: CreateCustomerDto) {
     // generate the password hash
-    // const hash = await argon.hash(dto.password);
-    const hash = await bcrypt.hash(dto.password, saltRounds);
+    const hash = await argon.hash(dto.password);
     // save the new user in the db
     try {
       const user = await this.prisma.user.create({
@@ -70,9 +67,7 @@ export class AuthService {
   async CreateStaff(restaurantId: string, dto: CreateStaffDto) {
     // generate the password hash
     const defaultPassword = "Password123"
-    // const hash = await argon.hash(defaultPassword);
-
-    const hash = await bcrypt.hash(defaultPassword, saltRounds);
+    const hash = await argon.hash(defaultPassword);
     // save the new user in the db
     try {
       const user = await this.prisma.user.create({
@@ -105,8 +100,7 @@ export class AuthService {
   async CreateDriver(restaurantId: string, dto: CreateDriverDto) {
     // generate the password hash
     const defaultPassword = "Password123"
-    // const hash = await argon.hash(defaultPassword);
-    const hash = await bcrypt.hash(defaultPassword, saltRounds);
+    const hash = await argon.hash(defaultPassword);
     // save the new user in the db
     try {
       const user = await this.prisma.user.create({
@@ -148,8 +142,7 @@ export class AuthService {
       throw new ForbiddenException('Invalid Credentials');
 
     // compare password
-    // const pwMatches = await argon.verify(user.hash, dto.password);
-    const pwMatches = await bcrypt.compare(user.hash, dto.password);
+    const pwMatches = await argon.verify(user.hash, dto.password);
     // if password incorrect throw exception
     if (!pwMatches)
       throw new ForbiddenException(
@@ -225,8 +218,7 @@ export class AuthService {
   async GenerateToken(): Promise<{ token: string, hashedToken: string }> {
 
     const token = crypto.randomBytes(32).toString('hex');
-    // const hashedToken = await argon.hash(token);
-    const hashedToken = await bcrypt.hash(token, saltRounds);
+    const hashedToken = await argon.hash(token);
 
     return { token, hashedToken }
   }
