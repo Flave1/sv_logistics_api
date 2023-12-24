@@ -74,8 +74,13 @@ export class MenuService {
       }));
       for(let i = 0; i<categories.length ; i++)
       {
-        const base64Image = await this.ConvertToBase64String(categories[i].image)
+        try {
+          const base64Image = await this.ConvertToBase64String(categories[i].image)
         categories[i].image = base64Image
+        } catch (error) {
+          categories[i].image = 'https://media.istockphoto.com/id/1468860049/photo/fitness-woman-eating-a-healthy-poke-bowl-in-the-kitchen-at-home.jpg?s=1024x1024&w=is&k=20&c=wvo0akyUsvpQfa0x9C86btd8D2aRfsWiGLWdURWUT78='
+        }
+        
       }
       return new APIResponse(Status.Success, StatusMessage.GetSuccess, categories);
     }
