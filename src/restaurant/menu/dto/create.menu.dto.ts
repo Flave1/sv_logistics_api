@@ -33,12 +33,10 @@ import {
     status: boolean;
 
     @ApiProperty({})
-    @IsString()
     @IsOptional()
     discount?: string;
 
     @ApiProperty({})
-    @IsString()
     @IsOptional()
     dietaryInformation?: string;
 

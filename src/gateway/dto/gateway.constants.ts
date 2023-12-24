@@ -13,6 +13,6 @@ export enum UserManagementEvents {
 
 export enum MenuManagementEvents {
   get_restaurant_menu_categories_event = 'get_restaurant_menu_categories_event',
-  get_restaurant_menu_sub_category_event = 'get_restaurant_menu_categories_event',
-  get_restaurant_menu_event = 'get_restaurant_menu_event'
+  get_restaurant_menu_event = 'get_restaurant_menu_event',
+  get_restaurant_menu_by_category_event = 'get_restaurant_menu_by_category_event'
 }
