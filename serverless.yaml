@@ -19,7 +19,6 @@ provider:
     POSTGRES_USER: ${env:POSTGRES_USER}
     POSTGRES_PASSWORD: ${env:POSTGRES_PASSWORD}
     POSTGRES_DB: ${env:POSTGRES_DB}
-    DIGITAL_OCEAN_TOKEN: ${env:DIGITAL_OCEAN_TOKEN}
 
 functions:
   main:
@@ -31,3 +30,10 @@ functions:
       - http:
           method: ANY
           path: '{proxy+}'
+
+package:
+  individually: true
+  exclude:
+    - node_modules/**
+  include:
+    - dist/**

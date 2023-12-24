@@ -12,7 +12,7 @@ class SocketIOAdapter extends platform_socket_io_1.IoAdapter {
         this.logger = new common_1.Logger(SocketIOAdapter.name);
     }
     createIOServer(port, options) {
-        const clientPort = parseInt(this.configService.get('CLIENT_PORT'));
+        const clientPort = parseInt(this.configService.get('3000'));
         const cors = {
             origin: [
                 `http://localhost:${clientPort}`,

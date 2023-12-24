@@ -159,15 +159,21 @@ let AuthService = class AuthService {
             userType,
             restaurantId
         };
-        const secret = this.config.get('JWT_SECRET');
-        const token = await this.jwt.signAsync(payload, {
-            expiresIn: '60m',
-            secret: secret,
-            jwtid: ''
-        });
-        return {
-            access_token: token,
-        };
+        const secret = 'wowthisisabadsecret123';
+        try {
+            const token = await this.jwt.signAsync(payload, {
+                expiresIn: '60m',
+                secret: secret,
+                jwtid: ''
+            });
+            return {
+                access_token: token,
+            };
+        }
+        catch (error) {
+            console.log('error', error);
+        }
+        return null;
     }
     async forgotPassword(dto) {
         const user = await this.prisma.user.findUnique({

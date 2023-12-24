@@ -8,7 +8,7 @@
       "name": "aws",
       "runtime": "nodejs14.x",
       "environment": {
-        "DATABASE_URL": "://SQL8006.site4now.net:1433;database=db_a86846_foodie;user=db_a86846_foodie_admin;password=85236580@Fo;encrypt=true",
+        "DATABASE_URL": "sqlserver://SQL8006.site4now.net:1433;database=db_a86846_foodie;user=db_a86846_foodie_admin;password=85236580@Fo;encrypt=true",
         "BASE_URL": "http://localhost:",
         "PORT": "3200",
         "REDIS_HOST": "localhost",
@@ -17,8 +17,7 @@
         "CLIENT_PORT": "3000",
         "POSTGRES_USER": "postgres",
         "POSTGRES_PASSWORD": "85236580@Po",
-        "POSTGRES_DB": "foodieapi",
-        "DIGITAL_OCEAN_TOKEN": "dop_v1_d4d75d0581c14197072594c5e015d016a55b5c1a585bef091d23acbe1e29dbbc"
+        "POSTGRES_DB": "foodieapi"
       },
       "stage": "dev",
       "region": "us-east-1",
@@ -187,7 +186,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/foodieapi/prod/1703342249727-2023-12-23T14:37:29.727Z/foodieapi.zip"
+                "S3Key": "serverless/foodieapi/prod/1703396048787-2023-12-24T05:34:08.787Z/main.zip"
               },
               "Handler": "dist/serverless.handler",
               "Runtime": "nodejs14.x",
@@ -196,7 +195,7 @@
               "Timeout": 6,
               "Environment": {
                 "Variables": {
-                  "DATABASE_URL": "://SQL8006.site4now.net:1433;database=db_a86846_foodie;user=db_a86846_foodie_admin;password=85236580@Fo;encrypt=true",
+                  "DATABASE_URL": "sqlserver://SQL8006.site4now.net:1433;database=db_a86846_foodie;user=db_a86846_foodie_admin;password=85236580@Fo;encrypt=true",
                   "BASE_URL": "http://localhost:",
                   "PORT": "3200",
                   "REDIS_HOST": "localhost",
@@ -205,8 +204,7 @@
                   "CLIENT_PORT": "3000",
                   "POSTGRES_USER": "postgres",
                   "POSTGRES_PASSWORD": "85236580@Po",
-                  "POSTGRES_DB": "foodieapi",
-                  "DIGITAL_OCEAN_TOKEN": "dop_v1_d4d75d0581c14197072594c5e015d016a55b5c1a585bef091d23acbe1e29dbbc"
+                  "POSTGRES_DB": "foodieapi"
                 }
               },
               "Role": {
@@ -220,14 +218,14 @@
               "MainLogGroup"
             ]
           },
-          "MainLambdaVersionOsCd8QEqdmVPMKHo92gf5qEaJKdYfFzZZf82LyLq4g": {
+          "MainLambdaVersionkuauqHlvIYKTRhBsiR0Btm6OR7fnqV5hc6SsE8evo": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "MainLambdaFunction"
               },
-              "CodeSha256": "6gb8muYVPFXbAlNHlgw73JKH0xzwbU4jsUBlkIMZ1u0="
+              "CodeSha256": "zi5zQxCIEDixpBjdPVD3hFMas+L9rsRfcRRoKTKRQt4="
             }
           },
           "ApiGatewayRestApi": {
@@ -352,7 +350,7 @@
               "MainLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1703342232683": {
+          "ApiGatewayDeployment1703396038669": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -415,7 +413,7 @@
           "MainLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "MainLambdaVersionOsCd8QEqdmVPMKHo92gf5qEaJKdYfFzZZf82LyLq4g"
+              "Ref": "MainLambdaVersionkuauqHlvIYKTRhBsiR0Btm6OR7fnqV5hc6SsE8evo"
             },
             "Export": {
               "Name": "sls-foodieapi-prod-MainLambdaFunctionQualifiedArn"
@@ -557,12 +555,14 @@
           }
         ],
         "name": "foodieapi-prod-main",
-        "package": {},
+        "package": {
+          "artifact": "/Users/user/Desktop/FLAVETECH/Main/foodie/api/foodieapi/.serverless/main.zip"
+        },
         "memory": 1024,
         "timeout": 6,
         "runtime": "nodejs14.x",
         "vpc": {},
-        "versionLogicalId": "MainLambdaVersionOsCd8QEqdmVPMKHo92gf5qEaJKdYfFzZZf82LyLq4g"
+        "versionLogicalId": "MainLambdaVersionkuauqHlvIYKTRhBsiR0Btm6OR7fnqV5hc6SsE8evo"
       }
     },
     "configValidationMode": "warn",
@@ -578,14 +578,25 @@
       },
       "functions": {
         "$ref": "$[\"service\"][\"functions\"]"
+      },
+      "package": {
+        "individually": true,
+        "exclude": [
+          "node_modules/**"
+        ],
+        "include": [
+          "dist/**"
+        ],
+        "artifactsS3KeyDirname": "serverless/foodieapi/prod/code-artifacts",
+        "artifactDirectoryName": "serverless/foodieapi/prod/1703396048787-2023-12-24T05:34:08.787Z"
       }
     },
     "layers": {},
-    "isDashboardMonitoringPreconfigured": false,
-    "artifact": "/Users/user/Desktop/FLAVETECH/Main/foodie/api/foodieapi/.serverless/foodieapi.zip"
+    "isDashboardMonitoringPreconfigured": false
   },
   "package": {
-    "artifactDirectoryName": "serverless/foodieapi/prod/1703342249727-2023-12-23T14:37:29.727Z",
-    "artifact": "foodieapi.zip"
+    "individually": true,
+    "artifactDirectoryName": "serverless/foodieapi/prod/1703396048787-2023-12-24T05:34:08.787Z",
+    "artifact": ""
   }
 }

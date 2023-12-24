@@ -6,10 +6,6 @@ import { Test } from '@nestjs/testing';
 import * as pactum from 'pactum';
 import { AppModule } from '../src/app.module';
 import { AuthDto } from '../src/auth/dto';
-import {
-  CreateBookmarkDto,
-  EditBookmarkDto,
-} from '../src/bookmark/dto';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { EditUserDto } from '../src/restaurant/user/dto';
 
@@ -34,7 +30,7 @@ describe('App e2e', () => {
 
     prisma = app.get(PrismaService);
     await prisma.cleanDb();
-    pactum.request.setBaseUrl(`${process.env['BASE_URL']}${process.env['PORT']}`);
+    pactum.request.setBaseUrl(`http://localhost:3000`);//${process.env['BASE_URL']}${process.env['PORT']}
   });
 
   afterAll(() => {
@@ -45,7 +41,7 @@ describe('App e2e', () => {
     const dto: AuthDto = {
       email: 'vlad@gmail.com',
       password: '123',
-      restaurantId: 1
+      // restaurantId: 1
     };
     describe('Signup', () => {
       it('should throw if email empty', () => {
@@ -135,7 +131,7 @@ describe('App e2e', () => {
       it('should edit user', () => {
         const dto: EditUserDto = {
           firstName: 'Vladimir',
-          email: 'vlad@codewithvlad.com',
+          // email: 'vlad@codewithvlad.com',
         };
         return pactum
           .spec()
