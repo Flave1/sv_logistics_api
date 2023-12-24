@@ -33,7 +33,6 @@ let AuthController = class AuthController {
         return this.authService.CreateStaff(restaurantId, dto);
     }
     createDriver(restaurantId, dto) {
-        console.log('dto', dto);
         return this.authService.CreateDriver(restaurantId, dto);
     }
     signin(dto) {
