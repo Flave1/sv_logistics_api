@@ -25,7 +25,9 @@ export class MenuService {
       where: {
         restaurantId: parseInt(restaurantId),
         deleted: false,
-        name: dto.name
+        name: {
+          equals: dto.name.toLowerCase()
+        }
       },
     });
 
