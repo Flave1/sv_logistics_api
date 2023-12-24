@@ -24,7 +24,7 @@ let RedisRepository = RedisRepository_1 = class RedisRepository {
         this.redisClient = redisClient;
         this.cacheManager = cacheManager;
         this.logger = new common_1.Logger(RedisRepository_1.name);
-        this.ttl = configService.get('POLL_DURATION');
+        this.ttl = configService.get('7200');
     }
     async store({ data, key }) {
         try {
