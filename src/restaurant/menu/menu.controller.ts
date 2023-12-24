@@ -106,6 +106,11 @@ export class MenuController {
         return this.menuService.getRestaurantMenuById(restaurantId, id);
     }
 
+    @Get('restaurant-menu/category/:categoryId')
+    getMenuByCategoryId(@GetUser('restaurantId') restaurantId: string, @Param('categoryId') categoryId: string) {
+        return this.menuService.getRestaurantMenuByCategoryId(restaurantId, categoryId);
+    }
+
     @Post('delete-menu')
     deleteMenu(@GetUser('restaurantId') restaurantId: string, @Body() dto: DeleteDto) {
         return this.menuService.deleteRestaurantMenuById(restaurantId, dto);
