@@ -1,9 +1,6 @@
 {
   "name": "foodieapi",
   "version": "0.0.1",
-  "engines": {
-    "node": "21.x"
-  },
   "description": "",
   "author": "",
   "private": true,
