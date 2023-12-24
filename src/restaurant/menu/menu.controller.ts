@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, ForbiddenException, Get, HttpCode, HttpStatus, Param, Post, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { MenuService } from "./menu.service";
 import { ApiBearerAuth, ApiConsumes, ApiCreatedResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { JwtGuard } from "src/auth/guard";
@@ -6,33 +6,35 @@ import { GetUser } from "src/auth/decorator/get-user.decorator";
 import { FileInterceptor } from "@nestjs/platform-express/multer";
 import { CreateMenuCategoryDto } from "./dto/create.menu-category.dto";
 import { diskStorage } from "multer";
-import {v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import { DeleteDto } from "src/dto/delete.dto";
 import { UpdateMenuCategoryDto } from "./dto/update.menu-category.dto";
-import { CreateMenuSubCategoryDto } from "./dto/create-menu-subcategory.dto";
-import { UpdateMenuSubCategoryDto } from "./dto/update.menu-subcategory.dto";
 import { CreateMenuDto } from "./dto/create.menu.dto";
 import { UpdateMenuDto } from "./dto/update.menu.dto";
+import { Request } from "express";
 
+
+const menuCategoryDestination: string = './src/uploads/menu-category'
+const menuDestination: string = './src/uploads/menu'
+let basePath: string = '';
 @ApiTags('Menu')
 @ApiBearerAuth()
 @UseGuards(JwtGuard)
 @Controller('menu')
 export class MenuController {
     constructor(
-       private menuService: MenuService
-        ) {}
-
+        private menuService: MenuService
+    ) { }
+    @HttpCode(HttpStatus.OK)
     @ApiCreatedResponse({ description: "Category successfully created" })
     @ApiOperation({ summary: 'Create category with an image, name and description' })
-    @UseInterceptors(FileInterceptor('file',{
+    @UseInterceptors(FileInterceptor('file', {
         storage: diskStorage({
-            destination: './src/uploads/menu-category',
+            destination: menuCategoryDestination,
             filename: (req, file, cb) => {
-                const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
+                const filename: string = uuidv4();
                 const extension: string = path.parse(file.originalname).ext;
-
                 cb(null, `${filename}${extension}`)
             }
         })
@@ -58,7 +60,7 @@ export class MenuController {
         return this.menuService.deleteRestaurantMenuCategoryById(restaurantId, dto);
     }
 
-    @UseInterceptors(FileInterceptor('file',{
+    @UseInterceptors(FileInterceptor('file', {
         storage: diskStorage({
             destination: './src/uploads/menu-category',
             filename: (req, file, cb) => {
@@ -77,7 +79,7 @@ export class MenuController {
 
     @ApiCreatedResponse({ description: "Menu successfully created" })
     @ApiOperation({ summary: 'Create menu with an image, name and description' })
-    @UseInterceptors(FileInterceptor('file',{
+    @UseInterceptors(FileInterceptor('file', {
         storage: diskStorage({
             destination: './src/uploads/menu',
             filename: (req, file, cb) => {
@@ -104,17 +106,12 @@ export class MenuController {
         return this.menuService.getRestaurantMenuById(restaurantId, id);
     }
 
-    @Get('restaurant-menu/category/:categoryId')
-    getMenuByCategoryId(@GetUser('restaurantId') restaurantId: string, @Param('categoryId') categoryId: string) {
-        return this.menuService.getRestaurantMenuByCategoryId(restaurantId, categoryId);
-    }
-
     @Post('delete-menu')
     deleteMenu(@GetUser('restaurantId') restaurantId: string, @Body() dto: DeleteDto) {
         return this.menuService.deleteRestaurantMenuById(restaurantId, dto);
     }
 
-    @UseInterceptors(FileInterceptor('file',{
+    @UseInterceptors(FileInterceptor('file', {
         storage: diskStorage({
             destination: './src/uploads/menu',
             filename: (req, file, cb) => {

@@ -145,9 +145,7 @@ export class AuthService {
     const pwMatches = await argon.verify(user.hash, dto.password);
     // if password incorrect throw exception
     if (!pwMatches)
-      throw new ForbiddenException(
-        'Invalid Credentials',
-      );
+      throw new ForbiddenException('Invalid Credentials');
     return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
   }
 

@@ -42,8 +42,6 @@ export class AuthController {
   @UseGuards(JwtGuard)
   @Post('create-driver')
   createDriver(@GetUser('restaurantId') restaurantId: string, @Body() dto: CreateDriverDto) {
-    console.log('dto', dto);
-    
     return this.authService.CreateDriver(restaurantId, dto);
   }
 

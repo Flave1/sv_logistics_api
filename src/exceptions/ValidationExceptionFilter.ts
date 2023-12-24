@@ -13,26 +13,34 @@ export class ValidationExceptionFilter implements ExceptionFilter {
       ? exception.getStatus()
       : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    if (status === HttpStatus.BAD_REQUEST) {
-      this.logger.error(`${status} on ${request.url}  authorization=${request.headers.authorization}`)
-      this.logger.error(request)
-      const errors = this.flattenValidationErrors(exception);
-      response.status(status).json({
-        statusCode: status,
-        message: 'Validation failed',
-        errors,
-        timestamp: new Date().toISOString(),
-        path: request.url,
-      });
-    } else {
       this.logger.error(`${status} on ${request.url}  authorization=${request.headers.authorization}`)
       response.status(status).json({
         statusCode: status,
         message: exception.message,
-        timestamp: new Date().toISOString(),
-        path: request.url,
+        // timestamp: new Date().toISOString(),
+        // path: request.url,
       });
-    }
+
+    // if (status === HttpStatus.BAD_REQUEST) {
+    //   this.logger.error(`${status} on ${request.url}  authorization=${request.headers.authorization}`)
+    //   this.logger.error(request)
+    //   const errors = this.flattenValidationErrors(exception);
+    //   response.status(status).json({
+    //     statusCode: status,
+    //     message: 'Validation failed',
+    //     errors,
+    //     timestamp: new Date().toISOString(),
+    //     path: request.url,
+    //   });
+    // } else {
+    //   this.logger.error(`${status} on ${request.url}  authorization=${request.headers.authorization}`)
+    //   response.status(status).json({
+    //     statusCode: status,
+    //     message: exception.message,
+    //     // timestamp: new Date().toISOString(),
+    //     // path: request.url,
+    //   });
+    // }
   }
 
   private flattenValidationErrors(exception: HttpException): Record<string, string[]> {
