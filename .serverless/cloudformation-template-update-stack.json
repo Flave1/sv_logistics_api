@@ -162,7 +162,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/foodieapi/prod/1703366579166-2023-12-23T21:22:59.166Z/foodieapi.zip"
+          "S3Key": "serverless/foodieapi/prod/1703396048787-2023-12-24T05:34:08.787Z/main.zip"
         },
         "Handler": "dist/serverless.handler",
         "Runtime": "nodejs14.x",
@@ -194,14 +194,14 @@
         "MainLogGroup"
       ]
     },
-    "MainLambdaVersionqkNylg33oLCRt2KaBv7aHK2YMOldA3Kvsg2PPRzUnLc": {
+    "MainLambdaVersionkuauqHlvIYKTRhBsiR0Btm6OR7fnqV5hc6SsE8evo": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "MainLambdaFunction"
         },
-        "CodeSha256": "eBdxnM20YJWTfDTqBPprqkklNlpiBdluSYIKlDVfnNs="
+        "CodeSha256": "zi5zQxCIEDixpBjdPVD3hFMas+L9rsRfcRRoKTKRQt4="
       }
     },
     "ApiGatewayRestApi": {
@@ -326,7 +326,7 @@
         "MainLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1703366562720": {
+    "ApiGatewayDeployment1703396038669": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -389,7 +389,7 @@
     "MainLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "MainLambdaVersionqkNylg33oLCRt2KaBv7aHK2YMOldA3Kvsg2PPRzUnLc"
+        "Ref": "MainLambdaVersionkuauqHlvIYKTRhBsiR0Btm6OR7fnqV5hc6SsE8evo"
       },
       "Export": {
         "Name": "sls-foodieapi-prod-MainLambdaFunctionQualifiedArn"

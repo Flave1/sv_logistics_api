@@ -1,9 +1,10 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ValidationError } from 'class-validator';
 
 @Catch(HttpException)
 export class ValidationExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(ValidationExceptionFilter.name) 
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -12,9 +13,9 @@ export class ValidationExceptionFilter implements ExceptionFilter {
       ? exception.getStatus()
       : HttpStatus.INTERNAL_SERVER_ERROR;
 
-
     if (status === HttpStatus.BAD_REQUEST) {
-        
+      this.logger.error(`${status} on ${request.url}  authorization=${request.headers.authorization}`)
+      this.logger.error(request)
       const errors = this.flattenValidationErrors(exception);
       response.status(status).json({
         statusCode: status,
@@ -24,8 +25,7 @@ export class ValidationExceptionFilter implements ExceptionFilter {
         path: request.url,
       });
     } else {
-
-      console.log('exception on any', exception);
+      this.logger.error(`${status} on ${request.url}  authorization=${request.headers.authorization}`)
       response.status(status).json({
         statusCode: status,
         message: exception.message,
