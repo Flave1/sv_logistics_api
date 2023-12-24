@@ -1,6 +1,6 @@
 # compiled output
-/src/uploads/menu
-/src/uploads/menu-category
+# /src/uploads/menu
+# /src/uploads/menu-category
 
 /dist
 /node_modules
