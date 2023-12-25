@@ -65,7 +65,7 @@ let GatewayService = GatewayService_1 = class GatewayService {
     }
     async emitToRoom(room, message = "") {
         const resp = { message };
-        this.server.to(room).emit('emitted', resp);
+        this.server.to(room).emit(room, resp);
     }
 };
 exports.GatewayService = GatewayService;

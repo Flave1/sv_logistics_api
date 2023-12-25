@@ -81,6 +81,6 @@ export class GatewayService implements OnModuleInit, OnGatewayDisconnect, OnGate
 
   async emitToRoom(room: string, message: string = "") {
     const resp: SocketResponse = { message }    
-    this.server.to(room).emit('emitted', resp)
+    this.server.to(room).emit(room, resp)
   }
 }
