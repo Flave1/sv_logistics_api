@@ -7,6 +7,7 @@ var CommonEvents;
     CommonEvents["gateway_health"] = "gateway_health";
     CommonEvents["get_connected_clients"] = "get_connected_clients";
     CommonEvents["join_room"] = "join_room";
+    CommonEvents["leave_room"] = "leave_room";
 })(CommonEvents || (exports.CommonEvents = CommonEvents = {}));
 var UserManagementEvents;
 (function (UserManagementEvents) {

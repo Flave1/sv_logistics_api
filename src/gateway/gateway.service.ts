@@ -60,14 +60,27 @@ export class GatewayService implements OnModuleInit, OnGatewayDisconnect, OnGate
   }
   @SubscribeMessage(CommonEvents.join_room)
   async JoinRoom(@ValidateGatewayUser() token: string, @MessageBody() body: any) {
-    const roomName = JSON.parse(body).roomName;
+    const roomName = body.roomName;  
     await this.connectedClients.socketsJoin(roomName)
-    const personsInRoom = this.connectedClients.adapter.rooms?.get(roomName)?.size;
-    this.connectedClients.to(roomName).emit(CommonEvents.join_room, { message: `A new user has joined ${roomName} total ${personsInRoom}` });
+    // const personsInRoom = this.connectedClients.adapter.rooms?.get(roomName)?.size;
+    this.connectedClients.to(roomName).emit(roomName, { message: `A client has joined ${roomName}` });
   }
 
-  async emitToClient(event: string, message: string = "emitted to client app") {
+  @SubscribeMessage(CommonEvents.leave_room)
+  async LeaveRoom(@ValidateGatewayUser() token: string, @MessageBody() body: any) {
+    const roomName = body.roomName;  
+    await this.connectedClients.socketsLeave(roomName)
+    // const personsInRoom = this.connectedClients.adapter.rooms?.get(roomName)?.size;
+    this.connectedClients.to(roomName).emit(roomName, { message: `A client has left ${roomName}` });
+  }
+
+  async emitToClient(event: string, message: string = "") {
     const resp: SocketResponse = { message }    
     this.server.emit(event, resp)
+  }
+
+  async emitToRoom(room: string, message: string = "") {
+    const resp: SocketResponse = { message }    
+    this.server.to(room).emit(room, resp)
   }
 }
