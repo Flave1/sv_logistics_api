@@ -219,6 +219,10 @@ export class MenuService {
         }
       ]
     }));
+    for (let i = 0; i < menus.length; i++) {
+      const base64Image = await this.ConvertToBase64String(menus[i].image)
+      menus[i].image = base64Image
+    }
     return new APIResponse(Status.Success, StatusMessage.GetSuccess, menus);
   }
 
