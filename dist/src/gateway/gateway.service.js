@@ -50,11 +50,14 @@ let GatewayService = GatewayService_1 = class GatewayService {
         });
     }
     async JoinRoom(token, body) {
-        var _a, _b;
-        const roomName = JSON.parse(body).roomName;
+        const roomName = body.roomName;
         await this.connectedClients.socketsJoin(roomName);
-        const personsInRoom = (_b = (_a = this.connectedClients.adapter.rooms) === null || _a === void 0 ? void 0 : _a.get(roomName)) === null || _b === void 0 ? void 0 : _b.size;
-        this.connectedClients.to(roomName).emit(dto_1.CommonEvents.join_room, { message: `A new user has joined ${roomName} total ${personsInRoom}` });
+        this.connectedClients.to(roomName).emit(roomName, { message: `A client has joined ${roomName}` });
+    }
+    async LeaveRoom(token, body) {
+        const roomName = body.roomName;
+        await this.connectedClients.socketsLeave(roomName);
+        this.connectedClients.to(roomName).emit(roomName, { message: `A client has left ${roomName}` });
     }
     async emitToClient(event, message = "emitted to client app") {
         const resp = { message };
@@ -82,6 +85,14 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], GatewayService.prototype, "JoinRoom", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)(dto_1.CommonEvents.leave_room),
+    __param(0, (0, decorator_1.ValidateGatewayUser)()),
+    __param(1, (0, websockets_1.MessageBody)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], GatewayService.prototype, "LeaveRoom", null);
 exports.GatewayService = GatewayService = GatewayService_1 = __decorate([
     (0, websockets_1.WebSocketGateway)({
         cors: {
