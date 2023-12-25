@@ -13,4 +13,5 @@ export declare class GatewayService implements OnModuleInit, OnGatewayDisconnect
     JoinRoom(token: string, body: any): Promise<void>;
     LeaveRoom(token: string, body: any): Promise<void>;
     emitToClient(event: string, message?: string): Promise<void>;
+    emitToRoom(room: string, message?: string): Promise<void>;
 }

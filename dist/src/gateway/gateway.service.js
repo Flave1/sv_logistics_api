@@ -59,9 +59,13 @@ let GatewayService = GatewayService_1 = class GatewayService {
         await this.connectedClients.socketsLeave(roomName);
         this.connectedClients.to(roomName).emit(roomName, { message: `A client has left ${roomName}` });
     }
-    async emitToClient(event, message = "emitted to client app") {
+    async emitToClient(event, message = "") {
         const resp = { message };
         this.server.emit(event, resp);
+    }
+    async emitToRoom(room, message = "") {
+        const resp = { message };
+        this.server.to(room).emit('emitted', resp);
     }
 };
 exports.GatewayService = GatewayService;

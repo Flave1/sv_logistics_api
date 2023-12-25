@@ -74,8 +74,13 @@ export class GatewayService implements OnModuleInit, OnGatewayDisconnect, OnGate
     this.connectedClients.to(roomName).emit(roomName, { message: `A client has left ${roomName}` });
   }
 
-  async emitToClient(event: string, message: string = "emitted to client app") {
+  async emitToClient(event: string, message: string = "") {
     const resp: SocketResponse = { message }    
     this.server.emit(event, resp)
+  }
+
+  async emitToRoom(room: string, message: string = "") {
+    const resp: SocketResponse = { message }    
+    this.server.to(room).emit('emitted', resp)
   }
 }
