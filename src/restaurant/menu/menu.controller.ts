@@ -1,4 +1,4 @@
-import { Body, Controller, ForbiddenException, Get, HttpCode, HttpStatus, Param, Post, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, ForbiddenException, Get, HttpCode, HttpStatus, Param, Post, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { MenuService } from "./menu.service";
 import { ApiBearerAuth, ApiConsumes, ApiCreatedResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { JwtGuard } from "src/auth/guard";
@@ -13,6 +13,7 @@ import { UpdateMenuCategoryDto } from "./dto/update.menu-category.dto";
 import { CreateMenuDto } from "./dto/create.menu.dto";
 import { UpdateMenuDto } from "./dto/update.menu.dto";
 import { Request } from "express";
+import { getBaseUrl } from "src/utils";
 
 
 const menuCategoryDestination: string = './src/uploads/menu-category'
@@ -46,8 +47,17 @@ export class MenuController {
     }
 
     @Get('restaurant-categories')
-    getRestaurantCategories(@GetUser('restaurantId') restaurantId: string) {
-        return this.menuService.getRestaurantMenuCategories(restaurantId);
+    async getRestaurantCategories(@GetUser('restaurantId') restaurantId: string, @Req() req: Request) {
+        const response = await this.menuService.getRestaurantMenuCategories(restaurantId);
+        for (let i = 0; i < response.length; i++) {
+            try {
+                response[i].image = getBaseUrl(req) + '/' + response[i].image;
+            } catch (error) {
+                response[i].image = ''
+            }
+
+        }
+        return response;
     }
 
     @Get('restaurant-category/:id')
@@ -97,8 +107,12 @@ export class MenuController {
     }
 
     @Get('restaurant-menu')
-    getAllMenu(@GetUser('restaurantId') restaurantId: string) {
-        return this.menuService.getRestaurantMenu(restaurantId);
+    async getAllMenu(@GetUser('restaurantId') restaurantId: string, @Req() req: Request) {
+        const response = await this.menuService.getRestaurantMenu(restaurantId);
+        for (let i = 0; i < response.length; i++) {
+            response[i].image = getBaseUrl(req) + '/' + response[i].image
+        }
+        return response;
     }
 
     @Get('restaurant-menu/:id')
@@ -107,8 +121,12 @@ export class MenuController {
     }
 
     @Get('restaurant-menu/category/:categoryId')
-    getMenuByCategoryId(@GetUser('restaurantId') restaurantId: string, @Param('categoryId') categoryId: string) {
-        return this.menuService.getRestaurantMenuByCategoryId(restaurantId, categoryId);
+    async getMenuByCategoryId(@GetUser('restaurantId') restaurantId: string, @Param('categoryId') categoryId: string, @Req() req: Request) {
+        const response = await this.menuService.getRestaurantMenuByCategoryId(restaurantId, categoryId);
+        for (let i = 0; i < response.length; i++) {
+            response[i].image = getBaseUrl(req) + '/' + response[i].image
+        }
+        return response;
     }
 
     @Post('delete-menu')

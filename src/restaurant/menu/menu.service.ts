@@ -9,11 +9,9 @@ import { StatusMessage } from "../enums/status-message.enum";
 import { UpdateMenuCategoryDto } from "./dto/update.menu-category.dto";
 import { CreateMenuDto } from "./dto/create.menu.dto";
 import { UpdateMenuDto } from "./dto/update.menu.dto";
-import * as fs from 'fs';
 
-import * as base64js from 'base64-js';
 import { MenuManagementEvents } from "src/gateway/dto";
-import { deleteFile, fileExist } from "src/utils";
+import { deleteFile, fileExist, getRootDirectory } from "src/utils";
 
 
 @Injectable()
@@ -30,11 +28,9 @@ export class MenuService {
         }
       },
     });
-
     if (category) {
       throw new BadRequestException(StatusMessage.Exist);
     }
-
     //Add new category
     const status = dto.status.toString().toLowerCase() == 'true' ? true : false;
     const menuCategory = await this.prisma.menuCategory.create({
@@ -63,16 +59,7 @@ export class MenuService {
         }
       ]
     }));
-    for (let i = 0; i < categories.length; i++) {
-      try {
-        const base64Image = await this.ConvertToBase64String(categories[i].image)
-        categories[i].image = base64Image
-      } catch (error) {
-        categories[i].image = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Good_Food_Display_-_NCI_Visuals_Online.jpg/1280px-Good_Food_Display_-_NCI_Visuals_Online.jpg'
-      }
-
-    }
-    return new APIResponse(Status.Success, StatusMessage.GetSuccess, categories);
+    return categories;
   }
 
   async getRestaurantMenuCategoryById(restaurantId: string, categoryId: string) {
@@ -135,7 +122,7 @@ export class MenuService {
       throw new BadRequestException(StatusMessage.Exist)
     }
 
-    if (await fileExist(category.image)) {
+    if (file && await fileExist(category.image)) {
       await deleteFile(category.image)
     }
 
@@ -148,7 +135,7 @@ export class MenuService {
       data: {
         name: dto.name,
         description: dto.description,
-        image: file.path,
+        image: file ? file.path : category.image,
         restaurantId: parseInt(restaurantId),
         deleted: false,
         status
@@ -205,7 +192,7 @@ export class MenuService {
   }
 
   async getRestaurantMenu(restaurantId: string) {
-    const menus = (await this.prisma.menu.findMany({
+    const restaurant_menu = (await this.prisma.menu.findMany({
       where: {
         restaurantId: parseInt(restaurantId),
         deleted: false
@@ -219,11 +206,7 @@ export class MenuService {
         }
       ]
     }));
-    for (let i = 0; i < menus.length; i++) {
-      const base64Image = await this.ConvertToBase64String(menus[i].image)
-      menus[i].image = base64Image
-    }
-    return new APIResponse(Status.Success, StatusMessage.GetSuccess, menus);
+    return restaurant_menu;
   }
 
   async getRestaurantMenuById(restaurantId: string, menuId: string) {
@@ -242,8 +225,7 @@ export class MenuService {
         return new APIResponse(Status.OtherErrors, StatusMessage.NoRecord, null);
       }
 
-      const base64Image = await this.ConvertToBase64String(menu.image)
-      menu.image = base64Image
+      menu.image = getRootDirectory() + '/' + menu.image
 
       return new APIResponse(Status.Success, StatusMessage.GetSuccess, menu);
     } catch (error) {
@@ -263,12 +245,7 @@ export class MenuService {
           menuCategory: true,
         }
       });
-      for (let i = 0; i < menuList.length; i++) {
-        const base64Image = await this.ConvertToBase64String(menuList[i].image)
-        menuList[i].image = base64Image
-      }
-
-      return new APIResponse(Status.Success, StatusMessage.GetSuccess, menuList);
+      return  menuList;
     } catch (error) {
       throw error
     }
@@ -340,12 +317,12 @@ export class MenuService {
     }
   }
 
-  async ConvertToBase64String(path: string): Promise<string> {
+  // async ConvertToBase64String(path: string): Promise<string> {
 
-    const fileData = fs.readFileSync(path);
-    const base64String = base64js.fromByteArray(new Uint8Array(fileData));
+  //   const fileData = fs.readFileSync(path);
+  //   const base64String = base64js.fromByteArray(new Uint8Array(fileData));
 
-    return base64String;
-  }
+  //   return base64String;
+  // }
 
 }
