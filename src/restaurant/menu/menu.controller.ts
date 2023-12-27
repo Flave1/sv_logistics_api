@@ -61,8 +61,14 @@ export class MenuController {
     }
 
     @Get('restaurant-category/:id')
-    getCategoryById(@GetUser('restaurantId') restaurantId: string, @Param('id') id: string) {
-        return this.menuService.getRestaurantMenuCategoryById(restaurantId, id);
+    async getCategoryById(@GetUser('restaurantId') restaurantId: string, @Param('id') id: string, @Req() req: Request) {
+        const response = await this.menuService.getRestaurantMenuCategoryById(restaurantId, id);
+        try {
+            response.image   = getBaseUrl(req) + '/' + response.image;
+        } catch (error) {
+            response.image = ''
+        }
+        return response;
     }
 
     @Post('delete-category')
@@ -116,8 +122,14 @@ export class MenuController {
     }
 
     @Get('restaurant-menu/:id')
-    getMenuById(@GetUser('restaurantId') restaurantId: string, @Param('id') id: string) {
-        return this.menuService.getRestaurantMenuById(restaurantId, id);
+    async getMenuById(@GetUser('restaurantId') restaurantId: string, @Param('id') id: string, @Req() req: Request) {
+        const response = await this.menuService.getRestaurantMenuById(restaurantId, id);
+        try {
+            response.image   = getBaseUrl(req) + '/' + response.image;
+        } catch (error) {
+            response.image = ''
+        }
+        return response;
     }
 
     @Get('restaurant-menu/category/:categoryId')
