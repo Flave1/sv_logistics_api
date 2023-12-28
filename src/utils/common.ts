@@ -1,9 +1,14 @@
 import * as fs from 'fs';
+import { Request } from 'express';
 export const filterTolower = (text: string): string => text.toLowerCase().replace(/\s/g, '');
 
 export const getRootDirectory = (): string => {
     const rootDirectory = process.cwd();
     return rootDirectory;
+}
+
+export const getBaseUrl = (request: Request) => {
+    return `${request.protocol}://${request.get('host')}`;
 }
 
 export const fileExist = async (filePath: string = "nofile.png") => {
