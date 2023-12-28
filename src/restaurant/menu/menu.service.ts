@@ -12,6 +12,7 @@ import { UpdateMenuDto } from "./dto/update.menu.dto";
 
 import { MenuManagementEvents } from "src/gateway/dto";
 import { deleteFile, fileExist, getRootDirectory } from "src/utils";
+import { response } from "express";
 
 
 @Injectable()
@@ -72,9 +73,9 @@ export class MenuService {
         }
       });
       if (!category) {
-        return new APIResponse(Status.OtherErrors, StatusMessage.NoRecord, null);
+        throw new NotFoundException(StatusMessage.NoRecord);
       }
-      return new APIResponse(Status.Success, StatusMessage.GetSuccess, category);
+      return category;
     } catch (error) {
       throw error
     }
@@ -222,12 +223,10 @@ export class MenuService {
         }
       });
       if (!menu) {
-        return new APIResponse(Status.OtherErrors, StatusMessage.NoRecord, null);
+        throw new NotFoundException(StatusMessage.NoRecord);
       }
 
-      menu.image = getRootDirectory() + '/' + menu.image
-
-      return new APIResponse(Status.Success, StatusMessage.GetSuccess, menu);
+      return menu;
     } catch (error) {
       throw error
     }
@@ -261,14 +260,14 @@ export class MenuService {
       }
     });
     if (!menu) {
-      return new APIResponse(Status.OtherErrors, StatusMessage.NoRecord, null);
+      throw new NotFoundException(StatusMessage.NoRecord);
     }
 
     if (menu.name.toLowerCase() == dto.name.toLowerCase()) {
-      return new APIResponse(Status.OtherErrors, StatusMessage.Exist, null);
+      throw new BadRequestException(StatusMessage.Exist)
     }
 
-    if (await fileExist(menu.image)) {
+    if (file && await fileExist(menu.image)) {
       await deleteFile(menu.image)
     }
 
@@ -294,7 +293,7 @@ export class MenuService {
       },
     });
 
-    this.socket.emitToClient(MenuManagementEvents.get_restaurant_menu_categories_event)
+    this.socket.emitToClient(MenuManagementEvents.get_restaurant_menu_event)
     return new APIResponse(Status.Success, StatusMessage.Updated, null);
   }
 
@@ -311,6 +310,7 @@ export class MenuService {
           deleted: true
         },
       });
+      this.socket.emitToClient(MenuManagementEvents.get_restaurant_menu_event)
       return new APIResponse(Status.Success, StatusMessage.Deleted, null);
     } catch (error) {
       throw error;
