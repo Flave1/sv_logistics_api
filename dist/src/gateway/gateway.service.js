@@ -100,7 +100,7 @@ __decorate([
 exports.GatewayService = GatewayService = GatewayService_1 = __decorate([
     (0, websockets_1.WebSocketGateway)({
         cors: {
-            origin: [`http://localhost:3000`]
+            origin: '*'
         },
     })
 ], GatewayService);
