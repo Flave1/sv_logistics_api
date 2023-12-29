@@ -18,6 +18,7 @@ model Restaurant {
   address              String?
   openingTime          String?
   closingTime          String?
+  hasFreeDelivery      Boolean?
   freeDeliveryAmount   Decimal?
   availabilitySchedule AvailabilitySchedule[]
   menu                 Menu[]
