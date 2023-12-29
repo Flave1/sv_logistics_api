@@ -51,7 +51,7 @@ model User {
   status               Boolean?
   courierType          CourierType @relation(fields: [courierTypeId], references: [id])
   restaurant           Restaurant  @relation(fields: [restaurantId], references: [id])
-  UserType             UserType    @relation(fields: [userTypeId], references: [id])
+  userType             UserType    @relation(fields: [userTypeId], references: [id])
 
   @@map("users")
 }
