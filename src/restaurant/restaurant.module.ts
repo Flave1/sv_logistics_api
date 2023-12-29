@@ -8,6 +8,7 @@ import { RedisRepository } from 'src/redis/redis.repository';
 import { GatewayService } from 'src/gateway/gateway.service';
 import { GatewayModule } from 'src/gateway/gateway.module';
 import { MenuService } from './menu/menu.service';
+import { CustomerModule } from './customer/customer.module';
 @Module({
   providers: [
     RestaurantService, 
@@ -20,7 +21,8 @@ import { MenuService } from './menu/menu.service';
     MulterModule.register({ dest: '../uploads/menu-category' }),
     MulterModule.register({ dest: '../uploads/menu-subcategory' }),
     MulterModule.register({ dest: '../uploads/menu' }),
-    MenuModule
+    MenuModule,
+    CustomerModule
   ],
   controllers: [RestaurantController],
 })

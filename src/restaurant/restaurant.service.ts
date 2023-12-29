@@ -42,7 +42,14 @@ export class RestaurantService {
         const restaurant =
             await this.prisma.restaurant.create({
                 data: {
-                    name: dto.name
+                    name: dto.name,
+                    phoneNumber: dto.phoneNumber,
+                    address: dto.address,
+                    openingTime: dto.openingTime,
+                    closingTime: dto.closingTime,
+                    hasFreeDelivery: dto.hasFreeDelivery,
+                    freeDeliveryAmount: dto.freeDeliveryAmount,
+                    status: dto.status
                 },
             });
         // await this.redis.updateList(cached_restaurants, restaurant);

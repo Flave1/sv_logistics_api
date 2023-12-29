@@ -11,11 +11,49 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateRestaurantDto = void 0;
 const class_validator_1 = require("class-validator");
+const swagger_1 = require("@nestjs/swagger");
 class CreateRestaurantDto {
 }
 exports.CreateRestaurantDto = CreateRestaurantDto;
 __decorate([
+    (0, swagger_1.ApiProperty)({}),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateRestaurantDto.prototype, "name", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({}),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateRestaurantDto.prototype, "phoneNumber", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({}),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateRestaurantDto.prototype, "address", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({}),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateRestaurantDto.prototype, "openingTime", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({}),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateRestaurantDto.prototype, "closingTime", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({}),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", Boolean)
+], CreateRestaurantDto.prototype, "hasFreeDelivery", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({}),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateRestaurantDto.prototype, "freeDeliveryAmount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({}),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", Boolean)
+], CreateRestaurantDto.prototype, "status", void 0);
 //# sourceMappingURL=create-restuarant.dto.js.map
