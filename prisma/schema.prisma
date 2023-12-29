@@ -142,8 +142,10 @@ model MenuOrder{
   restaurantId Int
   menuId      Int
   quantity Int
-  orderDate    DateTime   @default(now())
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
   status Int
+  deleted Boolean
 
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   menu   Menu @relation(fields: [menuId], references: [id], onDelete: NoAction, onUpdate: NoAction)
