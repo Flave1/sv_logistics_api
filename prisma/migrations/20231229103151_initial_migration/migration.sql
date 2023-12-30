@@ -10,6 +10,12 @@ CREATE TABLE [dbo].[restaurant] (
     [name] NVARCHAR(1000),
     [deleted] BIT,
     [status] BIT,
+    [phoneNumber] NVARCHAR(1000),
+    [address] NVARCHAR(1000),
+    [openingTime] NVARCHAR(1000),
+    [closingTime] NVARCHAR(1000),
+    [hasFreeDelivery] BIT,
+    [freeDeliveryAmount] DECIMAL(32,16),
     CONSTRAINT [restaurant_pkey] PRIMARY KEY CLUSTERED ([id])
 );
 
@@ -108,6 +114,20 @@ CREATE TABLE [dbo].[availabilitySchedule] (
     CONSTRAINT [availabilitySchedule_pkey] PRIMARY KEY CLUSTERED ([id])
 );
 
+-- CreateTable
+CREATE TABLE [dbo].[menuOrders] (
+    [id] INT NOT NULL IDENTITY(1,1),
+    [customerId] INT NOT NULL,
+    [restaurantId] INT NOT NULL,
+    [menuId] INT NOT NULL,
+    [quantity] INT NOT NULL,
+    [createdAt] DATETIME2 NOT NULL CONSTRAINT [menuOrders_createdAt_df] DEFAULT CURRENT_TIMESTAMP,
+    [updatedAt] DATETIME2 NOT NULL,
+    [status] INT NOT NULL,
+    [deleted] BIT NOT NULL,
+    CONSTRAINT [menuOrders_pkey] PRIMARY KEY CLUSTERED ([id])
+);
+
 -- AddForeignKey
 ALTER TABLE [dbo].[users] ADD CONSTRAINT [users_courierTypeId_fkey] FOREIGN KEY ([courierTypeId]) REFERENCES [dbo].[courierType]([id]) ON DELETE NO ACTION ON UPDATE CASCADE;
 
@@ -131,6 +151,12 @@ ALTER TABLE [dbo].[availabilitySchedule] ADD CONSTRAINT [availabilitySchedule_me
 
 -- AddForeignKey
 ALTER TABLE [dbo].[availabilitySchedule] ADD CONSTRAINT [availabilitySchedule_restaurantId_fkey] FOREIGN KEY ([restaurantId]) REFERENCES [dbo].[restaurant]([id]) ON DELETE CASCADE ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE [dbo].[menuOrders] ADD CONSTRAINT [menuOrders_restaurantId_fkey] FOREIGN KEY ([restaurantId]) REFERENCES [dbo].[restaurant]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE [dbo].[menuOrders] ADD CONSTRAINT [menuOrders_menuId_fkey] FOREIGN KEY ([menuId]) REFERENCES [dbo].[menu]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 COMMIT TRAN;
 
