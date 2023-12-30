@@ -10,6 +10,12 @@ export declare class RestaurantController {
         name: string;
         deleted: boolean;
         status: boolean;
+        phoneNumber: string;
+        address: string;
+        openingTime: string;
+        closingTime: string;
+        hasFreeDelivery: boolean;
+        freeDeliveryAmount: import("@prisma/client/runtime/library").Decimal;
     }[]>;
     getRestaurantById(restaurantId: number): import(".prisma/client").Prisma.Prisma__RestaurantClient<{
         id: number;
@@ -18,6 +24,12 @@ export declare class RestaurantController {
         name: string;
         deleted: boolean;
         status: boolean;
+        phoneNumber: string;
+        address: string;
+        openingTime: string;
+        closingTime: string;
+        hasFreeDelivery: boolean;
+        freeDeliveryAmount: import("@prisma/client/runtime/library").Decimal;
     }, null, import("@prisma/client/runtime/library").DefaultArgs>;
     createRestaurant(dto: CreateRestaurantDto): Promise<{
         id: number;
@@ -26,6 +38,12 @@ export declare class RestaurantController {
         name: string;
         deleted: boolean;
         status: boolean;
+        phoneNumber: string;
+        address: string;
+        openingTime: string;
+        closingTime: string;
+        hasFreeDelivery: boolean;
+        freeDeliveryAmount: import("@prisma/client/runtime/library").Decimal;
     }>;
     editRestaurantById(restaurantId: number, dto: EditRestaurantDto): Promise<{
         id: number;
@@ -34,6 +52,12 @@ export declare class RestaurantController {
         name: string;
         deleted: boolean;
         status: boolean;
+        phoneNumber: string;
+        address: string;
+        openingTime: string;
+        closingTime: string;
+        hasFreeDelivery: boolean;
+        freeDeliveryAmount: import("@prisma/client/runtime/library").Decimal;
     }>;
     deleteRestaurantById(restaurantId: number): Promise<void>;
 }
