@@ -10,6 +10,9 @@ export declare class RestaurantService {
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        description: string;
+        email: string;
+        image: string;
         deleted: boolean;
         status: boolean;
         phoneNumber: string;
@@ -24,6 +27,9 @@ export declare class RestaurantService {
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        description: string;
+        email: string;
+        image: string;
         deleted: boolean;
         status: boolean;
         phoneNumber: string;
@@ -38,6 +44,9 @@ export declare class RestaurantService {
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        description: string;
+        email: string;
+        image: string;
         deleted: boolean;
         status: boolean;
         phoneNumber: string;
@@ -52,6 +61,9 @@ export declare class RestaurantService {
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        description: string;
+        email: string;
+        image: string;
         deleted: boolean;
         status: boolean;
         phoneNumber: string;
