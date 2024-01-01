@@ -12,6 +12,9 @@ model Restaurant {
   createdAt            DateTime               @default(now())
   updatedAt            DateTime               @updatedAt
   name                 String?
+  description          String?
+  email                String?
+  image                String?
   deleted              Boolean?
   status               Boolean?
   phoneNumber          String?

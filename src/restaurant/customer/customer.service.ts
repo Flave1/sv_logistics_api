@@ -37,6 +37,11 @@ export class CustomerService {
         restaurantId: parseInt(restaurantId),
         deleted: false
       },
+      select: {
+        id: true,
+        name: true,
+        restaurantId: true,
+      },
       orderBy: [
         {
           createdAt: 'desc',
@@ -106,7 +111,8 @@ async getRestaurantMenu(restaurantId: string) {
                 createdAt: 'desc'
             }
           },
-        }
+        },
+        take: 20
       });
 
     const orderedMenus = menus.sort((menuA, menuB) => {
@@ -115,7 +121,11 @@ async getRestaurantMenu(restaurantId: string) {
     return sumB - sumA;
     });
     
-      return orderedMenus;
+    const mostOrderedMenu = orderedMenus.map((menu) => ({
+      ...menu,
+      MenuOrders: undefined
+    }))
+    return mostOrderedMenu;
 }
 
 async getPopularMenu() {
@@ -138,7 +148,8 @@ async getPopularMenu() {
             take: 1
           },
           restaurant: true
-        }
+        },
+        take: 20
       });
 
     const orderedMenus = menus.sort((menuA, menuB) => {
@@ -147,7 +158,10 @@ async getPopularMenu() {
     return sumB - sumA;
     });
     
-    const mostOrderedMenu = orderedMenus
+    const mostOrderedMenu = orderedMenus.map((menu) => ({
+      ...menu,
+      MenuOrders: undefined
+    }))
     return mostOrderedMenu;
 }
 

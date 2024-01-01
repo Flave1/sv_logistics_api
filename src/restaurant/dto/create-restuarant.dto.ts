@@ -1,4 +1,5 @@
 import {
+  IsEmail,
     IsNotEmpty,
     IsOptional,
     IsString,
@@ -9,6 +10,14 @@ import {
     @ApiProperty({})
     @IsString()
     name: string;
+
+    @ApiProperty({})
+    @IsString()
+    description: string;
+
+    @ApiProperty({})
+    @IsEmail()
+    email: string;
 
     @ApiProperty({})
     @IsString()
@@ -38,4 +47,7 @@ import {
     @IsOptional()
     @IsString()
     status: boolean;
+
+    @ApiProperty({ type: 'string', format: 'binary' })
+    file: any;
   }

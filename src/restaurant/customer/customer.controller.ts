@@ -25,13 +25,6 @@ export class CustomerController {
   @Get('restaurant-categories/:restaurantId')
   async getRestaurantCategories(@Param('restaurantId') restaurantId: string, @Req() req: Request) {
     const response = await this.customerService.getRestaurantMenuCategories(restaurantId);
-    for (let i = 0; i < response.length; i++) {
-      try {
-        response[i].image = getBaseUrl(req) + '/' + response[i].image;
-      } catch (error) {
-        response[i].image = '';
-      }
-    }
     return response;
   }
 
@@ -45,13 +38,20 @@ export class CustomerController {
   }
 
   @Get('restaurant/:id')
-    getRestaurantById(@Param('id') restaurantId: string) {
-        return this.customerService.getRestaurantById(restaurantId);
+    async getRestaurantById(@Param('id') restaurantId: string, @Req() req: Request) {
+        const response = await this.customerService.getRestaurantById(restaurantId);
+        response.image = getBaseUrl(req) + '/' + response.image
+
+        return response;
     }
 
     @Get('restaurants')
-    getRestaurant() {
-        return this.customerService.getRestaurants();
+    async getRestaurant(@Req() req: Request) {
+        const response = await this.customerService.getRestaurants();
+        for (let i = 0; i < response.length; i++) {
+          response[i].image = getBaseUrl(req) + '/' + response[i].image
+      }
+      return response;
     }
 
 @Get('all-restaurant-menu/:restaurantId')

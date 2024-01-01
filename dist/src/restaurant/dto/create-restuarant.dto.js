@@ -24,6 +24,16 @@ __decorate([
     (0, swagger_1.ApiProperty)({}),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
+], CreateRestaurantDto.prototype, "description", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({}),
+    (0, class_validator_1.IsEmail)(),
+    __metadata("design:type", String)
+], CreateRestaurantDto.prototype, "email", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({}),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
 ], CreateRestaurantDto.prototype, "phoneNumber", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({}),
@@ -56,4 +66,8 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", Boolean)
 ], CreateRestaurantDto.prototype, "status", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: 'string', format: 'binary' }),
+    __metadata("design:type", Object)
+], CreateRestaurantDto.prototype, "file", void 0);
 //# sourceMappingURL=create-restuarant.dto.js.map

@@ -1,3 +1,14 @@
 export declare class EditRestaurantDto {
-    name?: string;
+    id: string;
+    name: string;
+    description: string;
+    email: string;
+    phoneNumber: string;
+    address: string;
+    openingTime: string;
+    closingTime: string;
+    hasFreeDelivery: boolean;
+    freeDeliveryAmount: string;
+    status: boolean;
+    file: any;
 }
