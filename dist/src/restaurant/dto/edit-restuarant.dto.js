@@ -10,13 +10,69 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EditRestaurantDto = void 0;
+const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 class EditRestaurantDto {
 }
 exports.EditRestaurantDto = EditRestaurantDto;
 __decorate([
+    (0, swagger_1.ApiProperty)(),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], EditRestaurantDto.prototype, "id", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({}),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], EditRestaurantDto.prototype, "name", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({}),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], EditRestaurantDto.prototype, "description", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({}),
+    (0, class_validator_1.IsEmail)(),
+    __metadata("design:type", String)
+], EditRestaurantDto.prototype, "email", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({}),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], EditRestaurantDto.prototype, "phoneNumber", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({}),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], EditRestaurantDto.prototype, "address", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({}),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], EditRestaurantDto.prototype, "openingTime", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({}),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], EditRestaurantDto.prototype, "closingTime", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({}),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", Boolean)
+], EditRestaurantDto.prototype, "hasFreeDelivery", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({}),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], EditRestaurantDto.prototype, "freeDeliveryAmount", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({}),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", Boolean)
+], EditRestaurantDto.prototype, "status", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: 'string', format: 'binary' }),
+    __metadata("design:type", Object)
+], EditRestaurantDto.prototype, "file", void 0);
 //# sourceMappingURL=edit-restuarant.dto.js.map

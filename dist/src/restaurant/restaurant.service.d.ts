@@ -1,3 +1,4 @@
+/// <reference types="multer" />
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateRestaurantDto, EditRestaurantDto } from './dto';
 export declare const cached_restaurants = "cached_restaurants";
@@ -9,6 +10,9 @@ export declare class RestaurantService {
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        description: string;
+        email: string;
+        image: string;
         deleted: boolean;
         status: boolean;
         phoneNumber: string;
@@ -23,6 +27,9 @@ export declare class RestaurantService {
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        description: string;
+        email: string;
+        image: string;
         deleted: boolean;
         status: boolean;
         phoneNumber: string;
@@ -32,11 +39,14 @@ export declare class RestaurantService {
         hasFreeDelivery: boolean;
         freeDeliveryAmount: import("@prisma/client/runtime/library").Decimal;
     }[]>;
-    createRestaurant(dto: CreateRestaurantDto): Promise<{
+    createRestaurant(dto: CreateRestaurantDto, file: Express.Multer.File): Promise<{
         id: number;
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        description: string;
+        email: string;
+        image: string;
         deleted: boolean;
         status: boolean;
         phoneNumber: string;
@@ -46,11 +56,14 @@ export declare class RestaurantService {
         hasFreeDelivery: boolean;
         freeDeliveryAmount: import("@prisma/client/runtime/library").Decimal;
     }>;
-    editRestaurantById(restaurantId: number, dto: EditRestaurantDto): Promise<{
+    editRestaurantById(dto: EditRestaurantDto, file: Express.Multer.File): Promise<{
         id: number;
         createdAt: Date;
         updatedAt: Date;
         name: string;
+        description: string;
+        email: string;
+        image: string;
         deleted: boolean;
         status: boolean;
         phoneNumber: string;

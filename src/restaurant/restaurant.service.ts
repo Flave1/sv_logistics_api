@@ -32,7 +32,7 @@ export class RestaurantService {
         //     console.log('gotten from cache');
         //     return cachedData;
         // }
-
+        
         const restaurants = await this.prisma.restaurant.findMany();
         // await this.redis.store<Restaurant[]>({ key: cached_restaurants, data: restaurants });
         // console.log('gotten from db');
@@ -40,6 +40,8 @@ export class RestaurantService {
     }
 
     async createRestaurant(dto: CreateRestaurantDto, file: Express.Multer.File) {
+        const hasFreeDelivery = dto.hasFreeDelivery.toString().toLowerCase() == 'true' ? true : false;
+        const status = dto.status.toString().toLowerCase() == 'true' ? true : false;
         const restaurant =
             await this.prisma.restaurant.create({
                 data: {
@@ -51,9 +53,10 @@ export class RestaurantService {
                     image: file.path,
                     openingTime: dto.openingTime,
                     closingTime: dto.closingTime,
-                    hasFreeDelivery: dto.hasFreeDelivery,
+                    hasFreeDelivery: hasFreeDelivery,
                     freeDeliveryAmount: dto.freeDeliveryAmount,
-                    status: dto.status
+                    status: status,
+                    deleted: false
                 },
             });
         // await this.redis.updateList(cached_restaurants, restaurant);
@@ -82,6 +85,8 @@ export class RestaurantService {
         if (file && await fileExist(restaurant.image)) {
             await deleteFile(restaurant.image)
         }
+        const hasFreeDelivery = dto.hasFreeDelivery.toString().toLowerCase() == 'true' ? true : false;
+        const status = dto.status.toString().toLowerCase() == 'true' ? true : false;
         return this.prisma.restaurant.update({
             where: {
                 id: parseInt(dto.id),
@@ -95,9 +100,9 @@ export class RestaurantService {
                 image: file.path,
                 openingTime: dto.openingTime,
                 closingTime: dto.closingTime,
-                hasFreeDelivery: dto.hasFreeDelivery,
+                hasFreeDelivery: hasFreeDelivery,
                 freeDeliveryAmount: dto.freeDeliveryAmount,
-                status: dto.status
+                status: status
             },
         });
     }

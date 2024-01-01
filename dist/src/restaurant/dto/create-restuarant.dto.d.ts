@@ -1,5 +1,7 @@
 export declare class CreateRestaurantDto {
     name: string;
+    description: string;
+    email: string;
     phoneNumber: string;
     address: string;
     openingTime: string;
@@ -7,4 +9,5 @@ export declare class CreateRestaurantDto {
     hasFreeDelivery: boolean;
     freeDeliveryAmount: string;
     status: boolean;
+    file: any;
 }

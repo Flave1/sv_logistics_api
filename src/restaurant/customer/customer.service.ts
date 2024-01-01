@@ -37,6 +37,11 @@ export class CustomerService {
         restaurantId: parseInt(restaurantId),
         deleted: false
       },
+      select: {
+        id: true,
+        name: true,
+        restaurantId: true,
+      },
       orderBy: [
         {
           createdAt: 'desc',
