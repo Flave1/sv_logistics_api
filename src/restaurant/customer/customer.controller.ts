@@ -66,7 +66,9 @@ async getAllMenu(@Param('restaurantId') restaurantId: string, @Req() req: Reques
 @Get('popular-restaurant-menu')
 async getMenu(@Req() req: Request) {
     const response = await this.customerService.getPopularMenu();
-    response.image = getBaseUrl(req) + '/' + response.image
+    for (let i = 0; i < response.length; i++) {
+      response[i].image = getBaseUrl(req) + '/' + response[i].image
+  }
     return response;
 }
 

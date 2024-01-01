@@ -123,6 +123,7 @@ async getPopularMenu() {
         where: {
           deleted: false,
         },
+        distinct: ['restaurantId'],
         include: {
           MenuOrders: {
             where: {
@@ -133,7 +134,8 @@ async getPopularMenu() {
               },
               orderBy: {
                 createdAt: 'desc'
-            }
+            },
+            take: 1
           },
           restaurant: true
         }
@@ -145,8 +147,8 @@ async getPopularMenu() {
     return sumB - sumA;
     });
     
-    const mostOrderMenu = orderedMenus[0]
-    return mostOrderMenu;
+    const mostOrderedMenu = orderedMenus
+    return mostOrderedMenu;
 }
 
 
