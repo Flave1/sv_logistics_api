@@ -11,7 +11,9 @@ import {
     Post,
     UseGuards,
     UseInterceptors,
+    UploadedFile
 } from '@nestjs/common';
+import { FileInterceptor } from "@nestjs/platform-express/multer";
 
 import { JwtGuard } from '../auth/guard';
 import { RestaurantService } from './restaurant.service';
@@ -20,8 +22,14 @@ import {
     EditRestaurantDto,
 } from './dto';
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger';
+import { diskStorage } from "multer";
+import { v4 as uuidv4 } from 'uuid';
+import * as path from 'path';
 
+const restaurantDestination: string = './src/uploads/restaurant'
+let basePath: string = '';
+@ApiBearerAuth()
 @UseGuards(JwtGuard)
 @ApiTags('Restaurant')
 @Controller('restaurant')
@@ -42,14 +50,37 @@ export class RestaurantController {
         return this.restaurantService.getRestaurantById(restaurantId);
     }
 
-    @Post()
-    createRestaurant(@Body() dto: CreateRestaurantDto) {
-        return this.restaurantService.createRestaurant(dto);
+    @UseInterceptors(FileInterceptor('file', {
+        storage: diskStorage({
+            destination: restaurantDestination,
+            filename: (req, file, cb) => {
+                const filename: string = uuidv4();
+                const extension: string = path.parse(file.originalname).ext;
+                cb(null, `${filename}${extension}`)
+            }
+        })
+    }))
+    @ApiConsumes('multipart/form-data')
+    @Post('create')
+    createRestaurant(@UploadedFile() file, @Body() dto: CreateRestaurantDto) {
+        return this.restaurantService.createRestaurant(dto, file);
     }
 
-    @Patch(':id')
+    @UseInterceptors(FileInterceptor('file', {
+        storage: diskStorage({
+            destination: restaurantDestination,
+            filename: (req, file, cb) => {
+                const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
+                const extension: string = path.parse(file.originalname).ext;
+
+                cb(null, `${filename}${extension}`)
+            }
+        })
+    }))
+    @ApiConsumes('multipart/form-data')
+    @Post('update')
     editRestaurantById(
-        @Param('id', ParseIntPipe) restaurantId: number,
+        @UploadedFile() file, 
         @Body() dto: EditRestaurantDto,
     ) {
         return this.restaurantService.editRestaurantById(restaurantId, dto);

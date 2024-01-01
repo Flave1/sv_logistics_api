@@ -9,6 +9,7 @@ import {
 } from './dto';
 import { RedisRepository } from 'src/redis/redis.repository';
 import { Restaurant } from '@prisma/client';
+import { deleteFile, fileExist } from "src/utils";
 
 export const cached_restaurants = 'cached_restaurants';
 @Injectable()
@@ -38,13 +39,16 @@ export class RestaurantService {
         return restaurants;
     }
 
-    async createRestaurant(dto: CreateRestaurantDto) {
+    async createRestaurant(dto: CreateRestaurantDto, file: Express.Multer.File) {
         const restaurant =
             await this.prisma.restaurant.create({
                 data: {
                     name: dto.name,
                     phoneNumber: dto.phoneNumber,
                     address: dto.address,
+                    description: dto.description,
+                    email: dto.email,
+                    image: file.path,
                     openingTime: dto.openingTime,
                     closingTime: dto.closingTime,
                     hasFreeDelivery: dto.hasFreeDelivery,
@@ -60,25 +64,40 @@ export class RestaurantService {
 
 
     async editRestaurantById(
-        restaurantId: number,
         dto: EditRestaurantDto,
+        file: Express.Multer.File
     ) {
         const restaurant =
             await this.prisma.restaurant.findUnique({
                 where: {
-                    id: restaurantId,
+                    id: parseInt(dto.id),
+                    deleted: false
                 },
             });
 
-        if (!restaurant || restaurant.id !== restaurantId)
+        if (!restaurant)
             throw new NotFoundException('Item not found');
 
+
+        if (file && await fileExist(restaurant.image)) {
+            await deleteFile(restaurant.image)
+        }
         return this.prisma.restaurant.update({
             where: {
-                id: restaurantId,
+                id: parseInt(dto.id),
             },
             data: {
-                ...dto,
+                name: dto.name,
+                phoneNumber: dto.phoneNumber,
+                address: dto.address,
+                description: dto.description,
+                email: dto.email,
+                image: file.path,
+                openingTime: dto.openingTime,
+                closingTime: dto.closingTime,
+                hasFreeDelivery: dto.hasFreeDelivery,
+                freeDeliveryAmount: dto.freeDeliveryAmount,
+                status: dto.status
             },
         });
     }
