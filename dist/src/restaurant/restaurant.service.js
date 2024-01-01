@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RestaurantService = exports.cached_restaurants = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
+const utils_1 = require("../utils");
 exports.cached_restaurants = 'cached_restaurants';
 let RestaurantService = class RestaurantService {
     constructor(prisma) {
@@ -28,35 +29,57 @@ let RestaurantService = class RestaurantService {
         const restaurants = await this.prisma.restaurant.findMany();
         return restaurants;
     }
-    async createRestaurant(dto) {
+    async createRestaurant(dto, file) {
+        const hasFreeDelivery = dto.hasFreeDelivery.toString().toLowerCase() == 'true' ? true : false;
+        const status = dto.status.toString().toLowerCase() == 'true' ? true : false;
         const restaurant = await this.prisma.restaurant.create({
             data: {
                 name: dto.name,
                 phoneNumber: dto.phoneNumber,
                 address: dto.address,
+                description: dto.description,
+                email: dto.email,
+                image: file.path,
                 openingTime: dto.openingTime,
                 closingTime: dto.closingTime,
-                hasFreeDelivery: dto.hasFreeDelivery,
+                hasFreeDelivery: hasFreeDelivery,
                 freeDeliveryAmount: dto.freeDeliveryAmount,
-                status: dto.status
+                status: status,
+                deleted: false
             },
         });
         return restaurant;
     }
-    async editRestaurantById(restaurantId, dto) {
+    async editRestaurantById(dto, file) {
         const restaurant = await this.prisma.restaurant.findUnique({
             where: {
-                id: restaurantId,
+                id: parseInt(dto.id),
+                deleted: false
             },
         });
-        if (!restaurant || restaurant.id !== restaurantId)
+        if (!restaurant)
             throw new common_1.NotFoundException('Item not found');
+        if (file && await (0, utils_1.fileExist)(restaurant.image)) {
+            await (0, utils_1.deleteFile)(restaurant.image);
+        }
+        const hasFreeDelivery = dto.hasFreeDelivery.toString().toLowerCase() == 'true' ? true : false;
+        const status = dto.status.toString().toLowerCase() == 'true' ? true : false;
         return this.prisma.restaurant.update({
             where: {
-                id: restaurantId,
+                id: parseInt(dto.id),
             },
             data: {
-                ...dto,
+                name: dto.name,
+                phoneNumber: dto.phoneNumber,
+                address: dto.address,
+                description: dto.description,
+                email: dto.email,
+                image: file.path,
+                openingTime: dto.openingTime,
+                closingTime: dto.closingTime,
+                hasFreeDelivery: hasFreeDelivery,
+                freeDeliveryAmount: dto.freeDeliveryAmount,
+                status: status
             },
         });
     }

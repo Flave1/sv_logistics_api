@@ -11,7 +11,10 @@ import {
     Post,
     UseGuards,
     UseInterceptors,
+    UploadedFile,
+    Req
 } from '@nestjs/common';
+import { FileInterceptor } from "@nestjs/platform-express/multer";
 
 import { JwtGuard } from '../auth/guard';
 import { RestaurantService } from './restaurant.service';
@@ -20,8 +23,16 @@ import {
     EditRestaurantDto,
 } from './dto';
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger';
+import { diskStorage } from "multer";
+import { v4 as uuidv4 } from 'uuid';
+import * as path from 'path';
+import { getBaseUrl } from "src/utils";
+import { Request } from "express";
 
+const restaurantDestination: string = './src/uploads/restaurant'
+let basePath: string = '';
+@ApiBearerAuth()
 @UseGuards(JwtGuard)
 @ApiTags('Restaurant')
 @Controller('restaurant')
@@ -33,26 +44,56 @@ export class RestaurantController {
     @Get()
     // @UseInterceptors(CacheInterceptor) 
     // @CacheTTL(1000)
-    getRestaurant() {
-        return this.restaurantService.getRestaurants();
+    async getRestaurant(@Req() req: Request) {
+        const response = await this.restaurantService.getRestaurants();
+        for (let i = 0; i < response.length; i++) {
+            response[i].image = getBaseUrl(req) + '/' + response[i].image
+        }
+        return response;
     }
 
     @Get(':id')
-    getRestaurantById(@Param('id', ParseIntPipe) restaurantId: number) {
-        return this.restaurantService.getRestaurantById(restaurantId);
+    async getRestaurantById(@Param('id', ParseIntPipe) restaurantId: number, @Req() req: Request) {
+        const response = await this.restaurantService.getRestaurantById(restaurantId);
+        response.image = getBaseUrl(req) + '/' + response.image
+
+        return response;
     }
 
-    @Post()
-    createRestaurant(@Body() dto: CreateRestaurantDto) {
-        return this.restaurantService.createRestaurant(dto);
+    @UseInterceptors(FileInterceptor('file', {
+        storage: diskStorage({
+            destination: restaurantDestination,
+            filename: (req, file, cb) => {
+                const filename: string = uuidv4();
+                const extension: string = path.parse(file.originalname).ext;
+                cb(null, `${filename}${extension}`)
+            }
+        })
+    }))
+    @ApiConsumes('multipart/form-data')
+    @Post('create')
+    createRestaurant(@UploadedFile() file, @Body() dto: CreateRestaurantDto) {
+        return this.restaurantService.createRestaurant(dto, file);
     }
 
-    @Patch(':id')
+    @UseInterceptors(FileInterceptor('file', {
+        storage: diskStorage({
+            destination: restaurantDestination,
+            filename: (req, file, cb) => {
+                const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
+                const extension: string = path.parse(file.originalname).ext;
+
+                cb(null, `${filename}${extension}`)
+            }
+        })
+    }))
+    @ApiConsumes('multipart/form-data')
+    @Post('update')
     editRestaurantById(
-        @Param('id', ParseIntPipe) restaurantId: number,
+        @UploadedFile() file, 
         @Body() dto: EditRestaurantDto,
     ) {
-        return this.restaurantService.editRestaurantById(restaurantId, dto);
+        return this.restaurantService.editRestaurantById(dto, file);
     }
 
     @HttpCode(HttpStatus.NO_CONTENT)
