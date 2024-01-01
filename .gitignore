@@ -38,3 +38,4 @@ lerna-debug.log*
 !.vscode/extensions.json
 .serverless/foodieapi.zip
 .serverless/foodieapi
+dist/tsconfig.build.tsbuildinfo

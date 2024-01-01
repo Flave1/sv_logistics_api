@@ -9,9 +9,6 @@ export declare class RestaurantController {
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        description: string;
-        email: string;
-        image: string;
         deleted: boolean;
         status: boolean;
         phoneNumber: string;
@@ -26,9 +23,6 @@ export declare class RestaurantController {
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        description: string;
-        email: string;
-        image: string;
         deleted: boolean;
         status: boolean;
         phoneNumber: string;
@@ -43,9 +37,6 @@ export declare class RestaurantController {
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        description: string;
-        email: string;
-        image: string;
         deleted: boolean;
         status: boolean;
         phoneNumber: string;
@@ -60,9 +51,6 @@ export declare class RestaurantController {
         createdAt: Date;
         updatedAt: Date;
         name: string;
-        description: string;
-        email: string;
-        image: string;
         deleted: boolean;
         status: boolean;
         phoneNumber: string;
