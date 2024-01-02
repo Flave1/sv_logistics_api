@@ -281,7 +281,7 @@ export class MenuService {
       data: {
         name: dto.name,
         description: dto.description,
-        image: file.path,
+        image: file ? file.path : menu.image,
         restaurantId: parseInt(restaurantId),
         menuCategoryId: parseInt(dto.menuCategoryId),
         price: dto.price,
