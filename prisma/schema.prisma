@@ -23,7 +23,7 @@ model Restaurant {
   closingTime          String?
   hasFreeDelivery      Boolean?
   freeDeliveryAmount   Decimal?
-  clientId             Int
+  clientId             Int?
   availabilitySchedule AvailabilitySchedule[]
   menu                 Menu[]
   menuCategory         MenuCategory[]
