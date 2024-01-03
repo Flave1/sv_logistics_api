@@ -30,8 +30,6 @@ model Restaurant {
   users                User[]
   menuOrders           MenuOrder[]
 
-  client              Client @relation(fields: [clientId], references: [id])
-
   @@map("restaurant")
 }
 
@@ -169,26 +167,5 @@ model Country {
   deleted              Boolean?
   status               Boolean?
 
-  client              Client[]
-
   @@map("country")
-}
-
-model Client {
-  id                   Int                    @id @default(autoincrement())
-  createdAt            DateTime               @default(now())
-  updatedAt            DateTime               @updatedAt
-  name                 String?
-  description          String?
-  email                String?
-  image                String?
-  deleted              Boolean?
-  status               Boolean?
-  phoneNumber          String?
-  address              String?
-  countryId            Int
-  restaurant           Restaurant[]
-
-  country              Country @relation(fields: [countryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  @@map("client")
 }
