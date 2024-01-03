@@ -41,12 +41,7 @@ export class CustomerService {
         id: true,
         name: true,
         restaurantId: true,
-      },
-      orderBy: [
-        {
-          createdAt: 'desc',
-        }
-      ]
+      }
     }));
     return categories;
   }
@@ -57,9 +52,6 @@ export class CustomerService {
         where: {
           menuCategoryId: parseInt(categoryId),
           deleted: false
-        },
-        include: {
-          menuCategory: true,
         }
       });
       return  menuList;
