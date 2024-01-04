@@ -48,6 +48,10 @@ import {
     @IsString()
     status: boolean;
 
+    @ApiProperty({})
+    @IsString()
+    clientId: string;
+
     @ApiProperty({ type: 'string', format: 'binary' })
     file: any;
   }

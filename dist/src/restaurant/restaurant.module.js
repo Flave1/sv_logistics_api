@@ -15,6 +15,7 @@ const menu_module_1 = require("./menu/menu.module");
 const gateway_service_1 = require("../gateway/gateway.service");
 const menu_service_1 = require("./menu/menu.service");
 const customer_module_1 = require("./customer/customer.module");
+const country_module_1 = require("./country/country.module");
 let RestaurantModule = class RestaurantModule {
 };
 exports.RestaurantModule = RestaurantModule;
@@ -30,7 +31,8 @@ exports.RestaurantModule = RestaurantModule = __decorate([
             platform_express_1.MulterModule.register({ dest: '../uploads/menu-subcategory' }),
             platform_express_1.MulterModule.register({ dest: '../uploads/menu' }),
             menu_module_1.MenuModule,
-            customer_module_1.CustomerModule
+            customer_module_1.CustomerModule,
+            country_module_1.CountryModule
         ],
         controllers: [restaurant_controller_1.RestaurantController],
     })

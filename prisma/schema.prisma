@@ -23,6 +23,7 @@ model Restaurant {
   closingTime          String?
   hasFreeDelivery      Boolean?
   freeDeliveryAmount   Decimal?
+  clientId             Int
   availabilitySchedule AvailabilitySchedule[]
   menu                 Menu[]
   menuCategory         MenuCategory[]
@@ -153,4 +154,18 @@ model MenuOrder{
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   menu   Menu @relation(fields: [menuId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   @@map("menuOrders")
+}
+
+model Country {
+  id                   Int                    @id @default(autoincrement())
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  countryName          String?
+  countryCode          String?
+  currencyName         String?
+  currencyCode         String?
+  deleted              Boolean?
+  status               Boolean?
+
+  @@map("country")
 }

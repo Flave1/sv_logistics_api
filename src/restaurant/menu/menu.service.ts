@@ -263,7 +263,7 @@ export class MenuService {
       throw new NotFoundException(StatusMessage.NoRecord);
     }
 
-    if (menu.name.toLowerCase() == dto.name.toLowerCase()) {
+    if (menu.name.toLowerCase() == dto.name.toLowerCase() && parseInt(dto.id) != menu.id) {
       throw new BadRequestException(StatusMessage.Exist)
     }
 

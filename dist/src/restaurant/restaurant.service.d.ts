@@ -21,6 +21,7 @@ export declare class RestaurantService {
         closingTime: string;
         hasFreeDelivery: boolean;
         freeDeliveryAmount: import("@prisma/client/runtime/library").Decimal;
+        clientId: number;
     }, null, import("@prisma/client/runtime/library").DefaultArgs>;
     getRestaurants(): Promise<{
         id: number;
@@ -38,6 +39,7 @@ export declare class RestaurantService {
         closingTime: string;
         hasFreeDelivery: boolean;
         freeDeliveryAmount: import("@prisma/client/runtime/library").Decimal;
+        clientId: number;
     }[]>;
     createRestaurant(dto: CreateRestaurantDto, file: Express.Multer.File): Promise<{
         id: number;
@@ -55,6 +57,7 @@ export declare class RestaurantService {
         closingTime: string;
         hasFreeDelivery: boolean;
         freeDeliveryAmount: import("@prisma/client/runtime/library").Decimal;
+        clientId: number;
     }>;
     editRestaurantById(dto: EditRestaurantDto, file: Express.Multer.File): Promise<{
         id: number;
@@ -72,6 +75,7 @@ export declare class RestaurantService {
         closingTime: string;
         hasFreeDelivery: boolean;
         freeDeliveryAmount: import("@prisma/client/runtime/library").Decimal;
+        clientId: number;
     }>;
     deleteRestaurantById(restaurantId: number): Promise<void>;
 }

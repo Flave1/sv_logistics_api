@@ -35,7 +35,8 @@ async function main() {
         where: { id: 1 },
         update: {},
         create: {
-            name: 'Default Restaurant'
+            name: 'Default Restaurant',
+            clientId: 1
         },
     });
     for (let i = 0; i < courierTypes.length; i++) {
