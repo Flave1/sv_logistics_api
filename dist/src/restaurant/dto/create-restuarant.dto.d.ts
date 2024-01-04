@@ -9,5 +9,6 @@ export declare class CreateRestaurantDto {
     hasFreeDelivery: boolean;
     freeDeliveryAmount: string;
     status: boolean;
+    clientId: string;
     file: any;
 }

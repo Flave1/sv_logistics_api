@@ -67,6 +67,11 @@ __decorate([
     __metadata("design:type", Boolean)
 ], CreateRestaurantDto.prototype, "status", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)({}),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateRestaurantDto.prototype, "clientId", void 0);
+__decorate([
     (0, swagger_1.ApiProperty)({ type: 'string', format: 'binary' }),
     __metadata("design:type", Object)
 ], CreateRestaurantDto.prototype, "file", void 0);

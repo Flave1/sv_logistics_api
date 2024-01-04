@@ -56,7 +56,8 @@ export class RestaurantService {
                     hasFreeDelivery: hasFreeDelivery,
                     freeDeliveryAmount: dto.freeDeliveryAmount,
                     status: status,
-                    deleted: false
+                    deleted: false,
+                    clientId: parseInt(dto.clientId)
                 },
             });
         // await this.redis.updateList(cached_restaurants, restaurant);

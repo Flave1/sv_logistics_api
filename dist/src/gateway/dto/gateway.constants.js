@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MenuManagementEvents = exports.UserManagementEvents = exports.CommonEvents = void 0;
+exports.CountryManagementEvents = exports.MenuManagementEvents = exports.UserManagementEvents = exports.CommonEvents = void 0;
 var CommonEvents;
 (function (CommonEvents) {
     CommonEvents["connection"] = "connection";
@@ -21,4 +21,8 @@ var MenuManagementEvents;
     MenuManagementEvents["get_restaurant_menu_event"] = "get_restaurant_menu_event";
     MenuManagementEvents["get_restaurant_menu_by_category_event"] = "get_restaurant_menu_by_category_event";
 })(MenuManagementEvents || (exports.MenuManagementEvents = MenuManagementEvents = {}));
+var CountryManagementEvents;
+(function (CountryManagementEvents) {
+    CountryManagementEvents["get_countries_event"] = "get_countries_event";
+})(CountryManagementEvents || (exports.CountryManagementEvents = CountryManagementEvents = {}));
 //# sourceMappingURL=gateway.constants.js.map

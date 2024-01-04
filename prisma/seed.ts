@@ -14,7 +14,8 @@ async function main() {
         where: { id: 1 },
         update: {},
         create: {
-            name: 'Default Restaurant'
+            name: 'Default Restaurant',
+            clientId: 1
         },
     });
    

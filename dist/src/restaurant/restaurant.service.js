@@ -45,7 +45,8 @@ let RestaurantService = class RestaurantService {
                 hasFreeDelivery: hasFreeDelivery,
                 freeDeliveryAmount: dto.freeDeliveryAmount,
                 status: status,
-                deleted: false
+                deleted: false,
+                clientId: parseInt(dto.clientId)
             },
         });
         return restaurant;
