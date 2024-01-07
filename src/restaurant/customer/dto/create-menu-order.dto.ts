@@ -1,9 +1,7 @@
 import {
-  IsNotEmpty,
+  IsArray,
   IsNumber,
-  IsOptional,
   IsString,
-  isNotEmpty,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -26,18 +24,4 @@ export class SaveMenuOrderDto {
   @ApiProperty({})
   @IsString()
   temporalId: string
-}
-
-export class MenuOrderDto {
-  customerId?: string;
-  temporalId: string;
-  restaurantId: string;
-  restaurantName: string;
-  menuId: string;
-  menuName: string;
-  menuImage: string;
-  quantity: string;
-  status: number;
-  statuslable: string
-  price: number;
 }

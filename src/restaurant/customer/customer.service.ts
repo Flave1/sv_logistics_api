@@ -2,8 +2,10 @@ import { Injectable, InternalServerErrorException, NotFoundException } from "@ne
 import { GatewayService } from "src/gateway/gateway.service";
 import { PrismaService } from "src/prisma/prisma.service";
 import { StatusMessage, OrderStatus } from "../enums";
-import { MenuOrderDto, SaveMenuOrderDto } from "./dto/create-menu-order.dto";
-import { getStatusLabel } from "src/utils";
+import { SaveMenuOrderDto } from "./dto/create-menu-order.dto";
+import { getBaseUrl, getStatusLabel } from "src/utils";
+import { Request } from 'express';
+import { Menu } from "@prisma/client";
 
 
 @Injectable()
@@ -205,7 +207,7 @@ export class CustomerService {
     }
   }
 
-  async getFromCart(customerId?: number, temporalId?: string) {
+  async getFromCart(req: Request, customerId?: number, temporalId?: string) {
     try {
       const menuOrders = await this.prisma.menuOrder.findMany({
         where: {
@@ -239,7 +241,7 @@ export class CustomerService {
         restaurantName: order.restaurant.name,
         menuId: order.menuId,
         menuName: order.menu.name,
-        image: order.menu.image,
+        image: getBaseUrl(req) + '/' + order.menu.image,
         quantity: order.quantity,
         status: order.status,
         price: order.menu.price,
@@ -251,5 +253,40 @@ export class CustomerService {
 
 
   }
+
+  async getCheckoutMenu(restaurantIds: number[], menuIds: number[], req: Request) {
+    const menus = await this.prisma.menu.findMany({
+      where: {
+        restaurantId: {
+          in: restaurantIds,
+        },
+        OR: [
+          {
+            AND: [
+              {
+                NOT: {
+                  id: {
+                    in: menuIds,
+                  },
+                },
+              },
+              // {
+              //   menuCategoryId: categoryId,
+              // },
+            ],
+          },
+        ],
+      },
+      take: 5,
+    });
+    return menus.map((mn: Menu) => ({
+      restaurantId: mn.restaurantId,
+      id: mn.id,
+      name: mn.name,
+      price: mn.price,
+      image: getBaseUrl(req) + '/' + mn.image
+    }))
+  }
+
 }
 

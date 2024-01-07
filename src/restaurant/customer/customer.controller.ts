@@ -4,7 +4,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { CustomerService } from './customer.service';
 import { getBaseUrl } from 'src/utils';
 import { Request } from 'express';
-import { SaveMenuOrderDto } from './dto/create-menu-order.dto';
+import { CheckoutFinalMenuRequest, SaveMenuOrderDto } from './dto';
 
 @ApiTags('Customer')
 @Controller('customer')
@@ -79,10 +79,13 @@ export class CustomerController {
 
   @Get('cart-list')
   async getCartList(@Req() req: Request, @Query('customerId') customerId?: string, @Query('temporalId') temporalId?: string) {
-    const response = await this.customerService.getFromCart(parseInt(customerId), temporalId);
-    for (let i = 0; i < response.length; i++) {
-      response[i].image = getBaseUrl(req) + '/' + response[i].image
-    }
+    const response = await this.customerService.getFromCart(req, parseInt(customerId), temporalId);
+    return response;
+  }
+
+  @Post('get-checkout-final-menu')
+  async getCheckoutFinalmenu(@Req() req: Request, @Body() menuRequest: CheckoutFinalMenuRequest) {
+    const response = await this.customerService.getCheckoutMenu(menuRequest.restaurantIds, menuRequest.menuIds, req);
     return response;
   }
 }
