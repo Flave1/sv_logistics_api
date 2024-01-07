@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { GatewayService } from "src/gateway/gateway.service";
 import { PrismaService } from "src/prisma/prisma.service";
 import { StatusMessage, OrderStatus } from "../enums";
@@ -160,52 +160,57 @@ export class CustomerService {
 
 
   async addToCartOrUpdate(dto: SaveMenuOrderDto) {
-    const existingMenuOrder = await this.prisma.menuOrder.findFirst({
-      where: {
-        menuId: parseInt(dto.menuId),
-        // Use either customerId or temporalId, whichever is available
-        OR: [
-          { customerId: parseInt(dto.customerId) },
-          { temporalId: dto.temporalId },
-        ],
-      },
-    });
-
-    if (existingMenuOrder) {
-      // If the menu order already exists, update it
-      const updatedMenuOrder = await this.prisma.menuOrder.update({
-        where: { id: existingMenuOrder.id },
-        data: {
-          quantity: existingMenuOrder.quantity + parseInt(dto.quantity),
-          // Add any other fields you want to update
-          // ...
+    try {
+      const existingMenuOrder = await this.prisma.menuOrder.findFirst({
+        where: {
+          menuId: dto.menuId,
+          // Use either customerId or temporalId, whichever is available
+          OR: [
+            { customerId: dto.customerId },
+            { temporalId: dto.temporalId },
+          ],
         },
       });
 
-      return updatedMenuOrder;
-    } else {
-      // If the menu order does not exist, create a new one
-      const newMenuOrder = await this.prisma.menuOrder.create({
-        data: {
-          customerId: parseInt(dto.customerId),
-          restaurantId: parseInt(dto.restaurantId),
-          menuId: parseInt(dto.menuId),
-          quantity: parseInt(dto.quantity),
-          deleted: false,
-          status: OrderStatus.Pending,
-          temporalId: dto.temporalId,
-        },
-      });
+      if (existingMenuOrder) {
+        // If the menu order already exists, update it
+        const updatedMenuOrder = await this.prisma.menuOrder.update({
+          where: { id: existingMenuOrder.id },
+          data: {
+            quantity: existingMenuOrder.quantity + dto.quantity,
+            // Add any other fields you want to update
+            // ...
+          },
+        });
 
-      return newMenuOrder;
+        return updatedMenuOrder;
+      } else {
+        // If the menu order does not exist, create a new one
+        const newMenuOrder = await this.prisma.menuOrder.create({
+          data: {
+            customerId: dto.customerId ? dto.customerId : null,
+            restaurantId: dto.restaurantId,
+            menuId: dto.menuId,
+            quantity: dto.quantity,
+            deleted: false,
+            status: OrderStatus.Pending,
+            temporalId: dto.temporalId,
+          },
+        });
+
+        return newMenuOrder;
+      }
+    } catch (error) {
+      throw new InternalServerErrorException(error)
     }
   }
 
-  async getFromCart(customerId: string, temporalId: string) {
+  async getFromCart(customerId?: number, temporalId?: string) {
+  try {
     const menuOrders = await this.prisma.menuOrder.findMany({
       where: {
         OR: [
-          { customerId: parseInt(customerId) },
+          { customerId: customerId },
           { temporalId: temporalId },
         ],
         deleted: false,
@@ -215,6 +220,7 @@ export class CustomerService {
         menu: {
           select: {
             name: true,
+            price: true
           },
         },
         restaurant: {
@@ -236,6 +242,9 @@ export class CustomerService {
       status: order.status,
       statusLabel: getStatusLabel(order.status),
     }));
+  } catch (error) {
+    
+  }
 
 
   }
