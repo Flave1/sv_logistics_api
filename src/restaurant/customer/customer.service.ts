@@ -240,6 +240,7 @@ export class CustomerService {
       menuName: order.menu.name,
       quantity: order.quantity,
       status: order.status,
+      price: order.menu.price,
       statusLabel: getStatusLabel(order.status),
     }));
   } catch (error) {
