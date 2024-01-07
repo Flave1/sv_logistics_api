@@ -25,3 +25,16 @@ export class SaveMenuOrderDto {
   @IsString()
   temporalId: string
 }
+
+export class RemoveMenuOrderDto {
+  @ApiProperty({})
+  customerId?: number;
+
+  @ApiProperty({})
+  @IsNumber()
+  menuId: number;
+
+  @ApiProperty({})
+  @IsString()
+  temporalId: string
+}

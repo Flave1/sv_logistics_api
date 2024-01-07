@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException, NotFoundException } from "@ne
 import { GatewayService } from "src/gateway/gateway.service";
 import { PrismaService } from "src/prisma/prisma.service";
 import { StatusMessage, OrderStatus } from "../enums";
-import { SaveMenuOrderDto } from "./dto/create-menu-order.dto";
+import { RemoveMenuOrderDto, SaveMenuOrderDto } from "./dto/create-menu-order.dto";
 import { getBaseUrl, getStatusLabel } from "src/utils";
 import { Request } from 'express';
 import { Menu } from "@prisma/client";
@@ -201,6 +201,39 @@ export class CustomerService {
         });
 
         return newMenuOrder;
+      }
+    } catch (error) {
+      throw new InternalServerErrorException(error)
+    }
+  }
+  async removefromCart(dto: RemoveMenuOrderDto) {
+    try {
+      const existingMenuOrder = await this.prisma.menuOrder.findFirst({
+        where: {
+          menuId: dto.menuId,
+          OR: [
+            { customerId: dto.customerId },
+            { temporalId: dto.temporalId },
+          ],
+        },
+      });
+
+      if (existingMenuOrder) {
+        if (existingMenuOrder.quantity == 1) {
+          await this.prisma.menuOrder.delete({ where: { id: existingMenuOrder.id } })
+          return { message: "Menu completely removed from Cart"};
+        }
+        // If the menu order already exists, update it
+        const updatedMenuOrder = await this.prisma.menuOrder.update({
+          where: { id: existingMenuOrder.id },
+          data: {
+            quantity: existingMenuOrder.quantity - 1,
+          },
+        });
+
+        return updatedMenuOrder;
+      }else{
+        return { message: "Menu does not exist in  Cart"};
       }
     } catch (error) {
       throw new InternalServerErrorException(error)

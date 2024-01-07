@@ -4,7 +4,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { CustomerService } from './customer.service';
 import { getBaseUrl } from 'src/utils';
 import { Request } from 'express';
-import { CheckoutFinalMenuRequest, SaveMenuOrderDto } from './dto';
+import { CheckoutFinalMenuRequest, RemoveMenuOrderDto, SaveMenuOrderDto } from './dto';
 
 @ApiTags('Customer')
 @Controller('customer')
@@ -73,8 +73,12 @@ export class CustomerController {
   }
 
   @Post('save-to-cart')
-  createCategory(@Body() dto: SaveMenuOrderDto) {
+  addToCart(@Body() dto: SaveMenuOrderDto) {
     return this.customerService.addToCartOrUpdate(dto);
+  }
+  @Post('remove-from-cart')
+  deleteFromCart(@Body() dto: RemoveMenuOrderDto) {
+    return this.customerService.removefromCart(dto);
   }
 
   @Get('cart-list')
