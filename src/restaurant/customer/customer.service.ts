@@ -2,7 +2,8 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { GatewayService } from "src/gateway/gateway.service";
 import { PrismaService } from "src/prisma/prisma.service";
 import { StatusMessage, OrderStatus } from "../enums";
-import { CreateMenuOrderDto } from "./dto/create-menu-order.dto";
+import { MenuOrderDto, SaveMenuOrderDto } from "./dto/create-menu-order.dto";
+import { getStatusLabel } from "src/utils";
 
 
 @Injectable()
@@ -54,7 +55,7 @@ export class CustomerService {
           deleted: false
         }
       });
-      return  menuList;
+      return menuList;
     } catch (error) {
       throw error
     }
@@ -62,14 +63,14 @@ export class CustomerService {
 
   async getRestaurantById(restaurantId: string) {
     const restaurant = await this.prisma.restaurant.findFirst({
-        where: {
-            id: parseInt(restaurantId),
-            deleted: false
-        },
+      where: {
+        id: parseInt(restaurantId),
+        deleted: false
+      },
     });
 
-    if(!restaurant) {
-        throw new NotFoundException(StatusMessage.NoRecord);
+    if (!restaurant) {
+      throw new NotFoundException(StatusMessage.NoRecord);
     }
 
     return restaurant
@@ -77,101 +78,166 @@ export class CustomerService {
 
   async getRestaurants() {
     const restaurants = await this.prisma.restaurant.findMany({
-        where: {
-            deleted: false
-        },
-      }
+      where: {
+        deleted: false
+      },
+    }
     );
     return restaurants;
-}
-
-async getRestaurantMenu(restaurantId: string) {
-    const menus = await this.prisma.menu.findMany({
-        where: {
-          restaurantId: parseInt(restaurantId),
-          deleted: false
-        },
-        include: {
-          MenuOrders: {
-            where: {
-                status: OrderStatus.Completed,
-                createdAt: {
-                    gte: new Date(new Date().getTime() - 3 * 24 * 60 * 60 * 1000), // Orders within the last 3 days
-                  }
-              },
-              orderBy: {
-                createdAt: 'desc'
-            }
-          },
-        },
-        take: 20
-      });
-
-    const orderedMenus = menus.sort((menuA, menuB) => {
-    const sumA = menuA.MenuOrders.reduce((total, order) => total + order.quantity, 0);
-    const sumB = menuB.MenuOrders.reduce((total, order) => total + order.quantity, 0);
-    return sumB - sumA;
-    });
-    
-    const mostOrderedMenu = orderedMenus.map((menu) => ({
-      ...menu,
-      MenuOrders: undefined
-    }))
-    return mostOrderedMenu;
-}
-
-async getPopularMenu() {
-    const menus = await this.prisma.menu.findMany({
-        where: {
-          deleted: false,
-        },
-        distinct: ['restaurantId'],
-        include: {
-          MenuOrders: {
-            where: {
-                status: OrderStatus.Completed,
-                createdAt: {
-                    gte: new Date(new Date().getTime() - 3 * 24 * 60 * 60 * 1000), // Orders within the last 3 days
-                  }
-              },
-              orderBy: {
-                createdAt: 'desc'
-            },
-            take: 1
-          },
-          restaurant: true
-        },
-        take: 20
-      });
-
-    const orderedMenus = menus.sort((menuA, menuB) => {
-    const sumA = menuA.MenuOrders.reduce((total, order) => total + order.quantity, 0);
-    const sumB = menuB.MenuOrders.reduce((total, order) => total + order.quantity, 0);
-    return sumB - sumA;
-    });
-    
-    const mostOrderedMenu = orderedMenus.map((menu) => ({
-      ...menu,
-      MenuOrders: undefined
-    }))
-    return mostOrderedMenu;
-}
-
-
-async CreateMenuOrder(dto: CreateMenuOrderDto) {
-    const status = dto.status.toString().toLowerCase() == 'true' ? true : false;
-    const menuOrder = await this.prisma.menuOrder.create({
-      data: {
-        customerId: parseInt(dto.customerId),
-        restaurantId: parseInt(dto.restaurantId),
-        menuId: parseInt(dto.menuId),
-        quantity: parseInt(dto.quantity),
-        deleted: false,
-        status: dto.status
-      },
-    });
-    return menuOrder;
   }
 
+  async getRestaurantMenu(restaurantId: string) {
+    const menus = await this.prisma.menu.findMany({
+      where: {
+        restaurantId: parseInt(restaurantId),
+        deleted: false
+      },
+      include: {
+        MenuOrders: {
+          where: {
+            status: OrderStatus.Completed,
+            createdAt: {
+              gte: new Date(new Date().getTime() - 3 * 24 * 60 * 60 * 1000), // Orders within the last 3 days
+            }
+          },
+          orderBy: {
+            createdAt: 'desc'
+          }
+        },
+      },
+      take: 20
+    });
+
+    const orderedMenus = menus.sort((menuA, menuB) => {
+      const sumA = menuA.MenuOrders.reduce((total, order) => total + order.quantity, 0);
+      const sumB = menuB.MenuOrders.reduce((total, order) => total + order.quantity, 0);
+      return sumB - sumA;
+    });
+
+    const mostOrderedMenu = orderedMenus.map((menu) => ({
+      ...menu,
+      MenuOrders: undefined
+    }))
+    return mostOrderedMenu;
+  }
+
+  async getPopularMenu() {
+    const menus = await this.prisma.menu.findMany({
+      where: {
+        deleted: false,
+      },
+      distinct: ['restaurantId'],
+      include: {
+        MenuOrders: {
+          where: {
+            status: OrderStatus.Completed,
+            createdAt: {
+              gte: new Date(new Date().getTime() - 3 * 24 * 60 * 60 * 1000), // Orders within the last 3 days
+            }
+          },
+          orderBy: {
+            createdAt: 'desc'
+          },
+          take: 1
+        },
+        restaurant: true
+      },
+      take: 20
+    });
+
+    const orderedMenus = menus.sort((menuA, menuB) => {
+      const sumA = menuA.MenuOrders.reduce((total, order) => total + order.quantity, 0);
+      const sumB = menuB.MenuOrders.reduce((total, order) => total + order.quantity, 0);
+      return sumB - sumA;
+    });
+
+    const mostOrderedMenu = orderedMenus.map((menu) => ({
+      ...menu,
+      MenuOrders: undefined
+    }))
+    return mostOrderedMenu;
+  }
+
+
+  async addToCartOrUpdate(dto: SaveMenuOrderDto) {
+    const existingMenuOrder = await this.prisma.menuOrder.findFirst({
+      where: {
+        menuId: parseInt(dto.menuId),
+        // Use either customerId or temporalId, whichever is available
+        OR: [
+          { customerId: parseInt(dto.customerId) },
+          { temporalId: dto.temporalId },
+        ],
+      },
+    });
+
+    if (existingMenuOrder) {
+      // If the menu order already exists, update it
+      const updatedMenuOrder = await this.prisma.menuOrder.update({
+        where: { id: existingMenuOrder.id },
+        data: {
+          quantity: existingMenuOrder.quantity + parseInt(dto.quantity),
+          // Add any other fields you want to update
+          // ...
+        },
+      });
+
+      return updatedMenuOrder;
+    } else {
+      // If the menu order does not exist, create a new one
+      const newMenuOrder = await this.prisma.menuOrder.create({
+        data: {
+          customerId: parseInt(dto.customerId),
+          restaurantId: parseInt(dto.restaurantId),
+          menuId: parseInt(dto.menuId),
+          quantity: parseInt(dto.quantity),
+          deleted: false,
+          status: OrderStatus.Pending,
+          temporalId: dto.temporalId,
+        },
+      });
+
+      return newMenuOrder;
+    }
+  }
+
+  async getFromCart(customerId: string, temporalId: string) {
+    const menuOrders = await this.prisma.menuOrder.findMany({
+      where: {
+        OR: [
+          { customerId: parseInt(customerId) },
+          { temporalId: temporalId },
+        ],
+        deleted: false,
+        status: OrderStatus.Pending,
+      },
+      include: {
+        menu: {
+          select: {
+            name: true,
+          },
+        },
+        restaurant: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    return menuOrders.map((order) => ({
+      customerId: order.customerId,
+      temporalId: order.temporalId,
+      restaurantId: order.restaurantId,
+      restaurantName: order.restaurant.name,
+      menuId: order.menuId,
+      menuName: order.menu.name,
+      quantity: order.quantity,
+      status: order.status,
+      statusLabel: getStatusLabel(order.status),
+    }));
+
+
+  }
 }
 

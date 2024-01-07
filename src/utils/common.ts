@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import { Request } from 'express';
+import { OrderStatus } from 'src/restaurant/enums';
 export const filterTolower = (text: string): string => text.toLowerCase().replace(/\s/g, '');
 
 export const getRootDirectory = (): string => {
@@ -30,3 +31,16 @@ export const deleteFile = async (filePath: string) => {
         console.error(`Error deleting file: ${error.message}`);
     }
 };
+
+export function getStatusLabel(status: OrderStatus): string {
+    switch (status) {
+      case OrderStatus.Pending:
+        return 'Pending';
+      case OrderStatus.Completed:
+        return 'Completed';
+      case OrderStatus.Cancelled:
+        return 'Cancelled';
+      default:
+        return 'Unknown Status';
+    }
+  }
