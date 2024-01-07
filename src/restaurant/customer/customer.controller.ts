@@ -78,8 +78,8 @@ export class CustomerController {
   }
 
   @Get('cart-list')
-  async getCartList(@Query('customerId') customerId: string, @Query('temporalId') temporalId: string) {
-    const response = await this.customerService.getFromCart(customerId, temporalId);
+  async getCartList(@Query('customerId') customerId?: string, @Query('temporalId') temporalId?: string) {
+    const response = await this.customerService.getFromCart(parseInt(customerId), temporalId);
     return response;
   }
 }

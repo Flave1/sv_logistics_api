@@ -9,20 +9,19 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class SaveMenuOrderDto {
   @ApiProperty({})
-  @IsString()
-  customerId: string;
+  customerId?: number;
 
   @ApiProperty({})
-  @IsString()
-  restaurantId: string;
+  @IsNumber()
+  restaurantId: number;
 
   @ApiProperty({})
-  @IsString()
-  menuId: string;
+  @IsNumber()
+  menuId: number;
 
   @ApiProperty({})
-  @IsString()
-  quantity: string;
+  @IsNumber()
+  quantity: number;
 
   @ApiProperty({})
   @IsNumber()
@@ -30,11 +29,11 @@ export class SaveMenuOrderDto {
 
   @ApiProperty({})
   @IsString()
-  temporalId: ''
+  temporalId: string
 }
 
 export class MenuOrderDto {
-  customerId: string;
+  customerId?: string;
   temporalId: string;
   restaurantId: string;
   restaurantName: string;
@@ -43,4 +42,5 @@ export class MenuOrderDto {
   quantity: string;
   status: number;
   statuslable: string
+  price: number;
 }
