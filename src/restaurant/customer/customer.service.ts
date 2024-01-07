@@ -206,46 +206,48 @@ export class CustomerService {
   }
 
   async getFromCart(customerId?: number, temporalId?: string) {
-  try {
-    const menuOrders = await this.prisma.menuOrder.findMany({
-      where: {
-        OR: [
-          { customerId: customerId },
-          { temporalId: temporalId },
-        ],
-        deleted: false,
-        status: OrderStatus.Pending,
-      },
-      include: {
-        menu: {
-          select: {
-            name: true,
-            price: true
+    try {
+      const menuOrders = await this.prisma.menuOrder.findMany({
+        where: {
+          OR: [
+            { customerId: customerId },
+            { temporalId: temporalId },
+          ],
+          deleted: false,
+          status: OrderStatus.Pending,
+        },
+        include: {
+          menu: {
+            select: {
+              name: true,
+              price: true,
+              image: true
+            },
+          },
+          restaurant: {
+            select: {
+              name: true,
+            },
           },
         },
-        restaurant: {
-          select: {
-            name: true,
-          },
-        },
-      },
-    });
+      });
 
-    return menuOrders.map((order) => ({
-      customerId: order.customerId,
-      temporalId: order.temporalId,
-      restaurantId: order.restaurantId,
-      restaurantName: order.restaurant.name,
-      menuId: order.menuId,
-      menuName: order.menu.name,
-      quantity: order.quantity,
-      status: order.status,
-      price: order.menu.price,
-      statusLabel: getStatusLabel(order.status),
-    }));
-  } catch (error) {
-    
-  }
+      return menuOrders.map((order) => ({
+        customerId: order.customerId,
+        temporalId: order.temporalId,
+        restaurantId: order.restaurantId,
+        restaurantName: order.restaurant.name,
+        menuId: order.menuId,
+        menuName: order.menu.name,
+        image: order.menu.image,
+        quantity: order.quantity,
+        status: order.status,
+        price: order.menu.price,
+        statusLabel: getStatusLabel(order.status),
+      }));
+    } catch (error) {
+
+    }
 
 
   }

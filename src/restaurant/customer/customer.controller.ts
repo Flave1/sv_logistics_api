@@ -78,8 +78,11 @@ export class CustomerController {
   }
 
   @Get('cart-list')
-  async getCartList(@Query('customerId') customerId?: string, @Query('temporalId') temporalId?: string) {
+  async getCartList(@Req() req: Request, @Query('customerId') customerId?: string, @Query('temporalId') temporalId?: string) {
     const response = await this.customerService.getFromCart(parseInt(customerId), temporalId);
+    for (let i = 0; i < response.length; i++) {
+      response[i].image = getBaseUrl(req) + '/' + response[i].image
+    }
     return response;
   }
 }

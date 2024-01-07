@@ -24,10 +24,6 @@ export class SaveMenuOrderDto {
   quantity: number;
 
   @ApiProperty({})
-  @IsNumber()
-  status: number;
-
-  @ApiProperty({})
   @IsString()
   temporalId: string
 }
@@ -39,6 +35,7 @@ export class MenuOrderDto {
   restaurantName: string;
   menuId: string;
   menuName: string;
+  menuImage: string;
   quantity: string;
   status: number;
   statuslable: string
