@@ -13,6 +13,7 @@ function swaggerConfig(app) {
         .addTag('Bookmarks')
         .addTag('Menu')
         .addTag('Customer')
+        .addTag('Address')
         .addBearerAuth()
         .build();
     const document = swagger_1.SwaggerModule.createDocument(app, config);
