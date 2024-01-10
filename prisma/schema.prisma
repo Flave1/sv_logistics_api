@@ -58,6 +58,7 @@ model User {
   userType             UserType    @relation(fields: [userTypeId], references: [id])
   menuOrders           MenuOrder[]
   addresses            Address[]
+  orderCheckout        OrderCheckout[]
 
   @@map("users")
 }
@@ -185,8 +186,19 @@ model Address {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   isDefault  Boolean
-
+  orderCheckout OrderCheckout[]
   user User @relation(fields: [customerId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
   @@map("address")
+}
+
+model OrderCheckout{
+  id         Int      @id @default(autoincrement())
+  menuIds    String
+  addressId  Int
+  customerId Int
+  paymentStatus Int
+
+  address Address @relation(fields: [addressId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user User @relation(fields: [customerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  @@map("menuOrder")
 }
