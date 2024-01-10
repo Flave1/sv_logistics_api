@@ -24,11 +24,16 @@ model Restaurant {
   hasFreeDelivery      Boolean?
   freeDeliveryAmount   Decimal?
   clientId             Int
+  latitude             Decimal?
+  longitude            Decimal?
+  countryId            Int
   availabilitySchedule AvailabilitySchedule[]
   menu                 Menu[]
   menuCategory         MenuCategory[]
   users                User[]
   menuOrders           MenuOrder[]
+
+  country              Country  @relation(fields: [countryId], references: [id])
 
   @@map("restaurant")
 }
@@ -172,7 +177,8 @@ model Country {
   currencyCode String?
   deleted      Boolean?
   status       Boolean?
-
+  restaurant   Restaurant[]
+  
   @@map("country")
 }
 

@@ -72,7 +72,10 @@ export class RestaurantService {
                     freeDeliveryAmount: dto.freeDeliveryAmount,
                     status: status,
                     deleted: false,
-                    clientId: parseInt(dto.clientId)
+                    clientId: parseInt(dto.clientId),
+                    latitude: dto.latitude,
+                    longitude: dto.longitude,
+                    countryId: dto.countryId
                 },
             });
         // await this.redis.updateList(cached_restaurants, restaurant);
