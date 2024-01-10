@@ -1,10 +1,14 @@
 /// <reference types="multer" />
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateRestaurantDto, EditRestaurantDto } from './dto';
+import { DeleteDto } from 'src/dto/delete.dto';
+import { APIResponse } from 'src/dto/api-response';
+import { GatewayService } from 'src/gateway/gateway.service';
 export declare const cached_restaurants = "cached_restaurants";
 export declare class RestaurantService {
     private prisma;
-    constructor(prisma: PrismaService);
+    private socket;
+    constructor(prisma: PrismaService, socket: GatewayService);
     getRestaurantById(restaurantId: number): import(".prisma/client").Prisma.Prisma__RestaurantClient<{
         id: number;
         createdAt: Date;
@@ -77,5 +81,5 @@ export declare class RestaurantService {
         freeDeliveryAmount: import("@prisma/client/runtime/library").Decimal;
         clientId: number;
     }>;
-    deleteRestaurantById(restaurantId: number): Promise<void>;
+    deleteRestaurantById(dto: DeleteDto): Promise<APIResponse<any>>;
 }

@@ -29,6 +29,7 @@ import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 import { getBaseUrl } from "src/utils";
 import { Request } from "express";
+import { DeleteDto } from 'src/dto/delete.dto';
 
 const restaurantDestination: string = './src/uploads/restaurant'
 let basePath: string = '';
@@ -41,7 +42,7 @@ export class RestaurantController {
         private restaurantService: RestaurantService,
     ) { }
 
-    @Get()
+    @Get('all')
     // @UseInterceptors(CacheInterceptor) 
     // @CacheTTL(1000)
     async getRestaurant(@Req() req: Request) {
@@ -96,11 +97,8 @@ export class RestaurantController {
         return this.restaurantService.editRestaurantById(dto, file);
     }
 
-    @HttpCode(HttpStatus.NO_CONTENT)
-    @Delete(':id')
-    deleteRestaurantById(
-        @Param('id', ParseIntPipe) restaurantId: number,
-    ) {
-        return this.restaurantService.deleteRestaurantById(restaurantId);
+    @Post('delete')
+    deleteCategory(@Body() dto: DeleteDto) {
+        return this.restaurantService.deleteRestaurantById(dto);
     }
 }

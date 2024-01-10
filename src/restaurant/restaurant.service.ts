@@ -10,12 +10,18 @@ import {
 import { RedisRepository } from 'src/redis/redis.repository';
 import { Restaurant } from '@prisma/client';
 import { deleteFile, fileExist } from "src/utils";
+import { DeleteDto } from 'src/dto/delete.dto';
+import { APIResponse } from 'src/dto/api-response';
+import { Status, StatusMessage } from './enums';
+import { GatewayService } from 'src/gateway/gateway.service';
+import { RestaurantManagementEvents } from 'src/gateway/dto';
 
 export const cached_restaurants = 'cached_restaurants';
 @Injectable()
 export class RestaurantService {
     constructor(private prisma: PrismaService,
         // private redis: RedisRepository
+        private socket: GatewayService
     ) { }
 
     getRestaurantById(restaurantId: number) {
@@ -33,7 +39,16 @@ export class RestaurantService {
         //     return cachedData;
         // }
         
-        const restaurants = await this.prisma.restaurant.findMany();
+        const restaurants = await this.prisma.restaurant.findMany({
+            where: {
+              deleted: false
+            },
+            orderBy: [
+              {
+                createdAt: 'desc',
+              }
+            ]
+          });
         // await this.redis.store<Restaurant[]>({ key: cached_restaurants, data: restaurants });
         // console.log('gotten from db');
         return restaurants;
@@ -61,6 +76,7 @@ export class RestaurantService {
                 },
             });
         // await this.redis.updateList(cached_restaurants, restaurant);
+        this.socket.emitToClient(RestaurantManagementEvents.get_restaurants_event)
         return restaurant;
     }
 
@@ -88,6 +104,8 @@ export class RestaurantService {
         }
         const hasFreeDelivery = dto.hasFreeDelivery.toString().toLowerCase() == 'true' ? true : false;
         const status = dto.status.toString().toLowerCase() == 'true' ? true : false;
+
+        this.socket.emitToClient(RestaurantManagementEvents.get_restaurants_event)
         return this.prisma.restaurant.update({
             where: {
                 id: parseInt(dto.id),
@@ -108,18 +126,23 @@ export class RestaurantService {
         });
     }
 
-    async deleteRestaurantById(restaurantId: number) {
-        const restaurant =
-            await this.prisma.restaurant.findUnique({
+    async deleteRestaurantById(dto: DeleteDto) {
+        try {
+            const restaurant =
+            await this.prisma.restaurant.updateMany({
                 where: {
-                    id: restaurantId,
+                  id: {
+                    in: dto.id.map(id => parseInt(id)),
+                  }
                 },
-            });
-
-        await this.prisma.restaurant.delete({
-            where: {
-                id: restaurantId,
-            },
-        });
+                data: {
+                  deleted: true
+                },
+              });
+              this.socket.emitToClient(RestaurantManagementEvents.get_restaurants_event)
+              return new APIResponse(Status.Success, StatusMessage.Deleted, null);
+        } catch (error) {
+            throw error;
+        }
     }
 }

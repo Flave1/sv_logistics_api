@@ -46,6 +46,7 @@ const multer_2 = require("multer");
 const uuid_1 = require("uuid");
 const path = __importStar(require("path"));
 const utils_1 = require("../utils");
+const delete_dto_1 = require("../dto/delete.dto");
 const restaurantDestination = './src/uploads/restaurant';
 let basePath = '';
 let RestaurantController = class RestaurantController {
@@ -70,13 +71,13 @@ let RestaurantController = class RestaurantController {
     editRestaurantById(file, dto) {
         return this.restaurantService.editRestaurantById(dto, file);
     }
-    deleteRestaurantById(restaurantId) {
-        return this.restaurantService.deleteRestaurantById(restaurantId);
+    deleteCategory(dto) {
+        return this.restaurantService.deleteRestaurantById(dto);
     }
 };
 exports.RestaurantController = RestaurantController;
 __decorate([
-    (0, common_1.Get)(),
+    (0, common_1.Get)('all'),
     __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -129,13 +130,12 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], RestaurantController.prototype, "editRestaurantById", null);
 __decorate([
-    (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),
-    (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    (0, common_1.Post)('delete'),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [delete_dto_1.DeleteDto]),
     __metadata("design:returntype", void 0)
-], RestaurantController.prototype, "deleteRestaurantById", null);
+], RestaurantController.prototype, "deleteCategory", null);
 exports.RestaurantController = RestaurantController = __decorate([
     (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.UseGuards)(guard_1.JwtGuard),
