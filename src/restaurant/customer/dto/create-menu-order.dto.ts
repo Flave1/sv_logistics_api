@@ -1,29 +1,40 @@
 import {
-    IsNotEmpty,
-    IsNumber,
-    IsOptional,
-    IsString,
-  } from 'class-validator';
-  import { ApiProperty } from '@nestjs/swagger';
-  
-  export class CreateMenuOrderDto {
-    @ApiProperty({})
-    @IsString()
-    customerId: string;
+  IsArray,
+  IsNumber,
+  IsString,
+} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
-    @ApiProperty({})
-    @IsString()
-    restaurantId: string;
+export class SaveMenuOrderDto {
+  @ApiProperty({})
+  customerId?: number;
 
-    @ApiProperty({})
-    @IsString()
-    menuId: string;
+  @ApiProperty({})
+  @IsNumber()
+  restaurantId: number;
 
-    @ApiProperty({})
-    @IsString()
-    quantity: string;
+  @ApiProperty({})
+  @IsNumber()
+  menuId: number;
 
-    @ApiProperty({})
-    @IsNumber()
-    status: number;
-  }
+  @ApiProperty({})
+  @IsNumber()
+  quantity: number;
+
+  @ApiProperty({})
+  @IsString()
+  temporalId: string
+}
+
+export class RemoveMenuOrderDto {
+  @ApiProperty({})
+  customerId?: number;
+
+  @ApiProperty({})
+  @IsNumber()
+  menuId: number;
+
+  @ApiProperty({})
+  @IsString()
+  temporalId: string
+}

@@ -2,9 +2,6 @@ BEGIN TRY
 
 BEGIN TRAN;
 
--- AlterTable
-ALTER TABLE [dbo].[restaurant]
-ALTER COLUMN [clientId] INT NOT NULL;
 
 -- CreateTable
 CREATE TABLE [dbo].[country] (

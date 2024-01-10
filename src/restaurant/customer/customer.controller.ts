@@ -1,15 +1,15 @@
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { MenuService } from '../menu/menu.service';
 import { ApiTags } from '@nestjs/swagger';
 import { CustomerService } from './customer.service';
 import { getBaseUrl } from 'src/utils';
 import { Request } from 'express';
-import { CreateMenuOrderDto } from './dto/create-menu-order.dto';
+import { CheckoutFinalMenuRequest, RemoveMenuOrderDto, SaveMenuOrderDto } from './dto';
 
 @ApiTags('Customer')
 @Controller('customer')
 export class CustomerController {
-  constructor(private customerService: CustomerService) {}
+  constructor(private customerService: CustomerService) { }
 
   @Get('restaurant-menu/:id')
   async getMenuById(@Param('id') id: string, @Req() req: Request) {
@@ -38,42 +38,59 @@ export class CustomerController {
   }
 
   @Get('restaurant/:id')
-    async getRestaurantById(@Param('id') restaurantId: string, @Req() req: Request) {
-        const response = await this.customerService.getRestaurantById(restaurantId);
-        response.image = getBaseUrl(req) + '/' + response.image
+  async getRestaurantById(@Param('id') restaurantId: string, @Req() req: Request) {
+    const response = await this.customerService.getRestaurantById(restaurantId);
+    response.image = getBaseUrl(req) + '/' + response.image
 
-        return response;
-    }
+    return response;
+  }
 
-    @Get('restaurants')
-    async getRestaurant(@Req() req: Request) {
-        const response = await this.customerService.getRestaurants();
-        for (let i = 0; i < response.length; i++) {
-          response[i].image = getBaseUrl(req) + '/' + response[i].image
-      }
-      return response;
-    }
-
-@Get('all-restaurant-menu/:restaurantId')
-async getAllMenu(@Param('restaurantId') restaurantId: string, @Req() req: Request) {
-    const response = await this.customerService.getRestaurantMenu(restaurantId);
+  @Get('restaurants')
+  async getRestaurant(@Req() req: Request) {
+    const response = await this.customerService.getRestaurants();
     for (let i = 0; i < response.length; i++) {
-        response[i].image = getBaseUrl(req) + '/' + response[i].image
+      response[i].image = getBaseUrl(req) + '/' + response[i].image
     }
     return response;
-}
+  }
 
-@Get('popular-restaurant-menu')
-async getMenu(@Req() req: Request) {
+  @Get('all-restaurant-menu/:restaurantId')
+  async getAllMenu(@Param('restaurantId') restaurantId: string, @Req() req: Request) {
+    const response = await this.customerService.getRestaurantMenu(restaurantId);
+    for (let i = 0; i < response.length; i++) {
+      response[i].image = getBaseUrl(req) + '/' + response[i].image
+    }
+    return response;
+  }
+
+  @Get('popular-restaurant-menu')
+  async getMenu(@Req() req: Request) {
     const response = await this.customerService.getPopularMenu();
     for (let i = 0; i < response.length; i++) {
       response[i].image = getBaseUrl(req) + '/' + response[i].image
-  }
+    }
     return response;
+  }
+
+  @Post('save-to-cart')
+  addToCart(@Body() dto: SaveMenuOrderDto) {
+    return this.customerService.addToCartOrUpdate(dto);
+  }
+  @Post('remove-from-cart')
+  deleteFromCart(@Body() dto: RemoveMenuOrderDto) {
+    return this.customerService.removefromCart(dto);
+  }
+
+  @Get('cart-list')
+  async getCartList(@Req() req: Request, @Query('customerId') customerId?: string, @Query('temporalId') temporalId?: string) {
+    const response = await this.customerService.getFromCart(req, parseInt(customerId), temporalId);
+    return response;
+  }
+
+  @Post('get-checkout-final-menu')
+  async getCheckoutFinalmenu(@Req() req: Request, @Body() menuRequest: CheckoutFinalMenuRequest) {
+    const response = await this.customerService.getCheckoutMenu(menuRequest.restaurantIds, menuRequest.menuIds, req);
+    return response;
+  }
 }
 
-@Post('create-order')
-    createCategory(@Body() dto: CreateMenuOrderDto) {
-        return this.customerService.CreateMenuOrder(dto);
-    }
-}
