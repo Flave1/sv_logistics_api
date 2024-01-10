@@ -197,8 +197,9 @@ model OrderCheckout{
   addressId  Int
   customerId Int
   paymentStatus Int
-
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
   address Address @relation(fields: [addressId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   user User @relation(fields: [customerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  @@map("menuOrder")
+  @@map("orderCheckout")
 }
