@@ -52,6 +52,18 @@ import {
     @IsString()
     status: boolean;
 
+    @ApiProperty({})
+    @IsString()
+    latitude: string;
+
+    @ApiProperty({})
+    @IsString()
+    longitude: string;
+
+    @ApiProperty({})
+    @IsString()
+    countryId: string;
+
     @ApiProperty({ type: 'string', format: 'binary' })
     file: any;
   }

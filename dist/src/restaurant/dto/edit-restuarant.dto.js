@@ -72,6 +72,21 @@ __decorate([
     __metadata("design:type", Boolean)
 ], EditRestaurantDto.prototype, "status", void 0);
 __decorate([
+    (0, swagger_1.ApiProperty)({}),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], EditRestaurantDto.prototype, "latitude", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({}),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], EditRestaurantDto.prototype, "longitude", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({}),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], EditRestaurantDto.prototype, "countryId", void 0);
+__decorate([
     (0, swagger_1.ApiProperty)({ type: 'string', format: 'binary' }),
     __metadata("design:type", Object)
 ], EditRestaurantDto.prototype, "file", void 0);

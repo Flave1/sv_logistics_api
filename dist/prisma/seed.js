@@ -36,7 +36,8 @@ async function main() {
         update: {},
         create: {
             name: 'Default Restaurant',
-            clientId: 1
+            clientId: 1,
+            countryId: 1
         },
     });
     for (let i = 0; i < courierTypes.length; i++) {

@@ -63,7 +63,7 @@ let RestaurantService = class RestaurantService {
                 clientId: parseInt(dto.clientId),
                 latitude: dto.latitude,
                 longitude: dto.longitude,
-                countryId: dto.countryId
+                countryId: parseInt(dto.countryId)
             },
         });
         this.socket.emitToClient(dto_1.RestaurantManagementEvents.get_restaurants_event);
@@ -99,7 +99,10 @@ let RestaurantService = class RestaurantService {
                 closingTime: dto.closingTime,
                 hasFreeDelivery: hasFreeDelivery,
                 freeDeliveryAmount: dto.freeDeliveryAmount,
-                status: status
+                status: status,
+                latitude: dto.latitude,
+                longitude: dto.longitude,
+                countryId: parseInt(dto.countryId)
             },
         });
     }
