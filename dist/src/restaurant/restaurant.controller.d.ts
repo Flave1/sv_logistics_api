@@ -1,6 +1,7 @@
 import { RestaurantService } from './restaurant.service';
 import { CreateRestaurantDto, EditRestaurantDto } from './dto';
 import { Request } from "express";
+import { DeleteDto } from 'src/dto/delete.dto';
 export declare class RestaurantController {
     private restaurantService;
     constructor(restaurantService: RestaurantService);
@@ -21,6 +22,9 @@ export declare class RestaurantController {
         hasFreeDelivery: boolean;
         freeDeliveryAmount: import("@prisma/client/runtime/library").Decimal;
         clientId: number;
+        latitude: import("@prisma/client/runtime/library").Decimal;
+        longitude: import("@prisma/client/runtime/library").Decimal;
+        countryId: number;
     }[]>;
     getRestaurantById(restaurantId: number, req: Request): Promise<{
         id: number;
@@ -39,6 +43,9 @@ export declare class RestaurantController {
         hasFreeDelivery: boolean;
         freeDeliveryAmount: import("@prisma/client/runtime/library").Decimal;
         clientId: number;
+        latitude: import("@prisma/client/runtime/library").Decimal;
+        longitude: import("@prisma/client/runtime/library").Decimal;
+        countryId: number;
     }>;
     createRestaurant(file: any, dto: CreateRestaurantDto): Promise<{
         id: number;
@@ -57,6 +64,9 @@ export declare class RestaurantController {
         hasFreeDelivery: boolean;
         freeDeliveryAmount: import("@prisma/client/runtime/library").Decimal;
         clientId: number;
+        latitude: import("@prisma/client/runtime/library").Decimal;
+        longitude: import("@prisma/client/runtime/library").Decimal;
+        countryId: number;
     }>;
     editRestaurantById(file: any, dto: EditRestaurantDto): Promise<{
         id: number;
@@ -75,6 +85,9 @@ export declare class RestaurantController {
         hasFreeDelivery: boolean;
         freeDeliveryAmount: import("@prisma/client/runtime/library").Decimal;
         clientId: number;
+        latitude: import("@prisma/client/runtime/library").Decimal;
+        longitude: import("@prisma/client/runtime/library").Decimal;
+        countryId: number;
     }>;
-    deleteRestaurantById(restaurantId: number): Promise<void>;
+    deleteCategory(dto: DeleteDto): Promise<import("../dto/api-response").APIResponse<any>>;
 }

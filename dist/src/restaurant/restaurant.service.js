@@ -13,10 +13,15 @@ exports.RestaurantService = exports.cached_restaurants = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const utils_1 = require("../utils");
+const api_response_1 = require("../dto/api-response");
+const enums_1 = require("./enums");
+const gateway_service_1 = require("../gateway/gateway.service");
+const dto_1 = require("../gateway/dto");
 exports.cached_restaurants = 'cached_restaurants';
 let RestaurantService = class RestaurantService {
-    constructor(prisma) {
+    constructor(prisma, socket) {
         this.prisma = prisma;
+        this.socket = socket;
     }
     getRestaurantById(restaurantId) {
         return this.prisma.restaurant.findFirst({
@@ -26,7 +31,16 @@ let RestaurantService = class RestaurantService {
         });
     }
     async getRestaurants() {
-        const restaurants = await this.prisma.restaurant.findMany();
+        const restaurants = await this.prisma.restaurant.findMany({
+            where: {
+                deleted: false
+            },
+            orderBy: [
+                {
+                    createdAt: 'desc',
+                }
+            ]
+        });
         return restaurants;
     }
     async createRestaurant(dto, file) {
@@ -46,9 +60,13 @@ let RestaurantService = class RestaurantService {
                 freeDeliveryAmount: dto.freeDeliveryAmount,
                 status: status,
                 deleted: false,
-                clientId: parseInt(dto.clientId)
+                clientId: parseInt(dto.clientId),
+                latitude: dto.latitude,
+                longitude: dto.longitude,
+                countryId: parseInt(dto.countryId)
             },
         });
+        this.socket.emitToClient(dto_1.RestaurantManagementEvents.get_restaurants_event);
         return restaurant;
     }
     async editRestaurantById(dto, file) {
@@ -65,6 +83,7 @@ let RestaurantService = class RestaurantService {
         }
         const hasFreeDelivery = dto.hasFreeDelivery.toString().toLowerCase() == 'true' ? true : false;
         const status = dto.status.toString().toLowerCase() == 'true' ? true : false;
+        this.socket.emitToClient(dto_1.RestaurantManagementEvents.get_restaurants_event);
         return this.prisma.restaurant.update({
             where: {
                 id: parseInt(dto.id),
@@ -80,26 +99,37 @@ let RestaurantService = class RestaurantService {
                 closingTime: dto.closingTime,
                 hasFreeDelivery: hasFreeDelivery,
                 freeDeliveryAmount: dto.freeDeliveryAmount,
-                status: status
+                status: status,
+                latitude: dto.latitude,
+                longitude: dto.longitude,
+                countryId: parseInt(dto.countryId)
             },
         });
     }
-    async deleteRestaurantById(restaurantId) {
-        const restaurant = await this.prisma.restaurant.findUnique({
-            where: {
-                id: restaurantId,
-            },
-        });
-        await this.prisma.restaurant.delete({
-            where: {
-                id: restaurantId,
-            },
-        });
+    async deleteRestaurantById(dto) {
+        try {
+            const restaurant = await this.prisma.restaurant.updateMany({
+                where: {
+                    id: {
+                        in: dto.id.map(id => parseInt(id)),
+                    }
+                },
+                data: {
+                    deleted: true
+                },
+            });
+            this.socket.emitToClient(dto_1.RestaurantManagementEvents.get_restaurants_event);
+            return new api_response_1.APIResponse(enums_1.Status.Success, enums_1.StatusMessage.Deleted, null);
+        }
+        catch (error) {
+            throw error;
+        }
     }
 };
 exports.RestaurantService = RestaurantService;
 exports.RestaurantService = RestaurantService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        gateway_service_1.GatewayService])
 ], RestaurantService);
 //# sourceMappingURL=restaurant.service.js.map
