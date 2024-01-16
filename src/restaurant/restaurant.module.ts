@@ -11,6 +11,7 @@ import { MenuService } from './menu/menu.service';
 import { CustomerModule } from './customer/customer.module';
 import { CountryModule } from './country/country.module';
 import { ClientModule } from './client/client.module';
+import { CustomerWebModule } from './customerweb/customerweb.module';
 @Module({
   providers: [
     RestaurantService, 
@@ -26,7 +27,8 @@ import { ClientModule } from './client/client.module';
     MenuModule,
     CustomerModule,
     CountryModule,
-    ClientModule
+    ClientModule,
+    CustomerWebModule,
   ],
   controllers: [RestaurantController],
 })

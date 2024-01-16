@@ -17,6 +17,7 @@ const menu_service_1 = require("./menu/menu.service");
 const customer_module_1 = require("./customer/customer.module");
 const country_module_1 = require("./country/country.module");
 const client_module_1 = require("./client/client.module");
+const customerweb_module_1 = require("./customerweb/customerweb.module");
 let RestaurantModule = class RestaurantModule {
 };
 exports.RestaurantModule = RestaurantModule;
@@ -34,7 +35,8 @@ exports.RestaurantModule = RestaurantModule = __decorate([
             menu_module_1.MenuModule,
             customer_module_1.CustomerModule,
             country_module_1.CountryModule,
-            client_module_1.ClientModule
+            client_module_1.ClientModule,
+            customerweb_module_1.CustomerWebModule,
         ],
         controllers: [restaurant_controller_1.RestaurantController],
     })

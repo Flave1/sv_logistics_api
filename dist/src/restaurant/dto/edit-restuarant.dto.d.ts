@@ -10,5 +10,8 @@ export declare class EditRestaurantDto {
     hasFreeDelivery: boolean;
     freeDeliveryAmount: string;
     status: boolean;
+    latitude: string;
+    longitude: string;
+    countryId: string;
     file: any;
 }
