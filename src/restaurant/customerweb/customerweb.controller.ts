@@ -3,8 +3,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CustomerWebService } from './customerweb.service';
 import { JwtGuard } from 'src/auth/guard';
 
-@ApiBearerAuth()
-@UseGuards(JwtGuard)
+
 @ApiTags('CustomerWeb')
 @Controller('customerweb')
 export class CustomerWebController {
