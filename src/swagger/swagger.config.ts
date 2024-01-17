@@ -11,7 +11,6 @@ export function swaggerConfig(app: INestApplication): void{
     .addTag('Restaurant')
     .addTag('Bookmarks')
     .addTag('Menu')
-    .addTag('Customer')
     .addTag('Address')
     .addTag('Web')
     .addBearerAuth()

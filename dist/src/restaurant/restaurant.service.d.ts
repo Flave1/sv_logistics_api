@@ -4,7 +4,7 @@ import { CreateRestaurantDto, EditRestaurantDto } from './dto';
 import { DeleteDto } from 'src/dto/delete.dto';
 import { APIResponse } from 'src/dto/api-response';
 import { GatewayService } from 'src/gateway/gateway.service';
-import { CreateQrCodeDto } from './customerweb/dto/create-qrcode.dto';
+import { CreateQrCodeDto } from '../customerweb/dto/create-qrcode.dto';
 import { Request } from 'express';
 export declare const cached_restaurants = "cached_restaurants";
 export declare class RestaurantService {

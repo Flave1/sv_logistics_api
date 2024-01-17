@@ -1,14 +1,16 @@
 import { Injectable, NotFoundException, Req } from '@nestjs/common';
 import { GatewayService } from 'src/gateway/gateway.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { StatusMessage } from '../enums';
+import { StatusMessage } from '../restaurant/enums';
+import { Request } from 'express';
+import { getBaseUrl } from 'src/utils';
 
 @Injectable()
 export class CustomerWebService {
   constructor(
     private prisma: PrismaService,
     private socket: GatewayService,
-  ) {}
+  ) { }
 
   async getRestaurantMenuCategories(restaurantId: string) {
     const categories = (await this.prisma.menuCategory.findMany({
@@ -37,7 +39,7 @@ export class CustomerWebService {
           menuCategory: true,
         }
       });
-      return  menuList;
+      return menuList;
     } catch (error) {
       throw error
     }
@@ -70,7 +72,7 @@ export class CustomerWebService {
       const menu = await this.prisma.menu.findFirst({
         where: {
           restaurantId: parseInt(restaurantId),
-          name: { 
+          name: {
             contains: name
           },
           deleted: false
@@ -89,14 +91,22 @@ export class CustomerWebService {
     }
   }
 
-  async getRestaurantAllMenu(restaurantId: string) {
+  async getRestaurantAllMenu(restaurantId: string, req: Request) {
     const restaurant_menu = (await this.prisma.menu.findMany({
       where: {
         restaurantId: parseInt(restaurantId),
         deleted: false
       },
       include: {
-        menuCategory: true,
+        restaurant: {
+          select: {
+            name: true,
+          },
+        }, menuCategory: {
+          select: {
+            name: true,
+          },
+        },
       },
       orderBy: [
         {
@@ -104,6 +114,19 @@ export class CustomerWebService {
         }
       ]
     }));
-    return restaurant_menu;
+
+    return restaurant_menu.map((menu) => ({
+      name: menu.name,
+      description: menu.description,
+      restaurantId: menu.restaurantId,
+      restaurantName: menu.restaurant.name,
+      categoryName: menu.menuCategory.name,
+      id: menu.id,
+      image: getBaseUrl(req) + '/' + menu.image,
+      price: menu.price,
+      availability: menu.availability,
+      discount: menu.discount,
+      dietaryInformation: menu.dietaryInformation,
+    }));
   }
 }

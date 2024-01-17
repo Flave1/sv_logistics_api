@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { GatewayService } from "src/gateway/gateway.service";
 import { PrismaService } from "src/prisma/prisma.service";
-import { StatusMessage, OrderStatus } from "../enums";
+import { StatusMessage, OrderStatus } from "../restaurant/enums";
 import { RemoveMenuOrderDto, SaveMenuOrderDto } from "./dto/create-menu-order.dto";
 import { getBaseUrl, getStatusLabel } from "src/utils";
 import { Request } from 'express';
@@ -9,7 +9,7 @@ import { Menu } from "@prisma/client";
 
 
 @Injectable()
-export class CustomerService {
+export class CustomerMobileService {
   constructor(private prisma: PrismaService, private socket: GatewayService) { }
 
 

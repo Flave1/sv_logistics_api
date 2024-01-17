@@ -1,15 +1,14 @@
 import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
-import { MenuService } from '../menu/menu.service';
 import { ApiTags } from '@nestjs/swagger';
-import { CustomerService } from './customer.service';
+import { CustomerMobileService } from './customer-mobile.service';
 import { getBaseUrl } from 'src/utils';
 import { Request } from 'express';
 import { CheckoutFinalMenuRequest, RemoveMenuOrderDto, SaveMenuOrderDto } from './dto';
 
-@ApiTags('Customer')
-@Controller('customer')
-export class CustomerController {
-  constructor(private customerService: CustomerService) { }
+@ApiTags('CustomerMobile')
+@Controller('customer-mobile')
+export class CustomerMobileController {
+  constructor(private customerService: CustomerMobileService) { }
 
   @Get('restaurant-menu/:id')
   async getMenuById(@Param('id') id: string, @Req() req: Request) {

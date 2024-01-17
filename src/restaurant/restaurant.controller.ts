@@ -31,7 +31,7 @@ import { getBaseUrl } from "src/utils";
 import { Request } from "express";
 import { DeleteDto } from 'src/dto/delete.dto';
 import { GetUser } from 'src/auth/decorator';
-import { CreateQrCodeDto } from './customerweb/dto/create-qrcode.dto';
+import { CreateQrCodeDto } from '../customerweb/dto/create-qrcode.dto';
 
 const restaurantDestination: string = './src/uploads/restaurant'
 let basePath: string = '';

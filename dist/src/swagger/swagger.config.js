@@ -12,7 +12,6 @@ function swaggerConfig(app) {
         .addTag('Restaurant')
         .addTag('Bookmarks')
         .addTag('Menu')
-        .addTag('Customer')
         .addTag('Address')
         .addTag('Web')
         .addBearerAuth()
