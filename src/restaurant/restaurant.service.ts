@@ -171,6 +171,17 @@ export class RestaurantService {
 
         let menuPage, qrText, qrPath, savePath;
         let qrCodes: string[] = [];
+
+        let sequentialArray: string[] = [];
+        if(dto.isSequential)
+        {
+            for(let i = parseInt(dto.table[0]); i <= parseInt(dto.table[1]); i++)
+            {
+                sequentialArray.push(i.toString());
+            }
+            dto.table = sequentialArray;
+        }
+
     
         if (dto.table.length == 0) {
     

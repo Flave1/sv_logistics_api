@@ -4,11 +4,15 @@ import { CustomerMobileService } from './customer-mobile.service';
 import { getBaseUrl } from 'src/utils';
 import { Request } from 'express';
 import { CheckoutFinalMenuRequest, RemoveMenuOrderDto, SaveMenuOrderDto } from './dto';
+import { MenuService } from 'src/restaurant/menu/menu.service';
 
 @ApiTags('CustomerMobile')
 @Controller('customer-mobile')
 export class CustomerMobileController {
-  constructor(private customerService: CustomerMobileService) { }
+  constructor(
+    private customerService: CustomerMobileService,
+    private menuService: MenuService
+    ) { }
 
   @Get('restaurant-menu/:id')
   async getMenuById(@Param('id') id: string, @Req() req: Request) {

@@ -165,6 +165,13 @@ let RestaurantService = class RestaurantService {
         }
         let menuPage, qrText, qrPath, savePath;
         let qrCodes = [];
+        let sequentialArray = [];
+        if (dto.isSequential) {
+            for (let i = parseInt(dto.table[0]); i <= parseInt(dto.table[1]); i++) {
+                sequentialArray.push(i.toString());
+            }
+            dto.table = sequentialArray;
+        }
         if (dto.table.length == 0) {
             menuPage = `${(0, utils_2.getBaseUrl)(req)}/${restaurant.name.replace(" ", "-")}/${restaurantId}/menu`;
             const base64Image = await this.generateQrCodeImage(menuPage);
