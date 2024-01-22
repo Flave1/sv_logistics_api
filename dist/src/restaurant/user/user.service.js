@@ -59,13 +59,31 @@ let UserService = class UserService {
         return user;
     }
     async getUserById(userId) {
-        const user = await this.prisma.user.findFirst({
+        return await this.prisma.user.findFirst({
             where: {
-                id: parseInt(userId)
+                id: userId
+            },
+            select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                phoneNumber: true,
+                otherPhoneNumber: true,
+                email: true,
+                status: true,
+                userTypeId: true,
+                addresses: {
+                    select: {
+                        id: true,
+                        label: true,
+                        isDefault: true,
+                    },
+                    where: {
+                        isDefault: true,
+                    },
+                },
             },
         });
-        delete user.hash;
-        return user;
     }
     async getUserByRestaurantId(restaurantId) {
         const user = await this.prisma.user.findMany({

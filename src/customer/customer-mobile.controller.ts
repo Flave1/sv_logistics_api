@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { CustomerService } from './customer-mobile.service';
+import { CustomerService } from './customer.service';
 import { getBaseUrl } from 'src/utils';
 import { Request } from 'express';
 import { CheckoutFinalMenuRequest, RemoveMenuOrderDto, SaveMenuOrderDto } from './dto';

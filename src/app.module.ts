@@ -7,7 +7,7 @@ import { UserModule } from './restaurant/user/user.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { RestaurantModule } from './restaurant/restaurant.module';
 import { GatewayModule } from './gateway/gateway.module';
-import { CustomerModule } from './customer/customer-mobile.module';
+import { CustomerModule } from './customer/customer.module';
 
 @Module({
   imports: [

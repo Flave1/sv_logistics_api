@@ -15,7 +15,7 @@ const user_module_1 = require("./restaurant/user/user.module");
 const prisma_module_1 = require("./prisma/prisma.module");
 const restaurant_module_1 = require("./restaurant/restaurant.module");
 const gateway_module_1 = require("./gateway/gateway.module");
-const customer_mobile_module_1 = require("./customer/customer-mobile.module");
+const customer_module_1 = require("./customer/customer.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -29,7 +29,7 @@ exports.AppModule = AppModule = __decorate([
             prisma_module_1.PrismaModule,
             restaurant_module_1.RestaurantModule,
             gateway_module_1.GatewayModule,
-            customer_mobile_module_1.CustomerModule,
+            customer_module_1.CustomerModule,
         ],
     })
 ], AppModule);

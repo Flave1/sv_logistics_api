@@ -2,8 +2,8 @@ import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { getBaseUrl } from 'src/utils';
 import { Request } from 'express';
-import { CustomerService } from 'src/customer/customer-mobile.service';
-import { CheckoutFinalMenuRequest, RemoveMenuOrderDto, SaveMenuOrderDto } from 'src/customer/dto';
+import { CustomerService } from 'src/customer/customer.service';
+import { CheckoutDto, CheckoutFinalMenuRequest, RemoveMenuOrderDto, SaveMenuOrderDto } from 'src/customer/dto';
 import { MenuService } from 'src/restaurant/menu/menu.service';
 
 
@@ -11,13 +11,13 @@ import { MenuService } from 'src/restaurant/menu/menu.service';
 @Controller('customer-web')
 export class CustomerWebController {
     constructor(
-        private customerMobileService: CustomerService,
+        private customerService: CustomerService,
         private menuService: MenuService
     ) { }
 
     @Get('restaurants')
     async getRestaurant(@Req() req: Request) {
-        const response = await this.customerMobileService.getRestaurants();
+        const response = await this.customerService.getRestaurants();
         for (let i = 0; i < response.length; i++) {
             response[i].image = getBaseUrl(req) + '/' + response[i].image
         }
@@ -50,27 +50,33 @@ export class CustomerWebController {
 
     @Get('all-menu/:restaurantId')
     async getRestaurantAllMenu(@Param('restaurantId') restaurantId: string, @Req() req: Request) {
-        return this.customerMobileService.getRestaurantAllMenu(restaurantId, req);
+        return this.customerService.getRestaurantAllMenu(restaurantId, req);
     }
 
     @Post('save-to-cart')
     addToCart(@Body() dto: SaveMenuOrderDto) {
-        return this.customerMobileService.addToCartOrUpdate(dto);
+        return this.customerService.addToCartOrUpdate(dto);
     }
     @Post('remove-from-cart')
     deleteFromCart(@Body() dto: RemoveMenuOrderDto) {
-        return this.customerMobileService.removefromCart(dto);
+        return this.customerService.removefromCart(dto);
     }
 
     @Get('cart-list')
     async getCartList(@Req() req: Request, @Query('customerId') customerId?: string, @Query('temporalId') temporalId?: string) {
-        const response = await this.customerMobileService.getFromCart(req, parseInt(customerId), temporalId);
+        const response = await this.customerService.getFromCart(req, parseInt(customerId), temporalId);
         return response;
     }
 
     @Post('get-checkout-final-menu')
     async getCheckoutFinalmenu(@Req() req: Request, @Body() menuRequest: CheckoutFinalMenuRequest) {
-        const response = await this.customerMobileService.getCheckoutMenu(menuRequest.restaurantIds, menuRequest.menuIds, req);
+        const response = await this.customerService.getCheckoutMenu(menuRequest.restaurantIds, menuRequest.menuIds, req);
+        return response;
+    }
+
+    @Post('checkout')
+    async checkoutOrder(@Body() request: CheckoutDto) {
+        const response = await this.customerService.checkoutOrder(request);
         return response;
     }
 }
