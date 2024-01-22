@@ -317,6 +317,30 @@ export class MenuService {
     }
   }
 
+  async getRestaurantMenuByName(restaurantId: string, name: string, ) {
+    try {
+      const menu = await this.prisma.menu.findFirst({
+        where: {
+          restaurantId: parseInt(restaurantId),
+          name: {
+            contains: name
+          },
+          deleted: false
+        },
+        include: {
+          menuCategory: true,
+        }
+      });
+      if (!menu) {
+        throw new NotFoundException(StatusMessage.NoRecord);
+      }
+
+      return menu;
+    } catch (error) {
+      throw error
+    }
+  }
+
   // async ConvertToBase64String(path: string): Promise<string> {
 
   //   const fileData = fs.readFileSync(path);

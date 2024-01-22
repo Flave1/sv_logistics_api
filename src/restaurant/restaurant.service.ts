@@ -1,6 +1,7 @@
 import {
     Injectable,
     NotFoundException,
+    Req,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import {
@@ -15,6 +16,10 @@ import { APIResponse } from 'src/dto/api-response';
 import { Status, StatusMessage } from './enums';
 import { GatewayService } from 'src/gateway/gateway.service';
 import { RestaurantManagementEvents } from 'src/gateway/dto';
+import { CreateQrCodeDto } from '../customerweb/dto/create-qrcode.dto';
+import { getBaseUrl } from 'src/utils';
+import { Request } from 'express';
+import * as qrcode from 'qrcode';
 
 export const cached_restaurants = 'cached_restaurants';
 @Injectable()
@@ -151,4 +156,52 @@ export class RestaurantService {
             throw error;
         }
     }
+    
+    async CreateQrCode(restaurantId: string, dto: CreateQrCodeDto, @Req() req: Request) {
+        //Fetch restaurant details by restaurantId
+        const restaurant = await this.prisma.restaurant.findFirst({
+          where: {
+            id: parseInt(restaurantId),
+          },
+        });
+    
+        if (!restaurant) {
+            throw new NotFoundException(StatusMessage.NoRecord);
+          }
+
+        let menuPage, qrText, qrPath, savePath;
+        let qrCodes: string[] = [];
+
+        let sequentialArray: string[] = [];
+        if(dto.isSequential)
+        {
+            for(let i = parseInt(dto.table[0]); i <= parseInt(dto.table[1]); i++)
+            {
+                sequentialArray.push(i.toString());
+            }
+            dto.table = sequentialArray;
+        }
+
+    
+        if (dto.table.length == 0) {
+    
+          //Generate QRCode
+          menuPage = `${getBaseUrl(req)}/${restaurant.name.replace(" ", "-")}/${restaurantId}/menu`;
+          const base64Image = await this.generateQrCodeImage(menuPage);
+          qrCodes.push(base64Image)
+    
+        } else {
+          for (let i = 0; i < dto.table.length; i++) {
+            
+            //Generate QRCode
+            menuPage = `${getBaseUrl(req)}/${restaurant.name.replace(" ", "-")}/${restaurantId}/menu/${dto.table[i]}`;
+            const base64Image = await this.generateQrCodeImage(menuPage);
+            qrCodes.push(base64Image)
+          }
+        }
+        return qrCodes;
+      }
+      private async generateQrCodeImage(text: string): Promise<string> {
+        return qrcode.toDataURL(text);
+      }
 }
