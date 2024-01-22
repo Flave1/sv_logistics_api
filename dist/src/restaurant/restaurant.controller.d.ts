@@ -2,6 +2,7 @@ import { RestaurantService } from './restaurant.service';
 import { CreateRestaurantDto, EditRestaurantDto } from './dto';
 import { Request } from "express";
 import { DeleteDto } from 'src/dto/delete.dto';
+import { CreateQrCodeDto } from '../customer/dto/create-qrcode.dto';
 export declare class RestaurantController {
     private restaurantService;
     constructor(restaurantService: RestaurantService);
@@ -89,5 +90,6 @@ export declare class RestaurantController {
         longitude: import("@prisma/client/runtime/library").Decimal;
         countryId: number;
     }>;
-    deleteCategory(dto: DeleteDto): Promise<import("../dto/api-response").APIResponse<any>>;
+    deleteRestaurant(dto: DeleteDto): Promise<import("../dto/api-response").APIResponse<any>>;
+    createQrCode(restaurantId: string, dto: CreateQrCodeDto, req: Request): Promise<string[]>;
 }

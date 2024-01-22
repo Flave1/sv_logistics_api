@@ -47,6 +47,8 @@ const uuid_1 = require("uuid");
 const path = __importStar(require("path"));
 const utils_1 = require("../utils");
 const delete_dto_1 = require("../dto/delete.dto");
+const decorator_1 = require("../auth/decorator");
+const create_qrcode_dto_1 = require("../customer/dto/create-qrcode.dto");
 const restaurantDestination = './src/uploads/restaurant';
 let basePath = '';
 let RestaurantController = class RestaurantController {
@@ -71,8 +73,11 @@ let RestaurantController = class RestaurantController {
     editRestaurantById(file, dto) {
         return this.restaurantService.editRestaurantById(dto, file);
     }
-    deleteCategory(dto) {
+    deleteRestaurant(dto) {
         return this.restaurantService.deleteRestaurantById(dto);
+    }
+    async createQrCode(restaurantId, dto, req) {
+        return this.restaurantService.CreateQrCode(restaurantId, dto, req);
     }
 };
 exports.RestaurantController = RestaurantController;
@@ -135,7 +140,16 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [delete_dto_1.DeleteDto]),
     __metadata("design:returntype", void 0)
-], RestaurantController.prototype, "deleteCategory", null);
+], RestaurantController.prototype, "deleteRestaurant", null);
+__decorate([
+    (0, common_1.Post)('create-qrcode'),
+    __param(0, (0, decorator_1.GetUser)('restaurantId')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, create_qrcode_dto_1.CreateQrCodeDto, Object]),
+    __metadata("design:returntype", Promise)
+], RestaurantController.prototype, "createQrCode", null);
 exports.RestaurantController = RestaurantController = __decorate([
     (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.UseGuards)(guard_1.JwtGuard),

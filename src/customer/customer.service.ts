@@ -1,16 +1,18 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { GatewayService } from "src/gateway/gateway.service";
 import { PrismaService } from "src/prisma/prisma.service";
-import { StatusMessage, OrderStatus } from "../enums";
+import { StatusMessage, OrderStatus } from "../restaurant/enums";
 import { RemoveMenuOrderDto, SaveMenuOrderDto } from "./dto/create-menu-order.dto";
-import { getBaseUrl, getStatusLabel } from "src/utils";
+import { PaymentStatus, getBaseUrl, getStatusLabel } from "src/utils";
 import { Request } from 'express';
-import { Menu } from "@prisma/client";
+import { Menu, User } from "@prisma/client";
+import { CheckoutDto } from "./dto";
+import { UserService } from "src/restaurant/user/user.service";
 
 
 @Injectable()
 export class CustomerService {
-  constructor(private prisma: PrismaService, private socket: GatewayService) { }
+  constructor(private prisma: PrismaService, private socket: GatewayService, private userService: UserService) { }
 
 
   async getRestaurantMenuById(menuId: string) {
@@ -160,7 +162,6 @@ export class CustomerService {
     return mostOrderedMenu;
   }
 
-
   async addToCartOrUpdate(dto: SaveMenuOrderDto) {
     try {
       const existingMenuOrder = await this.prisma.menuOrder.findFirst({
@@ -221,7 +222,7 @@ export class CustomerService {
       if (existingMenuOrder) {
         if (existingMenuOrder.quantity == 1) {
           await this.prisma.menuOrder.delete({ where: { id: existingMenuOrder.id } })
-          return { message: "Menu completely removed from Cart"};
+          return { message: "Menu completely removed from Cart" };
         }
         // If the menu order already exists, update it
         const updatedMenuOrder = await this.prisma.menuOrder.update({
@@ -232,8 +233,8 @@ export class CustomerService {
         });
 
         return updatedMenuOrder;
-      }else{
-        return { message: "Menu does not exist in  Cart"};
+      } else {
+        return { message: "Menu does not exist in  Cart" };
       }
     } catch (error) {
       throw new InternalServerErrorException(error)
@@ -321,5 +322,128 @@ export class CustomerService {
     }))
   }
 
+  async getRestaurantAllMenu(restaurantId: string, req: Request) {
+    const restaurant_menu = (await this.prisma.menu.findMany({
+      where: {
+        restaurantId: parseInt(restaurantId),
+        deleted: false
+      },
+      include: {
+        restaurant: {
+          select: {
+            name: true,
+          },
+        }, menuCategory: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: [
+        {
+          createdAt: 'desc',
+        }
+      ]
+    }));
+
+    return restaurant_menu.map((menu) => ({
+      name: menu.name,
+      description: menu.description,
+      restaurantId: menu.restaurantId,
+      restaurantName: menu.restaurant.name,
+      categoryName: menu.menuCategory.name,
+      id: menu.id,
+      image: getBaseUrl(req) + '/' + menu.image,
+      price: menu.price,
+      availability: menu.availability,
+      discount: menu.discount,
+      dietaryInformation: menu.dietaryInformation,
+    }));
+  }
+
+  async checkoutOrder(request: CheckoutDto) {
+    const customer = await this.userService.getUserById(request.customerId);
+    if (!customer) {
+      throw new NotFoundException('Customer not found ')
+    }
+
+    const menus = await this.prisma.menu.findMany({
+      where: {
+        id: { in: request.menuIds },
+      },
+    });
+
+    if (request.menuIds.length != menus.length) {
+      throw new NotFoundException('One of the selected Order is not available')
+    }
+
+    const checkout = await this.createOrderCheckout(request, customer)
+
+    const updatedOrders = await this.createMenuOrders(request, checkout.id)
+
+    return updatedOrders
+  }
+  
+  async createOrderCheckout(request: CheckoutDto, customer: any) {
+    try {
+      return await this.prisma.orderCheckout.create({
+        data: {
+          menuIds: request.menuIds.join(','),
+          paymentStatus: PaymentStatus.success,
+          addressId: customer.addresses.find(user => user).id,
+          customerId: request.customerId,
+          orderId: (await this.generateOrderCheckoutId()).toString(),
+          status: OrderStatus.Completed
+        }
+      });
+    } catch (error) {
+      throw new InternalServerErrorException
+    }
+  }
+
+  async createMenuOrders(request: CheckoutDto, checkoutId: number) {
+    try {
+      return await this.prisma.menuOrder.updateMany({
+        where: {
+          OR: [
+            { customerId: request.customerId },
+            { temporalId: request.temporalId },
+          ],
+          status: OrderStatus.Completed,
+          menuOrderId: checkoutId
+        },
+        data: {
+          orderId: (await this.generateOrderCheckoutId()).toString()
+        },
+      });
+    } catch (error) {
+      throw new InternalServerErrorException
+    }
+  }
+
+  async generateOrderCheckoutId() {
+    const lastOrderId = await this.prisma.orderCheckout.findFirst({
+      select: {
+        id: true,
+      },
+      orderBy: {
+        id: 'desc',
+      },
+    });
+    return lastOrderId ? lastOrderId.id + 1 : 1;
+  }
+
+  async generateMenuOrderId() {
+    const lastOrderId = await this.prisma.menuOrder.findFirst({
+      select: {
+        id: true,
+      },
+      orderBy: {
+        id: 'desc',
+      },
+    });
+    return lastOrderId ? lastOrderId.id + 1 : 1;
+  }
 }
+
 

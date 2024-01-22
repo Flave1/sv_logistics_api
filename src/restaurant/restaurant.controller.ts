@@ -30,6 +30,8 @@ import * as path from 'path';
 import { getBaseUrl } from "src/utils";
 import { Request } from "express";
 import { DeleteDto } from 'src/dto/delete.dto';
+import { GetUser } from 'src/auth/decorator';
+import { CreateQrCodeDto } from '../customer/dto/create-qrcode.dto';
 
 const restaurantDestination: string = './src/uploads/restaurant'
 let basePath: string = '';
@@ -98,7 +100,12 @@ export class RestaurantController {
     }
 
     @Post('delete')
-    deleteCategory(@Body() dto: DeleteDto) {
+    deleteRestaurant(@Body() dto: DeleteDto) {
         return this.restaurantService.deleteRestaurantById(dto);
     }
+
+  @Post('create-qrcode')
+  async createQrCode(@GetUser('restaurantId') restaurantId: string, @Body() dto: CreateQrCodeDto, @Req() req: Request) {
+    return this.restaurantService.CreateQrCode(restaurantId, dto, req);
+  }
 }

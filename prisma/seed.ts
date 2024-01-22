@@ -19,7 +19,7 @@ async function main() {
             countryId: 1
         },
     });
-   
+
     for (let i = 0; i < courierTypes.length; i++) {
         await prisma.courierType.upsert({
             where: { id: courierTypes[i].id },

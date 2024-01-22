@@ -54,17 +54,32 @@ export class UserService {
     return user;
   }
 
-  async getUserById(
-    userId: string,
-  ) {
-    const user = await this.prisma.user.findFirst({
+  async getUserById(userId: number) {
+    return await this.prisma.user.findFirst({
       where: {
-        id: parseInt(userId)
+        id: userId
+      },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        phoneNumber: true,
+        otherPhoneNumber: true,
+        email: true,
+        status: true,
+        userTypeId: true,
+        addresses: {
+          select: {
+            id: true,
+            label: true,
+            isDefault: true,
+          },
+          where: {
+            isDefault: true,
+          },
+        },
       },
     });
-    delete user.hash; //Todo: change to transformer
-
-    return user;
   }
 
   async getUserByRestaurantId(restaurantId: string) {
@@ -175,7 +190,7 @@ export class UserService {
         },
       });
 
-      if(users.length > 0) {
+      if (users.length > 0) {
         const userType: UserType = users[0].userTypeId;
 
         const result = await this.prisma.user.deleteMany({
@@ -186,16 +201,13 @@ export class UserService {
           },
         });
 
-        if(userType == UserType.Driver )
-        {
+        if (userType == UserType.Driver) {
           this.socket.emitToClient(UserManagementEvents.get_all_drivers_event)
         }
-        else if(userType == UserType.Staff )
-        {
+        else if (userType == UserType.Staff) {
           this.socket.emitToClient(UserManagementEvents.get_all_staff_event)
         }
-        else if(userType == UserType.Customer )
-        {
+        else if (userType == UserType.Customer) {
           this.socket.emitToClient(UserManagementEvents.get_all_customers_event)
         }
       }
