@@ -7,8 +7,7 @@ import { UserModule } from './restaurant/user/user.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { RestaurantModule } from './restaurant/restaurant.module';
 import { GatewayModule } from './gateway/gateway.module';
-import { CustomerMobileModule } from './customer-mobile/customer-mobile.module';
-import { CustomerWebModule } from './customerweb/customerweb.module';
+import { CustomerModule } from './customer/customer.module';
 
 @Module({
   imports: [
@@ -19,8 +18,7 @@ import { CustomerWebModule } from './customerweb/customerweb.module';
     PrismaModule,
     RestaurantModule,
     GatewayModule,
-    CustomerWebModule,
-    CustomerMobileModule,
+    CustomerModule,
   ],
 })
 export class AppModule { }

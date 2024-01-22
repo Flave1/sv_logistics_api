@@ -16,7 +16,7 @@ import { APIResponse } from 'src/dto/api-response';
 import { Status, StatusMessage } from './enums';
 import { GatewayService } from 'src/gateway/gateway.service';
 import { RestaurantManagementEvents } from 'src/gateway/dto';
-import { CreateQrCodeDto } from '../customerweb/dto/create-qrcode.dto';
+import { CreateQrCodeDto } from '../customer/dto/create-qrcode.dto';
 import { getBaseUrl } from 'src/utils';
 import { Request } from 'express';
 import * as qrcode from 'qrcode';
