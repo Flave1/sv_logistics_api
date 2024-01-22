@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { CustomerMobileService } from './customer-mobile.service';
+import { CustomerService } from './customer-mobile.service';
 import { getBaseUrl } from 'src/utils';
 import { Request } from 'express';
 import { CheckoutFinalMenuRequest, RemoveMenuOrderDto, SaveMenuOrderDto } from './dto';
@@ -10,7 +10,7 @@ import { MenuService } from 'src/restaurant/menu/menu.service';
 @Controller('customer-mobile')
 export class CustomerMobileController {
   constructor(
-    private customerService: CustomerMobileService,
+    private customerService: CustomerService,
     private menuService: MenuService
     ) { }
 

@@ -1,11 +1,9 @@
-import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { CustomerWebService } from './customerweb.service';
-import { JwtGuard } from 'src/auth/guard';
+import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { getBaseUrl } from 'src/utils';
 import { Request } from 'express';
-import { CustomerMobileService } from 'src/customer-mobile/customer-mobile.service';
-import { CheckoutFinalMenuRequest, RemoveMenuOrderDto, SaveMenuOrderDto } from 'src/customer-mobile/dto';
+import { CustomerService } from 'src/customer/customer-mobile.service';
+import { CheckoutFinalMenuRequest, RemoveMenuOrderDto, SaveMenuOrderDto } from 'src/customer/dto';
 import { MenuService } from 'src/restaurant/menu/menu.service';
 
 
@@ -13,8 +11,7 @@ import { MenuService } from 'src/restaurant/menu/menu.service';
 @Controller('customer-web')
 export class CustomerWebController {
     constructor(
-        private customerWebService: CustomerWebService,
-        private customerMobileService: CustomerMobileService,
+        private customerMobileService: CustomerService,
         private menuService: MenuService
     ) { }
 
@@ -53,7 +50,7 @@ export class CustomerWebController {
 
     @Get('all-menu/:restaurantId')
     async getRestaurantAllMenu(@Param('restaurantId') restaurantId: string, @Req() req: Request) {
-        return this.customerWebService.getRestaurantAllMenu(restaurantId, req);
+        return this.customerMobileService.getRestaurantAllMenu(restaurantId, req);
     }
 
     @Post('save-to-cart')

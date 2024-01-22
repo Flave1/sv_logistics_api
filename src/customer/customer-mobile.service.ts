@@ -9,7 +9,7 @@ import { Menu } from "@prisma/client";
 
 
 @Injectable()
-export class CustomerMobileService {
+export class CustomerService {
   constructor(private prisma: PrismaService, private socket: GatewayService) { }
 
 
@@ -321,5 +321,43 @@ export class CustomerMobileService {
     }))
   }
 
+  async getRestaurantAllMenu(restaurantId: string, req: Request) {
+    const restaurant_menu = (await this.prisma.menu.findMany({
+      where: {
+        restaurantId: parseInt(restaurantId),
+        deleted: false
+      },
+      include: {
+        restaurant: {
+          select: {
+            name: true,
+          },
+        }, menuCategory: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: [
+        {
+          createdAt: 'desc',
+        }
+      ]
+    }));
+
+    return restaurant_menu.map((menu) => ({
+      name: menu.name,
+      description: menu.description,
+      restaurantId: menu.restaurantId,
+      restaurantName: menu.restaurant.name,
+      categoryName: menu.menuCategory.name,
+      id: menu.id,
+      image: getBaseUrl(req) + '/' + menu.image,
+      price: menu.price,
+      availability: menu.availability,
+      discount: menu.discount,
+      dietaryInformation: menu.dietaryInformation,
+    }));
+  }
 }
 

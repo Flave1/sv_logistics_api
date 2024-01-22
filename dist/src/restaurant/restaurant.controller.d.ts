@@ -2,7 +2,7 @@ import { RestaurantService } from './restaurant.service';
 import { CreateRestaurantDto, EditRestaurantDto } from './dto';
 import { Request } from "express";
 import { DeleteDto } from 'src/dto/delete.dto';
-import { CreateQrCodeDto } from '../customerweb/dto/create-qrcode.dto';
+import { CreateQrCodeDto } from '../customer/dto/create-qrcode.dto';
 export declare class RestaurantController {
     private restaurantService;
     constructor(restaurantService: RestaurantService);
