@@ -162,7 +162,7 @@ let AuthService = class AuthService {
         const secret = 'wowthisisabadsecret123';
         try {
             const token = await this.jwt.signAsync(payload, {
-                expiresIn: '60m',
+                expiresIn: '24hrs',
                 secret: secret,
                 jwtid: ''
             });

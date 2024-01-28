@@ -1,9 +1,9 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { Injectable, InternalServerErrorException, Logger, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { GatewayService } from "src/gateway/gateway.service";
 import { PrismaService } from "src/prisma/prisma.service";
 import { StatusMessage, OrderStatus } from "../restaurant/enums";
 import { RemoveMenuOrderDto, SaveMenuOrderDto } from "./dto/create-menu-order.dto";
-import { PaymentStatus, getBaseUrl, getStatusLabel } from "src/utils";
+import { PaymentOption, PaymentStatus, getBaseUrl, getStatusLabel } from "src/utils";
 import { Request } from 'express';
 import { Menu, User } from "@prisma/client";
 import { CheckoutDto } from "./dto";
@@ -15,6 +15,7 @@ export class CustomerService {
   constructor(private prisma: PrismaService, private socket: GatewayService, private userService: UserService) { }
 
 
+  private readonly logger = new Logger(GatewayService.name);
   async getRestaurantMenuById(menuId: string) {
     try {
       const menu = await this.prisma.menu.findFirst({
@@ -99,7 +100,7 @@ export class CustomerService {
       include: {
         MenuOrders: {
           where: {
-            status: OrderStatus.Completed,
+            status: OrderStatus.CheckedOut,
             createdAt: {
               gte: new Date(new Date().getTime() - 3 * 24 * 60 * 60 * 1000), // Orders within the last 3 days
             }
@@ -134,7 +135,7 @@ export class CustomerService {
       include: {
         MenuOrders: {
           where: {
-            status: OrderStatus.Completed,
+            status: OrderStatus.CheckedOut,
             createdAt: {
               gte: new Date(new Date().getTime() - 3 * 24 * 60 * 60 * 1000), // Orders within the last 3 days
             }
@@ -167,6 +168,7 @@ export class CustomerService {
       const existingMenuOrder = await this.prisma.menuOrder.findFirst({
         where: {
           menuId: dto.menuId,
+          status: OrderStatus.Pending,
           // Use either customerId or temporalId, whichever is available
           OR: [
             { customerId: dto.customerId },
@@ -212,6 +214,7 @@ export class CustomerService {
       const existingMenuOrder = await this.prisma.menuOrder.findFirst({
         where: {
           menuId: dto.menuId,
+          status: OrderStatus.Pending,
           OR: [
             { customerId: dto.customerId },
             { temporalId: dto.temporalId },
@@ -362,67 +365,85 @@ export class CustomerService {
   }
 
   async checkoutOrder(request: CheckoutDto) {
-    const customer = await this.userService.getUserById(request.customerId);
-    if (!customer) {
-      throw new NotFoundException('Customer not found ')
+    try {
+      let customer = null;
+
+      if (request.customerId > 0) {
+        customer = await this.userService.getUserById(request.customerId);
+      }
+      if (request.paymentOption != PaymentOption.payAtRestaurant) {
+        if (!customer) {
+          throw new UnauthorizedException('Authentication is required')
+        }
+      }
+
+      const menus = await this.prisma.menu.findMany({
+        where: {
+          id: { in: request.menuIds },
+        },
+      });
+
+      if (request.menuIds.length !== menus.length) {
+        throw new NotFoundException('One of the selected Order is not available')
+      }
+      const checkout = await this.createOrderCheckout(request, customer);
+      const updatedOrders = await this.updateMenuOrders(request, checkout.id);
+
+      this.socket.emitToClient(`get_orders_${request.restaurantId}`);
+      return updatedOrders
+    } catch (error) {
+      this.logger.error(error)
+      throw error
     }
-
-    const menus = await this.prisma.menu.findMany({
-      where: {
-        id: { in: request.menuIds },
-      },
-    });
-
-    if (request.menuIds.length != menus.length) {
-      throw new NotFoundException('One of the selected Order is not available')
-    }
-
-    const checkout = await this.createOrderCheckout(request, customer)
-
-    const updatedOrders = await this.createMenuOrders(request, checkout.id)
-
-    return updatedOrders
   }
-  
+
   async createOrderCheckout(request: CheckoutDto, customer: any) {
     try {
-      return await this.prisma.orderCheckout.create({
+      const orderCheckout = await this.prisma.orderCheckout.create({
         data: {
           menuIds: request.menuIds.join(','),
           paymentStatus: PaymentStatus.success,
-          addressId: customer.addresses.find(user => user).id,
-          customerId: request.customerId,
-          orderId: (await this.generateOrderCheckoutId()).toString(),
-          status: OrderStatus.Completed
+          addressId: customer && customer.addresses && customer.addresses.map(user => user).id,
+          customerId: customer && request.customerId,
+          orderId: (await this.generateOrderCheckoutId(request.restaurantId)).toString(),
+          status: OrderStatus.CheckedOut,
+          restaurantId: request.restaurantId
         }
       });
+      return orderCheckout
     } catch (error) {
-      throw new InternalServerErrorException
+      this.logger.error(error)
+      throw error
     }
   }
 
-  async createMenuOrders(request: CheckoutDto, checkoutId: number) {
+  async updateMenuOrders(request: CheckoutDto, checkoutId: number) {
     try {
-      return await this.prisma.menuOrder.updateMany({
+      const menuOrder = await this.prisma.menuOrder.updateMany({
         where: {
           OR: [
             { customerId: request.customerId },
             { temporalId: request.temporalId },
           ],
-          status: OrderStatus.Completed,
-          menuOrderId: checkoutId
+          status: OrderStatus.Pending,
         },
         data: {
-          orderId: (await this.generateOrderCheckoutId()).toString()
+          orderId: (await this.generateMenuOrderId(request.restaurantId)).toString(),
+          status: OrderStatus.CheckedOut,
+          orderCheckoutId: checkoutId
         },
       });
+      return menuOrder;
     } catch (error) {
-      throw new InternalServerErrorException
+      throw error
     }
   }
 
-  async generateOrderCheckoutId() {
+  async generateOrderCheckoutId(restuarantId: number) {
     const lastOrderId = await this.prisma.orderCheckout.findFirst({
+      where: {
+        restaurantId: restuarantId
+      },
       select: {
         id: true,
       },
@@ -430,11 +451,15 @@ export class CustomerService {
         id: 'desc',
       },
     });
-    return lastOrderId ? lastOrderId.id + 1 : 1;
+    const traxId = lastOrderId ? lastOrderId.id + 1 : 1;
+    return traxId
   }
 
-  async generateMenuOrderId() {
+  async generateMenuOrderId(restuarantId: number) {
     const lastOrderId = await this.prisma.menuOrder.findFirst({
+      where: {
+        restaurantId: restuarantId
+      },
       select: {
         id: true,
       },

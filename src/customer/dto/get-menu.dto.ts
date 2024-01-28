@@ -43,7 +43,6 @@ export class CheckoutDto {
   menuIds: number[]
 
   @ApiProperty({})
-  @IsArray()
   paymentCompleted: boolean
 
 
@@ -55,5 +54,7 @@ export class CheckoutDto {
 
   @ApiProperty({})
   price: number;
+
+  paymentOption: number
 }
 

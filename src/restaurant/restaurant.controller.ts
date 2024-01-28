@@ -34,7 +34,6 @@ import { GetUser } from 'src/auth/decorator';
 import { CreateQrCodeDto } from '../customer/dto/create-qrcode.dto';
 
 const restaurantDestination: string = './src/uploads/restaurant'
-let basePath: string = '';
 @ApiBearerAuth()
 @UseGuards(JwtGuard)
 @ApiTags('Restaurant')

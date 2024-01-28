@@ -71,13 +71,13 @@ export declare class UserService {
     }>;
     getUserById(userId: number): Promise<{
         id: number;
+        status: boolean;
         email: string;
+        phoneNumber: string;
         firstName: string;
         lastName: string;
-        phoneNumber: string;
         otherPhoneNumber: string;
         userTypeId: number;
-        status: boolean;
         addresses: {
             id: number;
             label: string;

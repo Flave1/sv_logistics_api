@@ -14,6 +14,7 @@ function swaggerConfig(app) {
         .addTag('Menu')
         .addTag('Address')
         .addTag('Web')
+        .addTag('CustomerWeb')
         .addBearerAuth()
         .build();
     const document = swagger_1.SwaggerModule.createDocument(app, config);

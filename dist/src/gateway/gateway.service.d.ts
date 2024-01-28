@@ -1,10 +1,10 @@
 import { OnModuleInit } from '@nestjs/common';
 import { OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import { Socket } from 'socket.io';
+import { Socket, Namespace } from 'socket.io';
 export declare class GatewayService implements OnModuleInit, OnGatewayDisconnect, OnGatewayConnection {
     private readonly logger;
-    private connectedClients;
+    connectedClients: Namespace;
     server: Server;
     onModuleInit(): void;
     handleDisconnect(client: Socket): void;

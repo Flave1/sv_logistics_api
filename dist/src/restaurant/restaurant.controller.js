@@ -50,7 +50,6 @@ const delete_dto_1 = require("../dto/delete.dto");
 const decorator_1 = require("../auth/decorator");
 const create_qrcode_dto_1 = require("../customer/dto/create-qrcode.dto");
 const restaurantDestination = './src/uploads/restaurant';
-let basePath = '';
 let RestaurantController = class RestaurantController {
     constructor(restaurantService) {
         this.restaurantService = restaurantService;

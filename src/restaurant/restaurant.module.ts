@@ -7,6 +7,7 @@ import { GatewayService } from 'src/gateway/gateway.service';
 import { MenuService } from './menu/menu.service';
 import { CountryModule } from './country/country.module';
 import { ClientModule } from './client/client.module';
+import { OrderModule } from './order/order.module';
 @Module({
   providers: [
     RestaurantService, 
@@ -21,7 +22,8 @@ import { ClientModule } from './client/client.module';
     MulterModule.register({ dest: '../uploads/menu' }),
     MenuModule,
     CountryModule,
-    ClientModule
+    ClientModule,
+    OrderModule
   ],
   controllers: [RestaurantController],
 })

@@ -33,7 +33,8 @@ model Restaurant {
   users                User[]
   menuOrders           MenuOrder[]
 
-  country Country @relation(fields: [countryId], references: [id])
+  country       Country         @relation(fields: [countryId], references: [id])
+  OrderCheckout OrderCheckout[]
 
   @@map("restaurant")
 }
@@ -149,22 +150,23 @@ model AvailabilitySchedule {
 }
 
 model MenuOrder {
-  id           Int      @id @default(autoincrement())
-  customerId   Int?
-  temporalId   String?
-  restaurantId Int
-  menuId       Int
-  quantity     Int
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  status       Int
-  deleted      Boolean
-  orderId      String?
-  menuOrderId  Int?
+  id              Int      @id @default(autoincrement())
+  customerId      Int?
+  temporalId      String?
+  restaurantId    Int
+  menuId          Int
+  quantity        Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  status          Int
+  deleted         Boolean
+  orderId         String?
+  orderCheckoutId Int?
 
-  user       User?      @relation(fields: [customerId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  menu       Menu       @relation(fields: [menuId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user          User?          @relation(fields: [customerId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  restaurant    Restaurant     @relation(fields: [restaurantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  menu          Menu           @relation(fields: [menuId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  OrderCheckout OrderCheckout? @relation(fields: [orderCheckoutId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("menuOrders")
 }
@@ -201,17 +203,20 @@ model Address {
 }
 
 model OrderCheckout {
-  id            Int      @id @default(autoincrement())
+  id            Int         @id @default(autoincrement())
   menuIds       String
-  addressId     Int
-  customerId    Int
+  addressId     Int?
+  customerId    Int?
   paymentStatus Int
   status        Int?
   orderId       String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  address       Address  @relation(fields: [addressId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  user          User     @relation(fields: [customerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  restaurantId  Int?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  address       Address?    @relation(fields: [addressId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user          User?       @relation(fields: [customerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  restaurant    Restaurant? @relation(fields: [restaurantId], references: [id], onUpdate: NoAction)
+  menuOrders    MenuOrder[]
 
   @@map("orderCheckout")
 }

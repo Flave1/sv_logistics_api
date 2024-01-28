@@ -21,3 +21,6 @@ export declare enum CountryManagementEvents {
 export declare enum RestaurantManagementEvents {
     get_restaurants_event = "get_restaurants_event"
 }
+export declare class AdminOrderEvents {
+    static get_order(restaurantId: number): string;
+}

@@ -13,6 +13,7 @@ export function swaggerConfig(app: INestApplication): void{
     .addTag('Menu')
     .addTag('Address')
     .addTag('Web')
+    .addTag('CustomerWeb')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
