@@ -69,26 +69,20 @@ export declare class UserService {
         deleted: boolean;
         status: boolean;
     }>;
-    getUserById(userId: string): Promise<{
-        id: number;
-        createdAt: Date;
-        updatedAt: Date;
+    getUserById(userId: number): Promise<{
         email: string;
-        hash: string;
         firstName: string;
         lastName: string;
         phoneNumber: string;
+        id: number;
         otherPhoneNumber: string;
-        address: string;
-        nextOfKinName: string;
-        nextOfKinPhoneNumber: string;
-        nextOfKinAddress: string;
         userTypeId: number;
-        courierTypeId: number;
-        restaurantId: number;
-        passwordResetToken: string;
-        deleted: boolean;
         status: boolean;
+        addresses: {
+            id: number;
+            label: string;
+            isDefault: boolean;
+        }[];
     }>;
     getUserByRestaurantId(restaurantId: string): Promise<{
         id: number;

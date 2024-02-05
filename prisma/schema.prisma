@@ -33,16 +33,17 @@ model Restaurant {
   users                User[]
   menuOrders           MenuOrder[]
 
-  country              Country  @relation(fields: [countryId], references: [id])
+  country       Country         @relation(fields: [countryId], references: [id])
+  OrderCheckout OrderCheckout[]
 
   @@map("restaurant")
 }
 
 model User {
-  id                   Int         @id @default(autoincrement())
-  createdAt            DateTime    @default(now())
-  updatedAt            DateTime    @updatedAt
-  email                String      @unique
+  id                   Int             @id @default(autoincrement())
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  email                String          @unique
   hash                 String
   firstName            String?
   lastName             String?
@@ -58,9 +59,9 @@ model User {
   passwordResetToken   String?
   deleted              Boolean?
   status               Boolean?
-  courierType          CourierType @relation(fields: [courierTypeId], references: [id])
-  restaurant           Restaurant  @relation(fields: [restaurantId], references: [id])
-  userType             UserType    @relation(fields: [userTypeId], references: [id])
+  courierType          CourierType     @relation(fields: [courierTypeId], references: [id])
+  restaurant           Restaurant      @relation(fields: [restaurantId], references: [id])
+  userType             UserType        @relation(fields: [userTypeId], references: [id])
   menuOrders           MenuOrder[]
   addresses            Address[]
   orderCheckout        OrderCheckout[]
@@ -149,28 +150,31 @@ model AvailabilitySchedule {
 }
 
 model MenuOrder {
-  id           Int      @id @default(autoincrement())
-  customerId   Int?
-  temporalId   String?
-  restaurantId Int
-  menuId       Int
-  quantity     Int
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  status       Int
-  deleted      Boolean
+  id              Int      @id @default(autoincrement())
+  customerId      Int?
+  temporalId      String?
+  restaurantId    Int
+  menuId          Int
+  quantity        Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  status          Int
+  deleted         Boolean
+  orderId         String?
+  orderCheckoutId Int?
 
-  user       User?      @relation(fields: [customerId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  menu       Menu       @relation(fields: [menuId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user          User?          @relation(fields: [customerId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  restaurant    Restaurant     @relation(fields: [restaurantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  menu          Menu           @relation(fields: [menuId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  OrderCheckout OrderCheckout? @relation(fields: [orderCheckoutId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("menuOrders")
 }
 
 model Country {
-  id           Int      @id @default(autoincrement())
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id           Int          @id @default(autoincrement())
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
   countryName  String?
   countryCode  String?
   currencyName String?
@@ -178,34 +182,41 @@ model Country {
   deleted      Boolean?
   status       Boolean?
   restaurant   Restaurant[]
-  
+
   @@map("country")
 }
 
 model Address {
-  id         Int      @id @default(autoincrement())
-  label      String
-  name       String
-  latitude   String
-  longitude  String
-  customerId Int
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  isDefault  Boolean
+  id            Int             @id @default(autoincrement())
+  label         String
+  name          String
+  latitude      String
+  longitude     String
+  customerId    Int
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  isDefault     Boolean
   orderCheckout OrderCheckout[]
-  user User @relation(fields: [customerId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user          User            @relation(fields: [customerId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
   @@map("address")
 }
 
-model OrderCheckout{
-  id         Int      @id @default(autoincrement())
-  menuIds    String
-  addressId  Int
-  customerId Int
+model OrderCheckout {
+  id            Int         @id @default(autoincrement())
+  menuIds       String
+  addressId     Int?
+  customerId    Int?
   paymentStatus Int
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  address Address @relation(fields: [addressId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  user User @relation(fields: [customerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  status        Int?
+  orderId       String?
+  restaurantId  Int?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  address       Address?    @relation(fields: [addressId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user          User?       @relation(fields: [customerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  restaurant    Restaurant? @relation(fields: [restaurantId], references: [id], onUpdate: NoAction)
+  menuOrders    MenuOrder[]
+
   @@map("orderCheckout")
 }

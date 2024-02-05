@@ -52,7 +52,6 @@ let GatewayService = GatewayService_1 = class GatewayService {
     async JoinRoom(token, body) {
         const roomName = body.roomName;
         await this.connectedClients.socketsJoin(roomName);
-        this.connectedClients.to(roomName).emit(roomName, { message: `A client has joined ${roomName}` });
     }
     async LeaveRoom(token, body) {
         const roomName = body.roomName;
@@ -64,8 +63,9 @@ let GatewayService = GatewayService_1 = class GatewayService {
         this.server.emit(event, resp);
     }
     async emitToRoom(room, message = "") {
-        const resp = { message };
-        this.server.to(room).emit(room, resp);
+        const resp = { message: `An update be dispatched to room ${room}` };
+        const er = this.connectedClients.to(room).emit(room, { message: `Dispached to room ${room}` });
+        console.log('has sent', er);
     }
 };
 exports.GatewayService = GatewayService;

@@ -1,18 +1,21 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { Injectable, InternalServerErrorException, Logger, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { GatewayService } from "src/gateway/gateway.service";
 import { PrismaService } from "src/prisma/prisma.service";
-import { StatusMessage, OrderStatus } from "../enums";
+import { StatusMessage, OrderStatus } from "../restaurant/enums";
 import { RemoveMenuOrderDto, SaveMenuOrderDto } from "./dto/create-menu-order.dto";
-import { getBaseUrl, getStatusLabel } from "src/utils";
+import { PaymentOption, PaymentStatus, getBaseUrl, getStatusLabel } from "src/utils";
 import { Request } from 'express';
-import { Menu } from "@prisma/client";
+import { Menu, User } from "@prisma/client";
+import { CheckoutDto } from "./dto";
+import { UserService } from "src/restaurant/user/user.service";
 
 
 @Injectable()
 export class CustomerService {
-  constructor(private prisma: PrismaService, private socket: GatewayService) { }
+  constructor(private prisma: PrismaService, private socket: GatewayService, private userService: UserService) { }
 
 
+  private readonly logger = new Logger(GatewayService.name);
   async getRestaurantMenuById(menuId: string) {
     try {
       const menu = await this.prisma.menu.findFirst({
@@ -97,7 +100,7 @@ export class CustomerService {
       include: {
         MenuOrders: {
           where: {
-            status: OrderStatus.Completed,
+            status: OrderStatus.CheckedOut,
             createdAt: {
               gte: new Date(new Date().getTime() - 3 * 24 * 60 * 60 * 1000), // Orders within the last 3 days
             }
@@ -132,7 +135,7 @@ export class CustomerService {
       include: {
         MenuOrders: {
           where: {
-            status: OrderStatus.Completed,
+            status: OrderStatus.CheckedOut,
             createdAt: {
               gte: new Date(new Date().getTime() - 3 * 24 * 60 * 60 * 1000), // Orders within the last 3 days
             }
@@ -160,12 +163,12 @@ export class CustomerService {
     return mostOrderedMenu;
   }
 
-
   async addToCartOrUpdate(dto: SaveMenuOrderDto) {
     try {
       const existingMenuOrder = await this.prisma.menuOrder.findFirst({
         where: {
           menuId: dto.menuId,
+          status: OrderStatus.Pending,
           // Use either customerId or temporalId, whichever is available
           OR: [
             { customerId: dto.customerId },
@@ -211,6 +214,7 @@ export class CustomerService {
       const existingMenuOrder = await this.prisma.menuOrder.findFirst({
         where: {
           menuId: dto.menuId,
+          status: OrderStatus.Pending,
           OR: [
             { customerId: dto.customerId },
             { temporalId: dto.temporalId },
@@ -221,7 +225,7 @@ export class CustomerService {
       if (existingMenuOrder) {
         if (existingMenuOrder.quantity == 1) {
           await this.prisma.menuOrder.delete({ where: { id: existingMenuOrder.id } })
-          return { message: "Menu completely removed from Cart"};
+          return { message: "Menu completely removed from Cart" };
         }
         // If the menu order already exists, update it
         const updatedMenuOrder = await this.prisma.menuOrder.update({
@@ -232,8 +236,8 @@ export class CustomerService {
         });
 
         return updatedMenuOrder;
-      }else{
-        return { message: "Menu does not exist in  Cart"};
+      } else {
+        return { message: "Menu does not exist in  Cart" };
       }
     } catch (error) {
       throw new InternalServerErrorException(error)
@@ -321,5 +325,179 @@ export class CustomerService {
     }))
   }
 
+  async getRestaurantAllMenu(restaurantId: string, req: Request) {
+    const restaurant_menu = (await this.prisma.menu.findMany({
+      where: {
+        restaurantId: parseInt(restaurantId),
+        deleted: false
+      },
+      include: {
+        restaurant: {
+          select: {
+            name: true,
+          },
+        }, menuCategory: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: [
+        {
+          createdAt: 'desc',
+        }
+      ]
+    }));
+
+    return restaurant_menu.map((menu) => ({
+      name: menu.name,
+      description: menu.description,
+      restaurantId: menu.restaurantId,
+      restaurantName: menu.restaurant.name,
+      categoryName: menu.menuCategory.name,
+      id: menu.id,
+      image: getBaseUrl(req) + '/' + menu.image,
+      price: menu.price,
+      availability: menu.availability,
+      discount: menu.discount,
+      dietaryInformation: menu.dietaryInformation,
+    }));
+  }
+
+  async checkoutOrder(request: CheckoutDto) {
+    try {
+      let customer = null;
+
+      if (request.customerId > 0) {
+        customer = await this.userService.getUserById(request.customerId);
+      }
+      if (request.paymentOption != PaymentOption.payAtRestaurant) {
+        if (!customer) {
+          throw new UnauthorizedException('Authentication is required')
+        }
+      }
+
+      const menus = await this.prisma.menu.findMany({
+        where: {
+          id: { in: request.menuIds },
+        },
+      });
+
+      if (request.menuIds.length !== menus.length) {
+        throw new NotFoundException('One of the selected Order is not available')
+      }
+      const checkout = await this.createOrderCheckout(request, customer);
+      const updatedOrders = await this.updateMenuOrders(request, checkout.id);
+
+      this.socket.emitToClient(`get_orders_${request.restaurantId}`);
+      return updatedOrders
+    } catch (error) {
+      this.logger.error(error)
+      throw error
+    }
+  }
+
+  async createOrderCheckout(request: CheckoutDto, customer: any) {
+    try {
+      const orderCheckout = await this.prisma.orderCheckout.create({
+        data: {
+          menuIds: request.menuIds.join(','),
+          paymentStatus: PaymentStatus.success,
+          addressId: customer && customer.addresses && customer.addresses.map(user => user).id,
+          customerId: customer && request.customerId,
+          orderId: (await this.generateOrderCheckoutId(request.restaurantId)).toString(),
+          status: OrderStatus.CheckedOut,
+          restaurantId: request.restaurantId
+        }
+      });
+      return orderCheckout
+    } catch (error) {
+      this.logger.error(error)
+      throw error
+    }
+  }
+
+  async updateMenuOrders(request: CheckoutDto, checkoutId: number) {
+    try {
+      const menuOrder = await this.prisma.menuOrder.updateMany({
+        where: {
+          OR: [
+            { customerId: request.customerId },
+            { temporalId: request.temporalId },
+          ],
+          status: OrderStatus.Pending,
+        },
+        data: {
+          orderId: (await this.generateMenuOrderId(request.restaurantId)).toString(),
+          status: OrderStatus.CheckedOut,
+          orderCheckoutId: checkoutId
+        },
+      });
+      return menuOrder;
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async generateOrderCheckoutId(restuarantId: number) {
+    const lastOrderId = await this.prisma.orderCheckout.findFirst({
+      where: {
+        restaurantId: restuarantId
+      },
+      select: {
+        id: true,
+      },
+      orderBy: {
+        id: 'desc',
+      },
+    });
+    const traxId = lastOrderId ? lastOrderId.id + 1 : 1;
+    return traxId
+  }
+
+  async generateMenuOrderId(restuarantId: number) {
+    const lastOrderId = await this.prisma.menuOrder.findFirst({
+      where: {
+        restaurantId: restuarantId
+      },
+      select: {
+        id: true,
+      },
+      orderBy: {
+        id: 'desc',
+      },
+    });
+    return lastOrderId ? lastOrderId.id + 1 : 1;
+  }
+
+  async customerMenuLiveSearch(req: Request, restaurantId: number, searchString: string) {
+    try {
+      const menu = await this.prisma.menu.findMany({
+        where: {
+          restaurantId: restaurantId,
+          OR: [
+            { name: { contains: searchString } },
+            { description: { contains: searchString } },
+            { dietaryInformation: { contains: searchString } },
+          ]
+        },
+        select: {
+          id: true,
+          name: true,
+          image: true
+        }
+      });
+
+      return menu.map((mn) => ({
+        id: mn.id,
+        name: mn.name,
+        image: getBaseUrl(req) + '/' + mn.image,
+      }));
+    } catch (error) {
+      this.logger.error(error);
+      throw error
+    }
+  }
 }
+
 

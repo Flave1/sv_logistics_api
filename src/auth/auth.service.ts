@@ -5,7 +5,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthDto } from './dto';
 import * as argon from 'argon2';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService} from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { Restaurant } from 'src/restaurant/enums/restaurant.enum';
@@ -161,7 +161,7 @@ export class AuthService {
     try {
       const token = await this.jwt.signAsync(payload,
         {
-          expiresIn: '60m',
+          expiresIn: '24hrs',
           secret: secret,
           jwtid: ''
         },
@@ -204,11 +204,6 @@ export class AuthService {
     });
 
     //Implement Logic to send mail
-
-
-
-
-
     return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
   }
 
