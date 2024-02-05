@@ -469,6 +469,35 @@ export class CustomerService {
     });
     return lastOrderId ? lastOrderId.id + 1 : 1;
   }
+
+  async customerMenuLiveSearch(req: Request, restaurantId: number, searchString: string) {
+    try {
+      const menu = await this.prisma.menu.findMany({
+        where: {
+          restaurantId: restaurantId,
+          OR: [
+            { name: { contains: searchString } },
+            { description: { contains: searchString } },
+            { dietaryInformation: { contains: searchString } },
+          ]
+        },
+        select: {
+          id: true,
+          name: true,
+          image: true
+        }
+      });
+
+      return menu.map((mn) => ({
+        id: mn.id,
+        name: mn.name,
+        image: getBaseUrl(req) + '/' + mn.image,
+      }));
+    } catch (error) {
+      this.logger.error(error);
+      throw error
+    }
+  }
 }
 
 

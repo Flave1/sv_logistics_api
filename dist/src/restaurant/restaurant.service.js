@@ -43,8 +43,7 @@ const api_response_1 = require("../dto/api-response");
 const enums_1 = require("./enums");
 const gateway_service_1 = require("../gateway/gateway.service");
 const dto_1 = require("../gateway/dto");
-const create_qrcode_dto_1 = require("../customer/dto/create-qrcode.dto");
-const utils_2 = require("../utils");
+const qrcode_dto_1 = require("./dto/qrcode.dto");
 const qrcode = __importStar(require("qrcode"));
 exports.cached_restaurants = 'cached_restaurants';
 let RestaurantService = class RestaurantService {
@@ -160,28 +159,18 @@ let RestaurantService = class RestaurantService {
                 id: parseInt(restaurantId),
             },
         });
-        if (!restaurant) {
-            throw new common_1.NotFoundException(enums_1.StatusMessage.NoRecord);
-        }
-        let menuPage, qrText, qrPath, savePath;
+        let menuPage;
         let qrCodes = [];
-        let sequentialArray = [];
-        if (dto.isSequential) {
-            for (let i = parseInt(dto.table[0]); i <= parseInt(dto.table[1]); i++) {
-                sequentialArray.push(i.toString());
-            }
-            dto.table = sequentialArray;
-        }
         if (dto.table.length == 0) {
-            menuPage = `${(0, utils_2.getBaseUrl)(req)}/${restaurant.name.replace(" ", "-")}/${restaurantId}/menu`;
+            menuPage = `${dto.clientUrl}/${restaurant.name.replace(" ", "-")}/${restaurantId}/menu`;
             const base64Image = await this.generateQrCodeImage(menuPage);
-            qrCodes.push(base64Image);
+            qrCodes.push({ table: '', qrcode: base64Image });
         }
         else {
             for (let i = 0; i < dto.table.length; i++) {
-                menuPage = `${(0, utils_2.getBaseUrl)(req)}/${restaurant.name.replace(" ", "-")}/${restaurantId}/menu/${dto.table[i]}`;
+                menuPage = `${dto.clientUrl}/${restaurant.name.replace(" ", "-")}/${restaurantId}/menu/${dto.table[i]}`;
                 const base64Image = await this.generateQrCodeImage(menuPage);
-                qrCodes.push(base64Image);
+                qrCodes.push({ table: dto.table[i], qrcode: base64Image });
             }
         }
         return qrCodes;
@@ -194,7 +183,7 @@ exports.RestaurantService = RestaurantService;
 __decorate([
     __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, create_qrcode_dto_1.CreateQrCodeDto, Object]),
+    __metadata("design:paramtypes", [String, qrcode_dto_1.CreateQrCodeDto, Object]),
     __metadata("design:returntype", Promise)
 ], RestaurantService.prototype, "CreateQrCode", null);
 exports.RestaurantService = RestaurantService = __decorate([

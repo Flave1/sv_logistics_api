@@ -4,7 +4,7 @@ import { CreateRestaurantDto, EditRestaurantDto } from './dto';
 import { DeleteDto } from 'src/dto/delete.dto';
 import { APIResponse } from 'src/dto/api-response';
 import { GatewayService } from 'src/gateway/gateway.service';
-import { CreateQrCodeDto } from '../customer/dto/create-qrcode.dto';
+import { CreateQrCodeDto, QrcodeResponse } from './dto/qrcode.dto';
 import { Request } from 'express';
 export declare const cached_restaurants = "cached_restaurants";
 export declare class RestaurantService {
@@ -96,6 +96,6 @@ export declare class RestaurantService {
         countryId: number;
     }>;
     deleteRestaurantById(dto: DeleteDto): Promise<APIResponse<any>>;
-    CreateQrCode(restaurantId: string, dto: CreateQrCodeDto, req: Request): Promise<string[]>;
+    CreateQrCode(restaurantId: string, dto: CreateQrCodeDto, req: Request): Promise<QrcodeResponse[]>;
     private generateQrCodeImage;
 }

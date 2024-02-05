@@ -70,14 +70,14 @@ export declare class UserService {
         status: boolean;
     }>;
     getUserById(userId: number): Promise<{
-        id: number;
-        status: boolean;
         email: string;
-        phoneNumber: string;
         firstName: string;
         lastName: string;
+        phoneNumber: string;
+        id: number;
         otherPhoneNumber: string;
         userTypeId: number;
+        status: boolean;
         addresses: {
             id: number;
             label: string;

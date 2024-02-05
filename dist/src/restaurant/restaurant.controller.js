@@ -48,7 +48,7 @@ const path = __importStar(require("path"));
 const utils_1 = require("../utils");
 const delete_dto_1 = require("../dto/delete.dto");
 const decorator_1 = require("../auth/decorator");
-const create_qrcode_dto_1 = require("../customer/dto/create-qrcode.dto");
+const qrcode_dto_1 = require("./dto/qrcode.dto");
 const restaurantDestination = './src/uploads/restaurant';
 let RestaurantController = class RestaurantController {
     constructor(restaurantService) {
@@ -146,7 +146,7 @@ __decorate([
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, create_qrcode_dto_1.CreateQrCodeDto, Object]),
+    __metadata("design:paramtypes", [String, qrcode_dto_1.CreateQrCodeDto, Object]),
     __metadata("design:returntype", Promise)
 ], RestaurantController.prototype, "createQrCode", null);
 exports.RestaurantController = RestaurantController = __decorate([
