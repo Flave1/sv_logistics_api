@@ -17,9 +17,9 @@ class EditUserDto {
 exports.EditUserDto = EditUserDto;
 __decorate([
     (0, swagger_1.ApiProperty)(),
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", Number)
-], EditUserDto.prototype, "id", void 0);
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], EditUserDto.prototype, "email", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
     (0, class_validator_1.IsString)(),

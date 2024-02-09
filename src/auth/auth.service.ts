@@ -47,7 +47,7 @@ export class AuthService {
         },
       });
 
-      this.socket.emitToClient(UserManagementEvents.get_all_customers_event)
+      this.socket.emitToClient(`get_all_customers_event_${user.restaurantId}`)
       return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
     } catch (error) {
       if (
@@ -84,7 +84,7 @@ export class AuthService {
         },
       });
 
-      this.socket.emitToClient(UserManagementEvents.get_all_staff_event)
+      this.socket.emitToClient(`get_all_staff_event_${restaurantId}`)
       return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
@@ -117,7 +117,7 @@ export class AuthService {
         },
       });
 
-      this.socket.emitToClient(UserManagementEvents.get_all_drivers_event)
+      this.socket.emitToClient(`get_all_drivers_event_${restaurantId}`)
       return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {

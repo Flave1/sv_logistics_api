@@ -54,6 +54,10 @@ let RestaurantController = class RestaurantController {
     constructor(restaurantService) {
         this.restaurantService = restaurantService;
     }
+    async getStatistics(restaurantId) {
+        const response = await this.restaurantService.getDasboardStats(parseInt(restaurantId));
+        return response;
+    }
     async getRestaurant(req) {
         const response = await this.restaurantService.getRestaurants();
         for (let i = 0; i < response.length; i++) {
@@ -80,6 +84,13 @@ let RestaurantController = class RestaurantController {
     }
 };
 exports.RestaurantController = RestaurantController;
+__decorate([
+    (0, common_1.Get)('statistics'),
+    __param(0, (0, decorator_1.GetUser)('restaurantId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], RestaurantController.prototype, "getStatistics", null);
 __decorate([
     (0, common_1.Get)('all'),
     __param(0, (0, common_1.Req)()),

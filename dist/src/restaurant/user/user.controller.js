@@ -30,11 +30,11 @@ let UserController = class UserController {
     getAll() {
         return this.userService.getAllUsers();
     }
-    editStaff(dto) {
-        return this.userService.updateStaffUser(dto.id, dto);
+    editStaff(restaurantId, dto, id) {
+        return this.userService.updateStaffUser(parseInt(id), dto, restaurantId);
     }
-    editDriver(dto) {
-        return this.userService.updateDriverUser(dto.id, dto);
+    editDriver(restaurantId, dto, id) {
+        return this.userService.updateDriverUser(parseInt(id), dto, restaurantId);
     }
     getStaffUser(id) {
         return this.userService.getUserByStaffId(id);
@@ -69,8 +69,8 @@ let UserController = class UserController {
             console.log('error', error);
         }
     }
-    async deleteById(dto) {
-        return await this.userService.deleteById(dto);
+    async deleteById(restaurantId, dto) {
+        return await this.userService.deleteById(dto, restaurantId);
     }
 };
 exports.UserController = UserController;
@@ -88,17 +88,21 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], UserController.prototype, "getAll", null);
 __decorate([
-    (0, common_1.Post)("update-staff"),
-    __param(0, (0, common_1.Body)()),
+    (0, common_1.Put)(':id/update-staff'),
+    __param(0, (0, decorator_1.GetUser)('restaurantId')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [dto_1.EditUserDto]),
+    __metadata("design:paramtypes", [String, dto_1.EditUserDto, String]),
     __metadata("design:returntype", void 0)
 ], UserController.prototype, "editStaff", null);
 __decorate([
     (0, common_1.Post)("update-driver"),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, decorator_1.GetUser)('restaurantId')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [dto_1.EditUserDto]),
+    __metadata("design:paramtypes", [String, dto_1.EditUserDto, String]),
     __metadata("design:returntype", void 0)
 ], UserController.prototype, "editDriver", null);
 __decorate([
@@ -146,9 +150,10 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiOkResponse)({ description: "User deleted successfully" }),
     (0, common_1.Post)('delete'),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, decorator_1.GetUser)('restaurantId')),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [delete_dto_1.DeleteDto]),
+    __metadata("design:paramtypes", [String, delete_dto_1.DeleteDto]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "deleteById", null);
 exports.UserController = UserController = __decorate([

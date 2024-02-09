@@ -98,4 +98,14 @@ export declare class RestaurantService {
     deleteRestaurantById(dto: DeleteDto): Promise<APIResponse<any>>;
     CreateQrCode(restaurantId: string, dto: CreateQrCodeDto, req: Request): Promise<QrcodeResponse[]>;
     private generateQrCodeImage;
+    getDasboardStats(restaurantId: number): Promise<{
+        currency: string;
+        totalIncome: number;
+        income: number;
+        expense: number;
+        completedOrder: number;
+        delivered: number;
+        canceled: number;
+        pending: number;
+    }>;
 }

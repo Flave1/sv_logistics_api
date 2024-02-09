@@ -27,7 +27,7 @@ export declare class UserService {
         deleted: boolean;
         status: boolean;
     }>;
-    updateDriverUser(userId: number, dto: EditUserDto): Promise<{
+    updateDriverUser(userId: number, dto: EditUserDto, restaurantId: string): Promise<{
         id: number;
         createdAt: Date;
         updatedAt: Date;
@@ -48,7 +48,7 @@ export declare class UserService {
         deleted: boolean;
         status: boolean;
     }>;
-    updateStaffUser(userId: number, dto: EditUserDto): Promise<{
+    updateStaffUser(userId: number, dto: EditUserDto, restaurantId: string): Promise<{
         id: number;
         createdAt: Date;
         updatedAt: Date;
@@ -229,7 +229,7 @@ export declare class UserService {
     getSuperUser(): Promise<{
         admin: string;
     }>;
-    deleteById(dto: DeleteDto): Promise<{
+    deleteById(dto: DeleteDto, restaurantId: string): Promise<{
         status: string;
         message: string;
     }>;

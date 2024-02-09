@@ -44,7 +44,7 @@ export class MenuService {
         status
       },
     });
-    this.socket.emitToClient(MenuManagementEvents.get_restaurant_menu_categories_event)
+    this.socket.emitToClient(`get_restaurant_menu_categories_event_${restaurantId}`)
     return menuCategory;
   }
 
@@ -100,7 +100,7 @@ export class MenuService {
         await this.prisma.menuCategory.delete({ where: { id: element.id } })
       }
 
-      this.socket.emitToClient(MenuManagementEvents.get_restaurant_menu_categories_event)
+      this.socket.emitToClient(`get_restaurant_menu_categories_event_${restaurantId}`)
       return new APIResponse(Status.Success, StatusMessage.Deleted, null);
     } catch (error) {
       throw error;
@@ -143,7 +143,7 @@ export class MenuService {
       },
     });
 
-    this.socket.emitToClient(MenuManagementEvents.get_restaurant_menu_categories_event)
+    this.socket.emitToClient(`get_restaurant_menu_categories_event_${restaurantId}`)
     return menuCategory;
   }
 
@@ -183,8 +183,7 @@ export class MenuService {
         },
       });
 
-      this.socket.emitToClient(MenuManagementEvents.get_restaurant_menu_event)
-      this.socket.emitToClient(MenuManagementEvents.get_restaurant_menu_by_category_event)
+      this.socket.emitToClient(`get_restaurant_menu_event_${restaurantId}`)
       return menu;
 
     } catch (error) {
@@ -199,7 +198,20 @@ export class MenuService {
         deleted: false
       },
       include: {
-        menuCategory: true,
+        menuCategory: {
+          select: {
+            name: true
+          }
+        },
+        restaurant: {
+          include: {
+            country: {
+              select: {
+                currencyCode: true
+              }
+            }
+          }
+        }
       },
       orderBy: [
         {
@@ -244,7 +256,7 @@ export class MenuService {
           menuCategory: true,
         }
       });
-      return  menuList;
+      return menuList;
     } catch (error) {
       throw error
     }
@@ -293,7 +305,7 @@ export class MenuService {
       },
     });
 
-    this.socket.emitToClient(MenuManagementEvents.get_restaurant_menu_event)
+    this.socket.emitToClient(`get_restaurant_menu_event_${restaurantId}`)
     return new APIResponse(Status.Success, StatusMessage.Updated, null);
   }
 
@@ -310,14 +322,14 @@ export class MenuService {
           deleted: true
         },
       });
-      this.socket.emitToClient(MenuManagementEvents.get_restaurant_menu_event)
+      this.socket.emitToClient(`get_restaurant_menu_event_${restaurantId}`)
       return new APIResponse(Status.Success, StatusMessage.Deleted, null);
     } catch (error) {
       throw error;
     }
   }
 
-  async getRestaurantMenuByName(restaurantId: string, name: string, ) {
+  async getRestaurantMenuByName(restaurantId: string, name: string,) {
     try {
       const menu = await this.prisma.menu.findFirst({
         where: {
