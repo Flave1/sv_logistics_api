@@ -10,14 +10,13 @@ import {
 } from './dto';
 import { RedisRepository } from 'src/redis/redis.repository';
 import { Restaurant } from '@prisma/client';
-import { deleteFile, fileExist } from "src/utils";
+import { PaymentStatus, deleteFile, fileExist } from "src/utils";
 import { DeleteDto } from 'src/dto/delete.dto';
 import { APIResponse } from 'src/dto/api-response';
-import { Status, StatusMessage } from './enums';
+import { OrderStatus, Status, StatusMessage } from './enums';
 import { GatewayService } from 'src/gateway/gateway.service';
 import { RestaurantManagementEvents } from 'src/gateway/dto';
 import { CreateQrCodeDto, QrcodeResponse } from './dto/qrcode.dto';
-import { getBaseUrl } from 'src/utils';
 import { Request } from 'express';
 import * as qrcode from 'qrcode';
 
@@ -164,23 +163,72 @@ export class RestaurantService {
         id: parseInt(restaurantId),
       },
     });
-    
+
     let menuPage;
     let qrCodes: QrcodeResponse[] = [];
     if (dto.table.length == 0) {
       menuPage = `${dto.clientUrl}/${restaurant.name.replace(" ", "-")}/${restaurantId}/menu`;
       const base64Image = await this.generateQrCodeImage(menuPage);
-      qrCodes.push({table: '', qrcode: base64Image})
+      qrCodes.push({ table: '', qrcode: base64Image })
     } else {
       for (let i = 0; i < dto.table.length; i++) {
         menuPage = `${dto.clientUrl}/${restaurant.name.replace(" ", "-")}/${restaurantId}/menu/${dto.table[i]}`;
         const base64Image = await this.generateQrCodeImage(menuPage);
-        qrCodes.push({table: dto.table[i], qrcode: base64Image})
+        qrCodes.push({ table: dto.table[i], qrcode: base64Image })
       }
     }
     return qrCodes;
   }
   private async generateQrCodeImage(text: string): Promise<string> {
     return qrcode.toDataURL(text);
+  }
+
+  async getDasboardStats(restaurantId: number) {
+    const restaurant = await this.prisma.restaurant.findFirst({
+      where: { id: restaurantId },
+      include: {
+        country: {
+          select: {
+            currencyCode: true
+          }
+        },
+      }
+    });
+
+    const menuOrder = await this.prisma.menuOrder.findMany({
+      where: { id: restaurantId },
+      include: {
+        OrderCheckout: {
+
+        },
+        menu: {
+          select: {
+            price: true
+          }
+        }
+      }
+    });
+
+    return {
+      currency: restaurant.country.currencyCode,
+      totalIncome: menuOrder.filter(f => f.OrderCheckout.status !== OrderStatus.CheckedOut)
+        .filter(d => d.OrderCheckout !== null).reduce((sum, order) => sum + Number(order.menu.price), 0),
+
+      income: menuOrder.filter(f => f.OrderCheckout.paymentStatus == PaymentStatus.success)
+        .filter(d => d.OrderCheckout !== null).reduce((sum, order) => sum + Number(order.menu.price) * order.quantity, 0),
+      expense: 0,
+
+      completedOrder: menuOrder.filter(f => f.OrderCheckout.status == OrderStatus.Packaged)
+        .filter(d => d.OrderCheckout !== null).length,
+
+      delivered: menuOrder.filter(f => f.OrderCheckout.status == OrderStatus.Delivered)
+        .filter(d => d.OrderCheckout !== null).length,
+
+      canceled: menuOrder.filter(f => f.OrderCheckout.status == OrderStatus.Cancelled)
+        .filter(d => d.OrderCheckout !== null).length,
+
+      pending: menuOrder.filter(f => f.OrderCheckout.status == OrderStatus.Pending)
+        .filter(d => d.OrderCheckout !== null).length
+    }
   }
 }

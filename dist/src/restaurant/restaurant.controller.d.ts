@@ -6,6 +6,16 @@ import { CreateQrCodeDto } from './dto/qrcode.dto';
 export declare class RestaurantController {
     private restaurantService;
     constructor(restaurantService: RestaurantService);
+    getStatistics(restaurantId: string): Promise<{
+        currency: string;
+        totalIncome: number;
+        income: number;
+        expense: number;
+        completedOrder: number;
+        delivered: number;
+        canceled: number;
+        pending: number;
+    }>;
     getRestaurant(req: Request): Promise<{
         id: number;
         createdAt: Date;

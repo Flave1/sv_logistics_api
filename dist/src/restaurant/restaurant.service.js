@@ -178,6 +178,45 @@ let RestaurantService = class RestaurantService {
     async generateQrCodeImage(text) {
         return qrcode.toDataURL(text);
     }
+    async getDasboardStats(restaurantId) {
+        const restaurant = await this.prisma.restaurant.findFirst({
+            where: { id: restaurantId },
+            include: {
+                country: {
+                    select: {
+                        currencyCode: true
+                    }
+                },
+            }
+        });
+        const menuOrder = await this.prisma.menuOrder.findMany({
+            where: { id: restaurantId },
+            include: {
+                OrderCheckout: {},
+                menu: {
+                    select: {
+                        price: true
+                    }
+                }
+            }
+        });
+        return {
+            currency: restaurant.country.currencyCode,
+            totalIncome: menuOrder.filter(f => f.OrderCheckout.status !== enums_1.OrderStatus.CheckedOut)
+                .filter(d => d.OrderCheckout !== null).reduce((sum, order) => sum + Number(order.menu.price), 0),
+            income: menuOrder.filter(f => f.OrderCheckout.paymentStatus == utils_1.PaymentStatus.success)
+                .filter(d => d.OrderCheckout !== null).reduce((sum, order) => sum + Number(order.menu.price) * order.quantity, 0),
+            expense: 0,
+            completedOrder: menuOrder.filter(f => f.OrderCheckout.status == enums_1.OrderStatus.Packaged)
+                .filter(d => d.OrderCheckout !== null).length,
+            delivered: menuOrder.filter(f => f.OrderCheckout.status == enums_1.OrderStatus.Delivered)
+                .filter(d => d.OrderCheckout !== null).length,
+            canceled: menuOrder.filter(f => f.OrderCheckout.status == enums_1.OrderStatus.Cancelled)
+                .filter(d => d.OrderCheckout !== null).length,
+            pending: menuOrder.filter(f => f.OrderCheckout.status == enums_1.OrderStatus.Pending)
+                .filter(d => d.OrderCheckout !== null).length
+        };
+    }
 };
 exports.RestaurantService = RestaurantService;
 __decorate([

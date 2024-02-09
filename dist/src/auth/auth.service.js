@@ -43,7 +43,6 @@ const restaurant_enum_1 = require("../restaurant/enums/restaurant.enum");
 const userType_enum_1 = require("../restaurant/user/enums/userType.enum");
 const courierType_enum_1 = require("../restaurant/user/enums/courierType.enum");
 const gateway_service_1 = require("../gateway/gateway.service");
-const dto_1 = require("../gateway/dto");
 const crypto = __importStar(require("crypto"));
 let AuthService = class AuthService {
     constructor(prisma, jwt, config, socket) {
@@ -68,7 +67,7 @@ let AuthService = class AuthService {
                     courierTypeId: courierType_enum_1.CourierType.Default
                 },
             });
-            this.socket.emitToClient(dto_1.UserManagementEvents.get_all_customers_event);
+            this.socket.emitToClient(`get_all_customers_event_${user.restaurantId}`);
             return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
         }
         catch (error) {
@@ -98,7 +97,7 @@ let AuthService = class AuthService {
                     courierTypeId: courierType_enum_1.CourierType.Default
                 },
             });
-            this.socket.emitToClient(dto_1.UserManagementEvents.get_all_staff_event);
+            this.socket.emitToClient(`get_all_staff_event_${restaurantId}`);
             return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
         }
         catch (error) {
@@ -127,7 +126,7 @@ let AuthService = class AuthService {
                     courierTypeId: parseInt(dto.courierType)
                 },
             });
-            this.socket.emitToClient(dto_1.UserManagementEvents.get_all_drivers_event);
+            this.socket.emitToClient(`get_all_drivers_event_${restaurantId}`);
             return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
         }
         catch (error) {

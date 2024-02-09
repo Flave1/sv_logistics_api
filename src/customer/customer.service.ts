@@ -266,6 +266,11 @@ export class CustomerService {
           restaurant: {
             select: {
               name: true,
+              country: {
+                select: {
+                  currencyCode: true
+                }
+              }
             },
           },
         },
@@ -273,6 +278,7 @@ export class CustomerService {
 
       return menuOrders.map((order) => ({
         customerId: order.customerId,
+        currencyCode: order. restaurant.country.currencyCode,
         temporalId: order.temporalId,
         restaurantId: order.restaurantId,
         restaurantName: order.restaurant.name,
@@ -335,8 +341,14 @@ export class CustomerService {
         restaurant: {
           select: {
             name: true,
+            country: {
+              select: {
+                currencyCode: true
+              }
+            }
           },
-        }, menuCategory: {
+        },
+        menuCategory: {
           select: {
             name: true,
           },
@@ -351,6 +363,7 @@ export class CustomerService {
 
     return restaurant_menu.map((menu) => ({
       name: menu.name,
+      currencyCode: menu.restaurant.country.currencyCode,
       description: menu.description,
       restaurantId: menu.restaurantId,
       restaurantName: menu.restaurant.name,

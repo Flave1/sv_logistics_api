@@ -17,8 +17,6 @@ import { getBaseUrl } from "src/utils";
 
 
 const menuCategoryDestination: string = './src/uploads/menu-category'
-const menuDestination: string = './src/uploads/menu'
-let basePath: string = '';
 @ApiTags('Menu')
 @ApiBearerAuth()
 @UseGuards(JwtGuard)

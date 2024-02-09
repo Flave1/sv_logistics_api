@@ -1,10 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { EditUserDto } from './dto';
 import { UserType } from './enums/userType.enum';
 import { GatewayService } from 'src/gateway/gateway.service';
 import { DeleteDto } from 'src/dto/delete.dto';
-import { UserManagementEvents } from 'src/gateway/dto/gateway.constants';
 
 @Injectable()
 export class UserService {
@@ -20,11 +19,11 @@ export class UserService {
       },
     });
 
-    delete user.hash; //Todo: change to transformer
+    delete user.hash;
     return user;
   }
 
-  async updateDriverUser(userId: number, dto: EditUserDto) {
+  async updateDriverUser(userId: number, dto: EditUserDto, restaurantId: string) {
     const user = await this.prisma.user.update({
       where: {
         id: userId,
@@ -34,24 +33,32 @@ export class UserService {
       },
     });
 
-    delete user.hash; //Todo: change to transformer
-    this.socket.emitToClient(UserManagementEvents.get_all_drivers_event)
+    delete user.hash;
+    this.socket.emitToClient(`get_all_drivers_event_${restaurantId}`)
     return user;
   }
 
-  async updateStaffUser(userId: number, dto: EditUserDto) {
-    const user = await this.prisma.user.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        ...dto,
-      },
-    });
-
-    delete user.hash; //Todo: change to transformer
-    this.socket.emitToClient(UserManagementEvents.get_all_staff_event)
-    return user;
+  async updateStaffUser(userId: number, dto: EditUserDto, restaurantId: string) {
+    try {
+      const user = await this.prisma.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          address: dto.address,
+          email: dto.email,
+          firstName : dto.firstName,
+          lastName: dto.lastName,
+          phoneNumber: dto.phoneNumber
+        },
+      });
+      delete user.hash;
+      this.socket.emitToClient(`get_all_staff_event_${restaurantId}`)
+      return user;
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(error)
+    }
   }
 
   async getUserById(userId: number) {
@@ -93,7 +100,7 @@ export class UserService {
         }
       ]
     });
-    return user.map(({ hash, ...newUsers }) => newUsers); //Todo: change mapping to transformer
+    return user.map(({ hash, ...newUsers }) => newUsers);
   }
 
   async getUserByStaffId(staffId: string) {
@@ -126,7 +133,7 @@ export class UserService {
         }
       ]
     });
-    return user.map(({ hash, ...newUsers }) => newUsers); //Todo: change mapping to transformer
+    return user.map(({ hash, ...newUsers }) => newUsers);
   }
 
   async getRestaurantDrivers(restaurantId: string) {
@@ -141,7 +148,7 @@ export class UserService {
         }
       ]
     });
-    return user.map(({ hash, ...newUsers }) => newUsers); //Todo: change mapping to transformer
+    return user.map(({ hash, ...newUsers }) => newUsers); 
   }
   async getRestaurantCustomers(restaurantId: string) {
     const user = await this.prisma.user.findMany({
@@ -155,7 +162,7 @@ export class UserService {
         }
       ]
     });
-    return user.map(({ hash, ...newUsers }) => newUsers); //Todo: change mapping to transformer
+    return user.map(({ hash, ...newUsers }) => newUsers); 
   }
 
   async getAllUsers(
@@ -167,7 +174,7 @@ export class UserService {
         }
       ]
     }));
-    return users.map(({ hash, ...newUsers }) => newUsers); //Todo: change mapping to transformer
+    return users.map(({ hash, ...newUsers }) => newUsers);
   }
 
   async getSuperUser() {
@@ -179,7 +186,7 @@ export class UserService {
     return user;
   }
 
-  async deleteById(dto: DeleteDto) {
+  async deleteById(dto: DeleteDto, restaurantId: string) {
     try {
 
       const users = await this.prisma.user.findMany({
@@ -202,13 +209,13 @@ export class UserService {
         });
 
         if (userType == UserType.Driver) {
-          this.socket.emitToClient(UserManagementEvents.get_all_drivers_event)
+          this.socket.emitToClient(`get_all_drivers_event_${restaurantId}`)
         }
         else if (userType == UserType.Staff) {
-          this.socket.emitToClient(UserManagementEvents.get_all_staff_event)
+          this.socket.emitToClient(`get_all_staff_event_${restaurantId}`)
         }
         else if (userType == UserType.Customer) {
-          this.socket.emitToClient(UserManagementEvents.get_all_customers_event)
+          this.socket.emitToClient(`get_all_customers_event_${restaurantId}`)
         }
       }
       return { status: "Successful", message: "User successfully deleted" }

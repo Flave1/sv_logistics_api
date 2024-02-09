@@ -21,6 +21,12 @@ export class OrderController {
         return response;
     }
 
+    @Get('/kitchen/:status')
+    async getOrdersInKitchen(@Req() req: Request, @GetUser('restaurantId') restaurantId: number, @Param('status') status: number) {
+        const response = await this.orderService.getOrdersInKitchen(req, restaurantId, status);
+        return response;
+    }
+
     @Post('/accept')
     async acceptOrder(@GetUser('restaurantId') restaurantId: number, @Body() request: OrderAcceptRequest) {
         const response = await this.orderService.acceptOrder(restaurantId, request.checkoutOrderId);
@@ -41,6 +47,11 @@ export class OrderController {
     @Post('/reinstate')
     async reinsateOrder(@GetUser('restaurantId') restaurantId: number, @Body() request: OrderAcceptRequest) {
         const response = await this.orderService.reinstateOrder(restaurantId, request.checkoutOrderId);
+        return response;
+    }
+    @Post('/prepare')
+    async prepapreOrder(@GetUser('restaurantId') restaurantId: number, @Body() request: OrderAcceptRequest) {
+        const response = await this.orderService.prepapreOrder(restaurantId, request.checkoutOrderId);
         return response;
     }
 }

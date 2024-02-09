@@ -1,51 +1,48 @@
 import {
-    Body,
-    Controller,
-    Get,
-    Param,
-    Patch,
-    Post,
-    Req,
-    UseGuards,
-  } from '@nestjs/common';
-  import { User } from '@prisma/client';
-  import { GetUser } from '../../auth/decorator';
-  import { JwtGuard } from '../../auth/guard';
-  import { AuthGuard } from '@nestjs/passport';
-  import { EditUserDto } from './dto';
-  import { UserService } from './user.service';
-import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
+import { User } from '@prisma/client';
+import { GetUser } from '../../auth/decorator';
+import { JwtGuard } from '../../auth/guard';
+import { EditUserDto } from './dto';
+import { UserService } from './user.service';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
-import { NextFunction, Request, Response } from 'express'
+import { Request, Response } from 'express'
 import { DeleteDto } from 'src/dto/delete.dto';
-  
-  @UseGuards(JwtGuard)
-  @ApiBearerAuth()
-  @ApiTags('Users')
-  @Controller('users')
-  export class UserController {
-    constructor(
-       private userService: UserService
-        ) {}
 
-    @Get('me')
-    getMe(@GetUser() user: User, req: Request) {
-      return user;
-    }
+@UseGuards(JwtGuard)
+@ApiBearerAuth()
+@ApiTags('Users')
+@Controller('users')
+export class UserController {
+  constructor(
+    private userService: UserService
+  ) { }
 
-    @Get('all')
-    getAll() {
-      return this.userService.getAllUsers();
-    }
+  @Get('me')
+  getMe(@GetUser() user: User, req: Request) {
+    return user;
+  }
 
-  @Post("update-staff")
-  editStaff(@Body() dto: EditUserDto) {
-    return this.userService.updateStaffUser(dto.id, dto);
+  @Get('all')
+  getAll() {
+    return this.userService.getAllUsers();
+  }
+  @Put(':id/update-staff')
+  editStaff(@GetUser('restaurantId') restaurantId: string, @Body() dto: EditUserDto, @Param('id') id: string) {
+    return this.userService.updateStaffUser(parseInt(id), dto, restaurantId);
   }
 
   @Post("update-driver")
-  editDriver(@Body() dto: EditUserDto) {
-    return this.userService.updateDriverUser(dto.id, dto);
+  editDriver(@GetUser('restaurantId') restaurantId: string, @Body() dto: EditUserDto, @Param('id') id: string) {
+    return this.userService.updateDriverUser(parseInt(id), dto, restaurantId);
   }
 
   // @Get(':id')
@@ -70,37 +67,37 @@ import { DeleteDto } from 'src/dto/delete.dto';
 
   @Get('staff')
   async getStaff(@GetUser('restaurantId') restaurantId: string, res: Response) {
-  try {
-    return await this.userService.getRestaurantStaff(restaurantId)
-  } catch (error) {
-    console.log('error', error);
-  }
+    try {
+      return await this.userService.getRestaurantStaff(restaurantId)
+    } catch (error) {
+      console.log('error', error);
+    }
   }
 
   @Get('drivers')
   async getDrivers(@GetUser('restaurantId') restaurantId: string, res: Response) {
-  try {
-    return await this.userService.getRestaurantDrivers(restaurantId)
-    // res.status(200).json(response)
-  } catch (error) {
-    console.log('error', error);
-  }
+    try {
+      return await this.userService.getRestaurantDrivers(restaurantId)
+      // res.status(200).json(response)
+    } catch (error) {
+      console.log('error', error);
+    }
   }
 
   @Get('customers')
   async getCustomers(@GetUser('restaurantId') restaurantId: string, res: Response) {
-  try {
-    return await this.userService.getRestaurantCustomers(restaurantId)
-    // res.status(200).json(response)
-  } catch (error) {
-    console.log('error', error);
-  }
+    try {
+      return await this.userService.getRestaurantCustomers(restaurantId)
+      // res.status(200).json(response)
+    } catch (error) {
+      console.log('error', error);
+    }
   }
 
-  @ApiOkResponse({description: "User deleted successfully"})
+  @ApiOkResponse({ description: "User deleted successfully" })
   @Post('delete')
-  async deleteById(@Body() dto: DeleteDto) {
-    return await this.userService.deleteById(dto);
+  async deleteById(@GetUser('restaurantId') restaurantId: string, @Body() dto: DeleteDto) {
+    return await this.userService.deleteById(dto, restaurantId);
   }
 
 }

@@ -1,13 +1,9 @@
 import {
     Body,
     Controller,
-    Delete,
     Get,
-    HttpCode,
-    HttpStatus,
     Param,
     ParseIntPipe,
-    Patch,
     Post,
     UseGuards,
     UseInterceptors,
@@ -22,7 +18,6 @@ import {
     CreateRestaurantDto,
     EditRestaurantDto,
 } from './dto';
-import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 import { ApiTags, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger';
 import { diskStorage } from "multer";
 import { v4 as uuidv4 } from 'uuid';
@@ -42,6 +37,13 @@ export class RestaurantController {
     constructor(
         private restaurantService: RestaurantService,
     ) { }
+
+
+    @Get('statistics')
+    async getStatistics(@GetUser('restaurantId') restaurantId: string) {
+        const response = await this.restaurantService.getDasboardStats(parseInt(restaurantId));        
+        return response;
+    }
 
     @Get('all')
     // @UseInterceptors(CacheInterceptor) 
@@ -92,7 +94,7 @@ export class RestaurantController {
     @ApiConsumes('multipart/form-data')
     @Post('update')
     editRestaurantById(
-        @UploadedFile() file, 
+        @UploadedFile() file,
         @Body() dto: EditRestaurantDto,
     ) {
         return this.restaurantService.editRestaurantById(dto, file);
@@ -103,8 +105,8 @@ export class RestaurantController {
         return this.restaurantService.deleteRestaurantById(dto);
     }
 
-  @Post('create-qrcode')
-  async createQrCode(@GetUser('restaurantId') restaurantId: string, @Body() dto: CreateQrCodeDto, @Req() req: Request) {
-    return this.restaurantService.CreateQrCode(restaurantId, dto, req);
-  }
+    @Post('create-qrcode')
+    async createQrCode(@GetUser('restaurantId') restaurantId: string, @Body() dto: CreateQrCodeDto, @Req() req: Request) {
+        return this.restaurantService.CreateQrCode(restaurantId, dto, req);
+    }
 }

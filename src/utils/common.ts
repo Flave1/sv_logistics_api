@@ -54,6 +54,17 @@ export function getStatusLabel(status: OrderStatus): string {
   }
 }
 
+export function getStatusLabelForOrdersInKitchen(status: OrderStatus): string {
+  switch (status) {
+    case OrderStatus.OrderAccepted:
+      return 'PENDING';
+    case OrderStatus.Packaged:
+      return 'PREPARED';
+    default:
+      return 'Unknown Status';
+  }
+}
+
 export function getPaymentStatusLabel(status: PaymentStatus): string {
   switch (status) {
     case PaymentStatus.unpaid:

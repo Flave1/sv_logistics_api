@@ -47,7 +47,7 @@ export declare class UserController {
         deleted: boolean;
         status: boolean;
     }[]>;
-    editStaff(dto: EditUserDto): Promise<{
+    editStaff(restaurantId: string, dto: EditUserDto, id: string): Promise<{
         id: number;
         createdAt: Date;
         updatedAt: Date;
@@ -68,7 +68,7 @@ export declare class UserController {
         deleted: boolean;
         status: boolean;
     }>;
-    editDriver(dto: EditUserDto): Promise<{
+    editDriver(restaurantId: string, dto: EditUserDto, id: string): Promise<{
         id: number;
         createdAt: Date;
         updatedAt: Date;
@@ -211,7 +211,7 @@ export declare class UserController {
         deleted: boolean;
         status: boolean;
     }[]>;
-    deleteById(dto: DeleteDto): Promise<{
+    deleteById(restaurantId: string, dto: DeleteDto): Promise<{
         status: string;
         message: string;
     }>;

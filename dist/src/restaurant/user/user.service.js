@@ -14,7 +14,6 @@ const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../../prisma/prisma.service");
 const userType_enum_1 = require("./enums/userType.enum");
 const gateway_service_1 = require("../../gateway/gateway.service");
-const gateway_constants_1 = require("../../gateway/dto/gateway.constants");
 let UserService = class UserService {
     constructor(prisma, socket) {
         this.prisma = prisma;
@@ -32,7 +31,7 @@ let UserService = class UserService {
         delete user.hash;
         return user;
     }
-    async updateDriverUser(userId, dto) {
+    async updateDriverUser(userId, dto, restaurantId) {
         const user = await this.prisma.user.update({
             where: {
                 id: userId,
@@ -42,21 +41,31 @@ let UserService = class UserService {
             },
         });
         delete user.hash;
-        this.socket.emitToClient(gateway_constants_1.UserManagementEvents.get_all_drivers_event);
+        this.socket.emitToClient(`get_all_drivers_event_${restaurantId}`);
         return user;
     }
-    async updateStaffUser(userId, dto) {
-        const user = await this.prisma.user.update({
-            where: {
-                id: userId,
-            },
-            data: {
-                ...dto,
-            },
-        });
-        delete user.hash;
-        this.socket.emitToClient(gateway_constants_1.UserManagementEvents.get_all_staff_event);
-        return user;
+    async updateStaffUser(userId, dto, restaurantId) {
+        try {
+            const user = await this.prisma.user.update({
+                where: {
+                    id: userId,
+                },
+                data: {
+                    address: dto.address,
+                    email: dto.email,
+                    firstName: dto.firstName,
+                    lastName: dto.lastName,
+                    phoneNumber: dto.phoneNumber
+                },
+            });
+            delete user.hash;
+            this.socket.emitToClient(`get_all_staff_event_${restaurantId}`);
+            return user;
+        }
+        catch (error) {
+            console.log(error);
+            throw new common_1.InternalServerErrorException(error);
+        }
     }
     async getUserById(userId) {
         return await this.prisma.user.findFirst({
@@ -174,7 +183,7 @@ let UserService = class UserService {
         };
         return user;
     }
-    async deleteById(dto) {
+    async deleteById(dto, restaurantId) {
         try {
             const users = await this.prisma.user.findMany({
                 where: {
@@ -193,13 +202,13 @@ let UserService = class UserService {
                     },
                 });
                 if (userType == userType_enum_1.UserType.Driver) {
-                    this.socket.emitToClient(gateway_constants_1.UserManagementEvents.get_all_drivers_event);
+                    this.socket.emitToClient(`get_all_drivers_event_${restaurantId}`);
                 }
                 else if (userType == userType_enum_1.UserType.Staff) {
-                    this.socket.emitToClient(gateway_constants_1.UserManagementEvents.get_all_staff_event);
+                    this.socket.emitToClient(`get_all_staff_event_${restaurantId}`);
                 }
                 else if (userType == userType_enum_1.UserType.Customer) {
-                    this.socket.emitToClient(gateway_constants_1.UserManagementEvents.get_all_customers_event);
+                    this.socket.emitToClient(`get_all_customers_event_${restaurantId}`);
                 }
             }
             return { status: "Successful", message: "User successfully deleted" };
