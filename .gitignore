@@ -40,3 +40,4 @@ lerna-debug.log*
 .serverless/foodieapi
 dist/tsconfig.build.tsbuildinfo
 dist/tsconfig.build.tsbuildinfo
+dist/tsconfig.build.tsbuildinfo

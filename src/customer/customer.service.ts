@@ -109,6 +109,15 @@ export class CustomerService {
             createdAt: 'desc'
           }
         },
+        restaurant:{
+          select:{
+            country:{
+              select:{
+                currencyCode: true
+              }
+            }
+          }
+        }
       },
       take: 20
     });
