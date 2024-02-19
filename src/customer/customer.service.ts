@@ -109,10 +109,10 @@ export class CustomerService {
             createdAt: 'desc'
           }
         },
-        restaurant:{
-          select:{
-            country:{
-              select:{
+        restaurant: {
+          select: {
+            country: {
+              select: {
                 currencyCode: true
               }
             }
@@ -170,6 +170,46 @@ export class CustomerService {
       MenuOrders: undefined
     }))
     return mostOrderedMenu;
+  }
+
+  async getPopularMenuV1(req: Request) {
+    const menu = await this.prisma.menu.findMany({
+      where: {
+        deleted: false,
+      },
+      select: {
+        id: true,
+        image: true,
+        name: true,
+        restaurant: {
+          select: {
+            id: true,
+            name: true,
+            status: true,
+            image: true,
+            phoneNumber: true,
+            address: true,
+            openingTime: true,
+            closingTime: true,
+            hasFreeDelivery: true,
+            freeDeliveryAmount: true,
+            latitude: true,
+            longitude: true,
+          }
+        }
+      },
+      take: 20
+    });
+
+    console.log('menu', menu);
+
+    return menu.map((mn) => ({
+      id: mn.id,
+      name: mn.name,
+      image: getBaseUrl(req) + '/' + mn.image,
+      restaurantImage: getBaseUrl(req) + '/' + mn.restaurant.image,
+      restaurant: mn.restaurant
+    }));
   }
 
   async addToCartOrUpdate(dto: SaveMenuOrderDto) {
@@ -287,7 +327,7 @@ export class CustomerService {
 
       return menuOrders.map((order) => ({
         customerId: order.customerId,
-        currencyCode: order. restaurant.country.currencyCode,
+        currencyCode: order.restaurant.country.currencyCode,
         temporalId: order.temporalId,
         restaurantId: order.restaurantId,
         restaurantName: order.restaurant.name,

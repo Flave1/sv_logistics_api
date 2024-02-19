@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { CustomerService } from './customer.service';
 import { getBaseUrl } from 'src/utils';
 import { Request } from 'express';
-import { CheckoutFinalMenuRequest, RemoveMenuOrderDto, SaveMenuOrderDto } from './dto';
+import { CheckoutDto, CheckoutFinalMenuRequest, RemoveMenuOrderDto, SaveMenuOrderDto } from './dto';
 import { MenuService } from 'src/restaurant/menu/menu.service';
 
 @ApiTags('CustomerMobile')
@@ -12,7 +12,7 @@ export class CustomerMobileController {
   constructor(
     private customerService: CustomerService,
     private menuService: MenuService
-    ) { }
+  ) { }
 
   @Get('restaurant-menu/:id')
   async getMenuById(@Param('id') id: string, @Req() req: Request) {
@@ -68,11 +68,7 @@ export class CustomerMobileController {
 
   @Get('popular-restaurant-menu')
   async getMenu(@Req() req: Request) {
-    const response = await this.customerService.getPopularMenu();
-    for (let i = 0; i < response.length; i++) {
-      response[i].image = getBaseUrl(req) + '/' + response[i].image
-    }
-    return response;
+    return await this.customerService.getPopularMenuV1(req);
   }
 
   @Post('save-to-cart')
@@ -94,6 +90,12 @@ export class CustomerMobileController {
   async getCheckoutFinalmenu(@Req() req: Request, @Body() menuRequest: CheckoutFinalMenuRequest) {
     const response = await this.customerService.getCheckoutMenu(menuRequest.restaurantIds, menuRequest.menuIds, req);
     return response;
+  }
+
+  @Post('checkout')
+  async checkoutOrder(@Body() request: CheckoutDto) {
+      const response = await this.customerService.checkoutOrder(request);
+      return response;
   }
 }
 
