@@ -202,7 +202,7 @@ export class CustomerService {
       take: 20
     });
 
-    return menu.map((res) => ({
+    return menu.filter(r => r.menu.length > 0).map((res) => ({
       id: res.id,
       name: res.name,
       image: getBaseUrl(req) + '/' + res.image,
