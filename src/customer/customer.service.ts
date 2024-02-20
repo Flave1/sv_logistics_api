@@ -173,42 +173,42 @@ export class CustomerService {
   }
 
   async getPopularMenuV1(req: Request) {
-    const menu = await this.prisma.menu.findMany({
+    const menu = await this.prisma.restaurant.findMany({
       where: {
         deleted: false,
       },
       select: {
         id: true,
-        image: true,
         name: true,
-        restaurant: {
+        status: true,
+        image: true,
+        phoneNumber: true,
+        address: true,
+        openingTime: true,
+        closingTime: true,
+        hasFreeDelivery: true,
+        freeDeliveryAmount: true,
+        latitude: true,
+        longitude: true,
+        menu: {
           select: {
             id: true,
-            name: true,
-            status: true,
             image: true,
-            phoneNumber: true,
-            address: true,
-            openingTime: true,
-            closingTime: true,
-            hasFreeDelivery: true,
-            freeDeliveryAmount: true,
-            latitude: true,
-            longitude: true,
-          }
+            name: true,
+          },
+          take: 1
         }
       },
       take: 20
     });
 
-    console.log('menu', menu);
-
-    return menu.map((mn) => ({
-      id: mn.id,
-      name: mn.name,
-      image: getBaseUrl(req) + '/' + mn.image,
-      restaurantImage: getBaseUrl(req) + '/' + mn.restaurant.image,
-      restaurant: mn.restaurant
+    return menu.map((res) => ({
+      id: res.id,
+      name: res.name,
+      image: getBaseUrl(req) + '/' + res.image,
+      menuImage: res.menu[0]?.image ? getBaseUrl(req) + '/' + res.menu[0]?.image : "",
+      menuName: res.menu[0]?.name ?? "",
+      menuId: res.menu[0]?.id ?? ""
     }));
   }
 
