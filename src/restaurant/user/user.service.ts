@@ -1,6 +1,6 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { EditUserDto } from './dto';
+import { EditUserDto, SavePermissionRequest } from './dto';
 import { UserType } from './enums/userType.enum';
 import { GatewayService } from 'src/gateway/gateway.service';
 import { DeleteDto } from 'src/dto/delete.dto';
@@ -47,7 +47,7 @@ export class UserService {
         data: {
           address: dto.address,
           email: dto.email,
-          firstName : dto.firstName,
+          firstName: dto.firstName,
           lastName: dto.lastName,
           phoneNumber: dto.phoneNumber
         },
@@ -148,7 +148,7 @@ export class UserService {
         }
       ]
     });
-    return user.map(({ hash, ...newUsers }) => newUsers); 
+    return user.map(({ hash, ...newUsers }) => newUsers);
   }
   async getRestaurantCustomers(restaurantId: string) {
     const user = await this.prisma.user.findMany({
@@ -162,7 +162,7 @@ export class UserService {
         }
       ]
     });
-    return user.map(({ hash, ...newUsers }) => newUsers); 
+    return user.map(({ hash, ...newUsers }) => newUsers);
   }
 
   async getAllUsers(
@@ -219,6 +219,54 @@ export class UserService {
         }
       }
       return { status: "Successful", message: "User successfully deleted" }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async savePermissions(restaurantId: string, request: SavePermissionRequest) {
+    try {
+
+      if (request.permissions.length > 0) {
+        await this.prisma.userPermission.deleteMany({
+          where: { userId: request.userId, restaurantId: parseInt(restaurantId) }
+        })
+        const created = await this.prisma.userPermission.create({
+          data: {
+            userId: request.userId,
+            restaurantId: parseInt(restaurantId),
+            type: request.type,
+            permissions: request.permissions.join(',')
+          }
+        });
+        return created;
+      }
+
+      throw new BadRequestException("Please confirm permissions are selected")
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getPermissions(restaurantId: string, userId: number, type: number) {
+    try {
+
+      const pms = await this.prisma.userPermission.findFirst({
+        where: {
+          userId,
+          restaurantId: parseInt(restaurantId),
+          type,
+        }
+      });
+
+      if (pms)
+        return {
+          userId,
+          restaurantId,
+          type,
+          permissions: pms.permissions.split(',')
+        }
+      return null
     } catch (error) {
       throw error;
     }

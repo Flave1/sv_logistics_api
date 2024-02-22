@@ -33,17 +33,18 @@ model Restaurant {
   users                User[]
   menuOrders           MenuOrder[]
 
-  country       Country         @relation(fields: [countryId], references: [id])
-  OrderCheckout OrderCheckout[]
+  country        Country          @relation(fields: [countryId], references: [id])
+  OrderCheckout  OrderCheckout[]
+  UserPermission UserPermission[]
 
   @@map("restaurant")
 }
 
 model User {
-  id                   Int             @id @default(autoincrement())
-  createdAt            DateTime        @default(now())
-  updatedAt            DateTime        @updatedAt
-  email                String          @unique
+  id                   Int              @id @default(autoincrement())
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  email                String           @unique
   hash                 String
   firstName            String?
   lastName             String?
@@ -59,12 +60,13 @@ model User {
   passwordResetToken   String?
   deleted              Boolean?
   status               Boolean?
-  courierType          CourierType     @relation(fields: [courierTypeId], references: [id])
-  restaurant           Restaurant      @relation(fields: [restaurantId], references: [id])
-  userType             UserType        @relation(fields: [userTypeId], references: [id])
+  courierType          CourierType      @relation(fields: [courierTypeId], references: [id])
+  restaurant           Restaurant       @relation(fields: [restaurantId], references: [id])
+  userType             UserType         @relation(fields: [userTypeId], references: [id])
   menuOrders           MenuOrder[]
   addresses            Address[]
   orderCheckout        OrderCheckout[]
+  UserPermission       UserPermission[]
 
   @@map("users")
 }
@@ -219,4 +221,16 @@ model OrderCheckout {
   menuOrders    MenuOrder[]
 
   @@map("orderCheckout")
+}
+
+model UserPermission {
+  id           Int        @id @default(autoincrement())
+  userId       Int
+  type         Int
+  permissions  String
+  restaurantId Int
+  user         User       @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("userPermission")
 }

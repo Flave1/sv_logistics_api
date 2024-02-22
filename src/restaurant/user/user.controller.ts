@@ -10,7 +10,7 @@ import {
 import { User } from '@prisma/client';
 import { GetUser } from '../../auth/decorator';
 import { JwtGuard } from '../../auth/guard';
-import { EditUserDto } from './dto';
+import { EditUserDto, SavePermissionRequest } from './dto';
 import { UserService } from './user.service';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
@@ -100,4 +100,12 @@ export class UserController {
     return await this.userService.deleteById(dto, restaurantId);
   }
 
+  @Post('permission')
+  async savePermissions(@GetUser('restaurantId') restaurantId: string, @Body() request: SavePermissionRequest) {
+    return await this.userService.savePermissions(restaurantId, request);
+  }
+  @Get('permission/:userId/:type')
+  async getPermissions(@GetUser('restaurantId') restaurantId: string, @Param('userId') userId: string, @Param('type') type: string) {
+    return await this.userService.getPermissions(restaurantId, parseInt(userId), parseInt(type));
+  }
 }

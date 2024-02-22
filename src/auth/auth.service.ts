@@ -5,7 +5,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthDto } from './dto';
 import * as argon from 'argon2';
-import { JwtService} from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { Restaurant } from 'src/restaurant/enums/restaurant.enum';
@@ -146,15 +146,20 @@ export class AuthService {
     // if password incorrect throw exception
     if (!pwMatches)
       throw new ForbiddenException('Invalid Credentials');
-    return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
+
+    const userMermissions = await this.prisma.userPermission.findFirst({ where: { userId: user.id, restaurantId: user.restaurantId }, select: { permissions: true } });
+    console.log('permissions', userMermissions);
+
+    return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId, userMermissions.permissions);
   }
 
-  async signToken(userId: number, email: string, userType: number, restaurantId: number): Promise<{ access_token: string }> {
+  async signToken(userId: number, email: string, userType: number, restaurantId: number, permissions: string = ""): Promise<{ access_token: string }> {
     const payload = {
       sub: userId,
       email,
       userType,
-      restaurantId
+      restaurantId,
+      permissions: permissions.split(',')
     };
     const secret = 'wowthisisabadsecret123'; //this.config.get('JWT_SECRET');
 
