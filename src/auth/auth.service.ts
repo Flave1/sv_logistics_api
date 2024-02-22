@@ -148,7 +148,7 @@ export class AuthService {
       throw new ForbiddenException('Invalid Credentials');
 
     const userMermissions = await this.prisma.userPermission.findFirst({ where: { userId: user.id, restaurantId: user.restaurantId }, select: { permissions: true } });
-    console.log('permissions', userMermissions);
+  
 
     return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId, userMermissions.permissions);
   }
