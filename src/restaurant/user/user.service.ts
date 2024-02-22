@@ -4,6 +4,7 @@ import { EditUserDto, SavePermissionRequest } from './dto';
 import { UserType } from './enums/userType.enum';
 import { GatewayService } from 'src/gateway/gateway.service';
 import { DeleteDto } from 'src/dto/delete.dto';
+import { getUserTypeLabel } from 'src/utils';
 
 @Injectable()
 export class UserService {
@@ -125,7 +126,10 @@ export class UserService {
     const user = await this.prisma.user.findMany({
       where: {
         restaurantId: parseInt(restaurantId),
-        userTypeId: UserType.Staff
+        userTypeId: UserType.Staff,
+        NOT: {
+          email: 'cafayadmin@gmail.com'
+        }
       },
       orderBy: [
         {
@@ -256,6 +260,15 @@ export class UserService {
           userId,
           restaurantId: parseInt(restaurantId),
           type,
+        },
+        include: {
+          user: {
+            select: {
+              firstName: true,
+              lastName: true,
+              userTypeId: true
+            }
+          }
         }
       });
 
@@ -264,7 +277,9 @@ export class UserService {
           userId,
           restaurantId,
           type,
-          permissions: pms.permissions.split(',')
+          permissions: pms.permissions.split(','),
+          name: pms.user.firstName + " " + pms.user.lastName,
+          userType: getUserTypeLabel(pms.user.userTypeId)
         }
       return null
     } catch (error) {

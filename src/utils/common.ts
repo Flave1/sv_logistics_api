@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import { Request } from 'express';
 import { OrderStatus } from 'src/restaurant/enums';
 import { PaymentStatus } from './constants';
+import { UserType } from 'src/restaurant/user/enums';
 export const filterTolower = (text: string): string => text.toLowerCase().replace(/\s/g, '');
 
 export const getRootDirectory = (): string => {
@@ -62,6 +63,21 @@ export function getStatusLabelForOrdersInKitchen(status: OrderStatus): string {
       return 'PREPARED';
     default:
       return 'Unknown Status';
+  }
+}
+
+export function getUserTypeLabel(status: UserType): string {
+  switch (status) {
+    case UserType.Client:
+      return 'Client';
+    case UserType.Client:
+      return 'Client';
+    case UserType.Customer:
+      return 'Customer';
+    case UserType.Staff:
+      return 'Staff';
+    default:
+      return 'Unknown User';
   }
 }
 
