@@ -1,6 +1,8 @@
 import {
   ForbiddenException,
   Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthDto } from './dto';
@@ -18,6 +20,7 @@ import { ForgotPasswordDto } from './dto/forgot.password.dto';
 import * as crypto from 'crypto';
 import { CreateDriverDto } from './dto/create.driver.dto';
 import { CreateStaffDto } from './dto/create.staff.dto';
+import * as jwt from 'jsonwebtoken'
 
 @Injectable()
 export class AuthService {
@@ -148,10 +151,37 @@ export class AuthService {
       throw new ForbiddenException('Invalid Credentials');
 
     const userMermissions = await this.prisma.userPermission.findFirst({ where: { userId: user.id, restaurantId: user.restaurantId }, select: { permissions: true } });
-  
+
 
     return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId, userMermissions.permissions);
   }
+  async refreshToken(token: string) {
+    try {
+      const decodedToken: any = jwt.decode(token, { complete: true });
+
+      if (this.isTokenExpired(decodedToken)) {
+        throw new UnauthorizedException()
+      }
+
+      const user = await this.prisma.user.findUnique({
+        where: {
+          email: decodedToken.payload.email,
+        },
+      });
+      const userMermissions = await this.prisma.userPermission.findFirst({ where: { userId: user.id, restaurantId: user.restaurantId }, select: { permissions: true } });
+      return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId, userMermissions.permissions);
+
+    } catch (error) {
+      throw new InternalServerErrorException(error)
+    }
+
+  }
+
+  isTokenExpired = (decodedToken: any) => {
+    const currentTimestamp = Math.floor(Date.now() / 1000);
+    const timeDifference = currentTimestamp - decodedToken.payload.exp;
+    return timeDifference > 60;
+  };
 
   async signToken(userId: number, email: string, userType: number, restaurantId: number, permissions: string = ""): Promise<{ access_token: string }> {
     const payload = {
@@ -166,7 +196,7 @@ export class AuthService {
     try {
       const token = await this.jwt.signAsync(payload,
         {
-          expiresIn: '24hrs',
+          expiresIn: '20secs',
           secret: secret,
           jwtid: ''
         },
@@ -178,7 +208,6 @@ export class AuthService {
       console.log('error', error);
 
     }
-
     return null
   }
 

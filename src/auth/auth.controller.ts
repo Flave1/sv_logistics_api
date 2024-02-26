@@ -1,19 +1,21 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthDto } from './dto';
+import { AuthDto, refreshTokenRequest } from './dto';
 import { CreateCustomerDto } from './dto/create.customer.dto';
 import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { GetUser } from './decorator/get-user.decorator';
 import { CreateStaffDto } from './dto/create.staff.dto';
 import { CreateDriverDto } from './dto/create.driver.dto';
 import { JwtGuard } from './guard/jwt.guard';
+import { User } from '@prisma/client';
 
 @ApiTags('Authentication')
 @Controller('authentication')
@@ -49,5 +51,12 @@ export class AuthController {
   @Post('login')
   signin(@Body() dto: AuthDto) {
     return this.authService.login(dto);
+  }
+
+  @ApiBearerAuth()
+  // @UseGuards(JwtGuard)
+  @Post('refresh-token')
+  refreshToken(@Body() request: refreshTokenRequest) {
+    return this.authService.refreshToken(request.token);
   }
 }

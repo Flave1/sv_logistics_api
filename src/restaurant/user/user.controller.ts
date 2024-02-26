@@ -30,7 +30,7 @@ export class UserController {
   getMe(@GetUser() user: User, req: Request) {
     return user;
   }
-
+ 
   @Get('all')
   getAll() {
     return this.userService.getAllUsers();

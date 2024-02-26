@@ -9,16 +9,21 @@ import { join } from 'path';
 async function bootstrap() {
   // const app = await NestFactory.create(AppModule);
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  
+
   app.useGlobalPipes(new ValidationPipe());
 
   swaggerConfig(app);
 
-  app.enableCors();
-  
-   const imagePath = join(__dirname).replace("/dist", "").replace("/src", "");
-   app.useStaticAssets(imagePath, { prefix: '/' });
- 
+  // Configure CORS
+  const corsOptions = {
+    origin: 'http://localhost:3000', // Change this to your frontend URL
+    credentials: true, // Enable credentials (cookies, authorization headers)
+  };
+  app.enableCors(corsOptions);
+
+  const imagePath = join(__dirname).replace("/dist", "").replace("/src", "");
+  app.useStaticAssets(imagePath, { prefix: '/' });
+
 
   await app.listen(3200);//process.env['PORT']
 }

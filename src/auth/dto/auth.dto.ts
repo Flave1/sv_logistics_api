@@ -17,3 +17,10 @@ import {
     @IsNotEmpty()
     password: string;
   }
+
+  export class refreshTokenRequest{
+    @ApiProperty({})
+    @IsNotEmpty()
+    @IsString()
+    token: string;
+  }
