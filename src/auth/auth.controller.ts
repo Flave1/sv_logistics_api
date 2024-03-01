@@ -54,7 +54,6 @@ export class AuthController {
   }
 
   @ApiBearerAuth()
-  // @UseGuards(JwtGuard)
   @Post('refresh-token')
   refreshToken(@Body() request: refreshTokenRequest) {
     return this.authService.refreshToken(request.token);

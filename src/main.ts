@@ -2,7 +2,6 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { swaggerConfig } from './swagger/swagger.config';
-import { ValidationExceptionFilter } from './exceptions/ValidationExceptionFilter';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 
@@ -14,10 +13,9 @@ async function bootstrap() {
 
   swaggerConfig(app);
 
-  // Configure CORS
   const corsOptions = {
-    origin: 'http://localhost:3000', // Change this to your frontend URL
-    credentials: true, // Enable credentials (cookies, authorization headers)
+    origin: 'http://localhost:3000',
+    credentials: true,
   };
   app.enableCors(corsOptions);
 
