@@ -1,46 +1,52 @@
 import { Injectable, ForbiddenException } from "@nestjs/common";
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
 import { PrismaService } from "src/prisma/prisma.service";
-import { GatewayService } from "src/gateway/gateway.service";
 import { CreateClientDto } from "./dto/create-client.dto";
 import * as argon from 'argon2';
-import { Restaurant } from "../enums";
 import { CourierType, UserType } from "../user/enums";
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { AuthService } from "src/auth/auth.service";
+import { client_permossions } from "../enums";
 
 
 @Injectable()
 export class ClientService {
   constructor(
     private prisma: PrismaService,
-    private jwt: JwtService,
-    private config: ConfigService,
-    private socket: GatewayService
+    private authService: AuthService
   ) { }
 
-async CreateClient(dto: CreateClientDto) {
+  async CreateClient(dto: CreateClientDto) {
     // generate the password hash
     const defaultPassword = "Password123"
     const hash = await argon.hash(defaultPassword);
     // save the new user in the db
     try {
-      const user = await this.prisma.user.create({
-        data: {
-          email: dto.email,
-          firstName: dto.firstName,
-          lastName: dto.lastName,
-          hash,
-          phoneNumber: dto.phoneNumber,
-          address: dto.address,
-          restaurantId: Restaurant.Default,
-          userTypeId: UserType.Client,
-          courierTypeId: CourierType.Default,
-          deleted: false
-        },
-      });
+      await this.prisma.$transaction(async (tx) => {
+        const user = await tx.user.create({
+          data: {
+            email: dto.email,
+            firstName: dto.firstName,
+            lastName: dto.lastName,
+            hash,
+            phoneNumber: dto.phoneNumber,
+            address: dto.address,
+            restaurantId: null,
+            userTypeId: UserType.Client,
+            courierTypeId: CourierType.Default,
+            deleted: false
+          },
+        });
+        await tx.userPermission.create({
+          data: {
+            userId: user.id,
+            type: 1,
+            permissions: client_permossions,
+            restaurantId: null,
+          }
+        });
 
-      return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
+        return this.authService.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
+      })
     } catch (error) {
       if (
         error instanceof
@@ -51,6 +57,8 @@ async CreateClient(dto: CreateClientDto) {
         }
       }
       throw error;
+    } finally {
+      await this.prisma.$disconnect();
     }
   }
 
@@ -67,33 +75,5 @@ async CreateClient(dto: CreateClientDto) {
       ]
     });
     return user.map(({ hash, ...newUsers }) => newUsers); //Todo: change mapping to transformer
-  }
-
-  async signToken(userId: number, email: string, userType: number, restaurantId: number): Promise<{ access_token: string }> {
-    const payload = {
-      sub: userId,
-      email,
-      userType,
-      restaurantId
-    };
-    const secret = 'wowthisisabadsecret123'; //this.config.get('JWT_SECRET');
-
-    try {
-      const token = await this.jwt.signAsync(payload,
-        {
-          expiresIn: '60m',
-          secret: secret,
-          jwtid: ''
-        },
-      );
-      return {
-        access_token: token,
-      };
-    } catch (error) {
-      console.log('error', error);
-
-    }
-
-    return null
   }
 }

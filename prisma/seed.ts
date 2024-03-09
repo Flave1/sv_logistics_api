@@ -7,7 +7,7 @@ import * as argon from 'argon2';
 const prisma = new PrismaClient();
 async function main() {
     const courierTypes = [{ id: 1, name: "Default" }, { id: 2, name: "Car" }, { id: 3, name: "Bycicle" }];
-    const userTypes = [{ id: 1, name: "Staff" }, { id: 2, name: "Customer" }, { id: 3, name: "Driver" }, { id: 4, name: "Client" }];
+    const userTypes = [{ id: 1, name: "Staff" }, { id: 2, name: "Customer" }, { id: 3, name: "Driver" }, { id: 4, name: "Client" }, { id: 5, name: "System Admin" }];
     const defaultPassword = "Password123"
     const hash = await argon.hash(defaultPassword);
     const restaurant = await prisma.restaurant.upsert({
@@ -45,15 +45,15 @@ async function main() {
         where: { id: 1 },
         update: {},
         create: {
-            email: 'cafayadmin@gmail.com',
+            email: 'cafayadmin@flaveconsole.com',
             firstName: 'cafay',
             lastName: 'admin',
             hash,
             phoneNumber: '08187019424',
             address: 'Ikeja Lagos Nigeria',
             restaurantId: restaurant.id,
-            userTypeId: userTypes[0].id,
-            courierTypeId: courierTypes[0].id
+            userTypeId: userTypes[4].id,
+            courierTypeId: courierTypes[4].id
         },
     });
 

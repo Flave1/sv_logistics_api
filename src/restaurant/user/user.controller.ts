@@ -16,6 +16,7 @@ import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { Request, Response } from 'express'
 import { DeleteDto } from 'src/dto/delete.dto';
+import { UserType } from './enums';
 
 @UseGuards(JwtGuard)
 @ApiBearerAuth()
@@ -30,7 +31,7 @@ export class UserController {
   getMe(@GetUser() user: User, req: Request) {
     return user;
   }
- 
+
   @Get('all')
   getAll() {
     return this.userService.getAllUsers();
@@ -66,9 +67,13 @@ export class UserController {
   }
 
   @Get('staff')
-  async getStaff(@GetUser('restaurantId') restaurantId: string, res: Response) {
+  async getStaff(@GetUser('restaurantId') restaurantId: string, @GetUser('userTypeId') userTypeId: string, res: Response) {    
     try {
-      return await this.userService.getRestaurantStaff(restaurantId)
+      if (parseInt(userTypeId) === UserType.SystemAdmin) {
+        return await this.userService.sys_getRestaurantStaff()
+      } else {
+        return await this.userService.getRestaurantStaff(restaurantId)
+      }
     } catch (error) {
       console.log('error', error);
     }

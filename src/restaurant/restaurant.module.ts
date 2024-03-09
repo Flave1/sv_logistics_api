@@ -8,12 +8,18 @@ import { MenuService } from './menu/menu.service';
 import { CountryModule } from './country/country.module';
 import { ClientModule } from './client/client.module';
 import { OrderModule } from './order/order.module';
+import { UserService } from './user/user.service';
+import { AuthService } from 'src/auth/auth.service';
+import { JwtService } from '@nestjs/jwt';
 @Module({
   providers: [
     RestaurantService, 
     // RedisRepository,
     GatewayService,
-    MenuService
+    MenuService,
+    UserService,
+    AuthService,
+    JwtService
   ],
   imports:[
     // redisModule,

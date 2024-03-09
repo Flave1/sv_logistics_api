@@ -21,6 +21,8 @@ import * as crypto from 'crypto';
 import { CreateDriverDto } from './dto/create.driver.dto';
 import { CreateStaffDto } from './dto/create.staff.dto';
 import * as jwt from 'jsonwebtoken'
+import { User } from '@prisma/client';
+import { staff_permossions } from 'src/restaurant/enums';
 
 @Injectable()
 export class AuthService {
@@ -67,29 +69,51 @@ export class AuthService {
 
 
   //** Method to profile Staff and Drivers */
-  async CreateStaff(restaurantId: string, dto: CreateStaffDto) {
-    // generate the password hash
+  async CreateStaff(restaurantId: string, dto: CreateStaffDto, tranx: any = null, permissions: string = staff_permossions) {
+
+    
     const defaultPassword = "Password123"
     const hash = await argon.hash(defaultPassword);
-    // save the new user in the db
+    const data = {
+      email: dto.email,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+      hash,
+      phoneNumber: dto.phoneNumber,
+      address: dto.address,
+      restaurantId: restaurantId ? parseInt(restaurantId) : null,
+      userTypeId: UserType.Staff,
+      courierTypeId: CourierType.Default
+    };
+    let user: User = null
     try {
-      const user = await this.prisma.user.create({
-        data: {
-          email: dto.email,
-          firstName: dto.firstName,
-          lastName: dto.lastName,
-          hash,
-          phoneNumber: dto.phoneNumber,
-          address: dto.address,
-          restaurantId: parseInt(restaurantId),
-          userTypeId: UserType.Staff,
-          courierTypeId: CourierType.Default
-        },
-      });
+      if (tranx) {
+        user = await tranx.user.create({ data });
+        await tranx.userPermission.create({
+          data: {
+            userId: user.id,
+            type: 1,
+            permissions,
+            restaurantId: restaurantId ? parseInt(restaurantId) : null,
+          }
+        });
+      } else {
+        user = await this.prisma.user.create({ data });
+        await this.prisma.userPermission.create({
+          data: {
+            userId: user.id,
+            type: 1,
+            permissions,
+            restaurantId: restaurantId ? parseInt(restaurantId) : null,
+          }
+        });
+      }
 
       this.socket.emitToClient(`get_all_staff_event_${restaurantId}`)
       return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
     } catch (error) {
+      console.log('error', error);
+
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
           throw new ForbiddenException('Email already exist');
@@ -155,6 +179,7 @@ export class AuthService {
 
     return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId, userMermissions.permissions);
   }
+
   async refreshToken(token: string) {
     try {
       const decodedToken: any = jwt.decode(token, { complete: true });
@@ -196,7 +221,7 @@ export class AuthService {
     try {
       const token = await this.jwt.signAsync(payload,
         {
-          expiresIn: '6hrs',
+          expiresIn: '1min',
           secret: secret,
           jwtid: ''
         },
@@ -240,7 +265,6 @@ export class AuthService {
     //Implement Logic to send mail
     return this.signToken(user.id, user.email, user.userTypeId, user.restaurantId);
   }
-
 
   async GenerateToken(): Promise<{ token: string, hashedToken: string }> {
 

@@ -21,6 +21,14 @@ import {
 
     @ApiProperty({})
     @IsString()
+    staffFirstname?: string;
+
+    @ApiProperty({})
+    @IsString()
+    staffLastname?: string;
+
+    @ApiProperty({})
+    @IsString()
     phoneNumber: string;
 
     @ApiProperty({})

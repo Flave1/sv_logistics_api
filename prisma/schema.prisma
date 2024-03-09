@@ -56,13 +56,13 @@ model User {
   nextOfKinAddress     String?
   userTypeId           Int
   courierTypeId        Int
-  restaurantId         Int
+  restaurantId         Int?
   passwordResetToken   String?
   deleted              Boolean?
   status               Boolean?
   courierType          CourierType      @relation(fields: [courierTypeId], references: [id])
-  restaurant           Restaurant       @relation(fields: [restaurantId], references: [id])
-  userType             UserType         @relation(fields: [userTypeId], references: [id])
+  restaurant           Restaurant?      @relation(fields: [restaurantId], references: [id])
+  // userType             UserType         @relation(fields: [userTypeId], references: [id])
   menuOrders           MenuOrder[]
   addresses            Address[]
   orderCheckout        OrderCheckout[]
@@ -78,7 +78,6 @@ model UserType {
   updatedAt DateTime @updatedAt
   deleted   Boolean?
   status    Boolean?
-  users     User[]
 
   @@map("userType")
 }
@@ -228,9 +227,9 @@ model UserPermission {
   userId       Int
   type         Int
   permissions  String
-  restaurantId Int
+  restaurantId Int?
   user         User       @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  restaurant   Restaurant? @relation(fields: [restaurantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("userPermission")
 }

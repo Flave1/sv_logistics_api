@@ -41,11 +41,13 @@ export class OrderService {
         try {
             const orderCheckout = await this.prisma.orderCheckout.findMany({
                 where: this.orderQuery(restaurantId, status),
-                orderBy: [{
-                    status: 'asc'
-                }, {
-                    createdAt: 'desc',
-                }],
+                orderBy: [
+                    {
+                        createdAt: 'desc',
+                    },
+                    {
+                        status: 'asc'
+                    }],
                 include: {
                     menuOrders: {
                         select: {

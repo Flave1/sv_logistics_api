@@ -90,6 +90,24 @@ export class UserService {
     });
   }
 
+  async getUserByEmail(email: string) {
+    return await this.prisma.user.findFirst({
+      where: {
+        email
+      },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        phoneNumber: true,
+        otherPhoneNumber: true,
+        email: true,
+        status: true,
+        userTypeId: true,
+      },
+    });
+  }
+
   async getUserByRestaurantId(restaurantId: string) {
     const user = await this.prisma.user.findMany({
       where: {
@@ -128,8 +146,22 @@ export class UserService {
         restaurantId: parseInt(restaurantId),
         userTypeId: UserType.Staff,
         NOT: {
-          email: 'cafayadmin@gmail.com'
+          email: 'cafayadmin@flaveconsole.com'
         }
+      },
+      orderBy: [
+        {
+          createdAt: 'desc',
+        }
+      ]
+    });
+    return user.map(({ hash, ...newUsers }) => newUsers);
+  }
+
+  async sys_getRestaurantStaff() {
+    const user = await this.prisma.user.findMany({
+      where: {
+        userTypeId: UserType.Staff,
       },
       orderBy: [
         {
