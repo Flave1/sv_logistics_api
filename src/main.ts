@@ -16,7 +16,7 @@ async function bootstrap() {
   swaggerConfig(app);
 
   const corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: 'http://cafay.flaveconsole.com', //'http://localhost:3000',
     credentials: true,
   };
   app.enableCors(corsOptions);
